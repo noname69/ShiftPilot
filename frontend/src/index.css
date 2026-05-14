@@ -1,0 +1,42 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background-color: #f8f8f8;
+  height: 100%;
+}
+
+body {
+  min-height: 100%;
+  margin: auto;
+  max-width: 1440px;
+  background-color: #f3efef;
+}
+
+@layer components {
+  .my-error {
+    color: #ac1f1f;
+    font-size: 0.8rem;
+    margin-bottom: 5px;
+  }
+
+  .my-btn-primary {
+    @apply btn btn-primary border-none;
+  }
+
+  .my-btn-secondary {
+    @apply btn btn-secondary bg-white border-slate-400 shadow-none text-slate-800;
+  }
+}
+
+@layer utilities {
+  .no-spinner::-webkit-outer-spin-button,
+  .no-spinner::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
