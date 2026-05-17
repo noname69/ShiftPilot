@@ -1,44 +1,54 @@
 package lt.techin.shiftpilot.feature.shift.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
+import lt.techin.shiftpilot.feature.user.model.User;
 
-import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Entity
+@Table(name = "shifts")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Shift {
 
     @Id
-    Long id;
-    String title;
-    String description;
-    LocalDate shiftDate;
-    Time startTime;
-    Time endTime;
-    int minEmployees;
-    ShiftStatus status;
-    Long createdByUserId;
-    LocalDateTime createdAt;
-    LocalDateTime updatedAt;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
+    private String title;
+    private String description;
 
-    public Shift(Long id, String title, String description, LocalDate shiftDate, Time startTime, Time endTime, int minEmployees, ShiftStatus status, Long createdByUserId, LocalDateTime createdAt, LocalDateTime updatedAt) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.shiftDate = shiftDate;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.minEmployees = minEmployees;
-        this.status = status;
-        this.createdByUserId = createdByUserId;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+    private LocalDate shiftDate;
+    private LocalTime startTime;
+    private LocalTime endTime;
+    private int minEmployees;
+
+    @Enumerated(EnumType.STRING)
+    private ShiftStatus status;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by_user_id")
+    private User createdBy;
+
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+
+    @PrePersist
+    public void prePersist() {
+        LocalDateTime now = LocalDateTime.now();
+        this.createdAt = now;
+        this.updatedAt = now;
     }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
+
 }
