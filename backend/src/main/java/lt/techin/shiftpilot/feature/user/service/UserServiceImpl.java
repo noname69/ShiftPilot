@@ -5,8 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lt.techin.shiftpilot.exception.user.DuplicateEmailException;
 import lt.techin.shiftpilot.exception.user.DuplicateUsernameException;
 import lt.techin.shiftpilot.exception.user.UserNotFoundException;
-import lt.techin.shiftpilot.feature.user.dto.UserFilter;
-import lt.techin.shiftpilot.feature.user.model.UserRole;
 import lt.techin.shiftpilot.feature.user.repository.UserRepository;
 import lt.techin.shiftpilot.feature.user.dto.CreateUserRequest;
 import lt.techin.shiftpilot.feature.user.dto.UpdateUserRequest;
@@ -14,11 +12,6 @@ import lt.techin.shiftpilot.feature.user.dto.UserResponse;
 import lt.techin.shiftpilot.feature.user.mapper.UserMapper;
 import lt.techin.shiftpilot.feature.user.model.User;
 import lt.techin.shiftpilot.feature.user.model.UserStatus;
-import lt.techin.shiftpilot.feature.user.specification.UserSpecification;
-import lt.techin.shiftpilot.security.principal.UserPrincipal;
-import lt.techin.shiftpilot.security.util.SecurityUtils;
-import org.springframework.data.domain.Sort;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -31,28 +24,11 @@ public class UserServiceImpl implements UserService{
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder encoder;
-    private final SecurityUtils securityUtils;
 
     @Override
-    public List<UserResponse> getAll(UserFilter filter) {
+    public List<UserResponse> getAll() {
 
-        UserPrincipal currentUser = securityUtils.getCurrentUser();
-
-//        List<User> users;
-//
-//        if (currentUser.getRole() == UserRole.ADMIN) {
-//            users = userRepository.findAll();
-//        } else if(currentUser.getRole() == UserRole.HR) {
-//            users = userRepository.findAllByStatus(UserStatus.INACTIVE);
-//        } else {
-//            users = userRepository.findAllByStatusAndRoleNot(
-//                    UserStatus.ACTIVE,
-//                    UserRole.ADMIN
-//            );
-//        }
-        List<User> users = userRepository.findAll(
-                UserSpecification.withFilters(filter, currentUser)
-        );
+        List<User> users = userRepository.findAll();
 
         return userMapper.toResponseList(users);
     }
@@ -60,15 +36,8 @@ public class UserServiceImpl implements UserService{
     @Override
     public UserResponse getById(Long id) {
 
-        UserPrincipal currentUser = securityUtils.getCurrentUser();
-
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
-
-        if(currentUser.getRole() == UserRole.USER &&
-        user.getRole() == UserRole.ADMIN) {
-            throw new AccessDeniedException("You do not have permission to view this user");
-        }
 
         return userMapper.toResponse(user);
     }
@@ -146,15 +115,5 @@ public class UserServiceImpl implements UserService{
                 .orElseThrow(() -> new UserNotFoundException(id));
 
         user.setStatus(UserStatus.ACTIVE);
-    }
-
-    @Override
-    public UserResponse getCurrentUser() {
-        UserPrincipal currentUser = securityUtils.getCurrentUser();
-
-        User user = userRepository.findById(currentUser.getId())
-                .orElseThrow(() -> new UserNotFoundException(currentUser.getId()));
-
-        return userMapper.toResponse(user);
     }
 }

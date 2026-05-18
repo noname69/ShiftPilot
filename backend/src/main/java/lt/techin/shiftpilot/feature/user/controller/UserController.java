@@ -9,6 +9,8 @@ import lt.techin.shiftpilot.feature.user.dto.UserResponse;
 import lt.techin.shiftpilot.feature.user.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,9 +23,8 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public List<UserResponse> getAll(
-            UserFilter filter) {
-        return userService.getAll(filter);
+    public List<UserResponse> getAll() {
+        return userService.getAll();
     }
 
     @GetMapping("/{id}")
@@ -59,5 +60,4 @@ public class UserController {
     // GET /api/users/search?query=john
     // PATCH /api/users/{id}/role
     // PATCH /api/users/{id}/password
-
 }
