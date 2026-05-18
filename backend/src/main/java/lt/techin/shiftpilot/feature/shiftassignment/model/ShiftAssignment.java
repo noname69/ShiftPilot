@@ -1,10 +1,9 @@
 package lt.techin.shiftpilot.feature.shiftassignment.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lt.techin.shiftpilot.feature.shift.model.Shift;
 import lt.techin.shiftpilot.feature.user.model.User;
@@ -12,32 +11,37 @@ import lt.techin.shiftpilot.feature.user.model.User;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "shift_assignments")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ShiftAssignment {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "shift_id")
+    @JoinColumn(name = "shift_id", nullable = false)
     private Shift shift;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    private Long assignedByUserId;
+    @ManyToOne
+    @JoinColumn(name = "assigned_by_user_id")
+    private User assignedBy;
+
+    @Enumerated(EnumType.STRING)
     ShiftAssignmentStatus status;
+
     LocalDateTime assignedAt;
     LocalDateTime removedAt;
 
-    public ShiftAssignment(Long id, Shift shift, User user, Long assignedByUserId, ShiftAssignmentStatus status, LocalDateTime assignedAt, LocalDateTime removedAt) {
-        this.id = id;
-        this.shift = shift;
-        this.user = user;
-        this.assignedByUserId = assignedByUserId;
-        this.status = status;
-        this.assignedAt = assignedAt;
-        this.removedAt = removedAt;
+    @PrePersist
+    public void onAssign() {
+        this.assignedAt = LocalDateTime.now();
     }
+
 }
