@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import lt.techin.shiftpilot.exception.core.DuplicateException;
 import lt.techin.shiftpilot.exception.core.NotFoundException;
 import lt.techin.shiftpilot.exception.core.TokenException;
-import lt.techin.shiftpilot.response.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -22,16 +21,14 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<ApiResponse<Object>> handleNotFound(
+    public ResponseEntity<ApiError> handleNotFound(
             NotFoundException ex,
             HttpServletRequest request) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(new ApiResponse<>(
+                .body(new ApiError(
                         HttpStatus.NOT_FOUND.value(),
-//                        HttpStatus.NOT_FOUND.getReasonPhrase(),
-                        false,
+                        HttpStatus.NOT_FOUND.getReasonPhrase(),
                         ex.getMessage(),
-                        null,
                         request.getRequestURI(),
                         LocalDateTime.now()
                 ));

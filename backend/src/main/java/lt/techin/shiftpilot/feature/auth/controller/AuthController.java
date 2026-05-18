@@ -1,5 +1,6 @@
 package lt.techin.shiftpilot.feature.auth.controller;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lt.techin.shiftpilot.feature.auth.dto.AuthResponse;
@@ -26,19 +27,19 @@ public class AuthController {
 
     // LOGIN
     @PostMapping("/login")
-    public AuthResponse login(@Valid @RequestBody LoginRequest request) {
-        return authService.login(request.username(), request.password());
+    public AuthResponse login(@Valid @RequestBody LoginRequest request, HttpServletResponse response) {
+        return authService.login(request.username(), request.password(), response);
     }
 
     // REFRESH TOKEN
     @PostMapping("/refresh")
-    public AuthResponse refresh(@RequestBody RefreshTokenRequest request) {
-        return authService.refreshToken(request.refreshToken());
+    public AuthResponse refresh(@RequestBody RefreshTokenRequest request, HttpServletResponse response) {
+        return authService.refreshToken(request.refreshToken(), response);
     }
 
     // LOGOUT
     @PostMapping("/logout")
-    public void logout(@RequestBody RefreshTokenRequest request) {
-        authService.logout(request.refreshToken());
+    public void logout(@RequestBody RefreshTokenRequest request, HttpServletResponse response) {
+        authService.logout(request.refreshToken(), response);
     }
 }

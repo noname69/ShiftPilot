@@ -37,21 +37,21 @@ public class UserSpecification {
                 );
             }
 
-            // STATUS FILTER
+            // STATUS
             if (filter.status() != null) {
                 predicates.add(
                         cb.equal(root.get("status"), filter.status())
                 );
             }
 
-            // ROLE FILTER
+            // ROLE
             if (filter.role() != null) {
                 predicates.add(
                         cb.equal(root.get("role"), filter.role())
                 );
             }
 
-            // SECURITY FILTER
+            // SECURITY
             if (currentUser.getRole() != UserRole.ADMIN) {
 
                 predicates.add(

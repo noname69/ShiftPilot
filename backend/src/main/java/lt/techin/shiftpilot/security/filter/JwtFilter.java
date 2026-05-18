@@ -30,14 +30,6 @@ public class JwtFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException, java.io.IOException {
 
-//        String path = request.getServletPath();
-//
-//        // 1. Skip auth endpoints FIRST
-//        if (path.startsWith("/api/auth")) {
-//            filterChain.doFilter(request, response);
-//            return;
-//        }
-
         String authHeader = request.getHeader("Authorization");
 
         // 2. No token → continue
@@ -82,19 +74,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
         } catch (io.jsonwebtoken.ExpiredJwtException ex) {
             throw new BadCredentialsException("Invalid JWT token");
-            // ❌ DO NOT throw exception
-            //SecurityContextHolder.clearContext();
-
-            // optional: mark request as unauthorized
-            //request.setAttribute("jwt_error", true);
         }
-//        catch (io.jsonwebtoken.JwtException ex) {
-//
-//            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-//            response.getWriter().write("Invalid JWT");
-//            return;
-//        }
-
         filterChain.doFilter(request, response);
     }
 }

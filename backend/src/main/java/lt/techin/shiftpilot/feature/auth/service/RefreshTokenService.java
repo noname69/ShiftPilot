@@ -19,7 +19,6 @@ import java.util.UUID;
 public class RefreshTokenService {
 
     private final RefreshTokenRepository refreshTokenRepository;
-    private final UserRepository userRepository;
 
     public RefreshToken createRefreshToken(User user) {
         System.out.println("refresh");
