@@ -1,10 +1,19 @@
 import "./App.css";
+import { Routes, Route } from "react-router";
+import Register from "./pages/auth/Register";
+import Login from "./pages/auth/Login";
+import Header from "./components/shared/Header";
+import HomePage from "./pages/auth/HomePage";
 
 function App() {
   return (
     <>
-      <h1>TEST</h1>
-      <button className="btn btn-primary">button</button>
+      <Header />
+      <Routes>
+        <Route index element={<HomePage />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
+      </Routes>
     </>
   );
 }
