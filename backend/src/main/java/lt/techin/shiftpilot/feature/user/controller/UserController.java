@@ -4,9 +4,11 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lt.techin.shiftpilot.feature.user.dto.CreateUserRequest;
 import lt.techin.shiftpilot.feature.user.dto.UpdateUserRequest;
+import lt.techin.shiftpilot.feature.user.dto.UserFilter;
 import lt.techin.shiftpilot.feature.user.dto.UserResponse;
 import lt.techin.shiftpilot.feature.user.service.UserService;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,8 +21,9 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public List<UserResponse> getAll() {
-        return userService.getAll(false);
+    public List<UserResponse> getAll(
+            UserFilter filter) {
+        return userService.getAll(filter);
     }
 
     @GetMapping("/{id}")
@@ -52,8 +55,8 @@ public class UserController {
         userService.restore(id);
     }
 
-    // GET /api/users/search?query=john
     // GET /api/users/me
+    // GET /api/users/search?query=john
     // PATCH /api/users/{id}/role
     // PATCH /api/users/{id}/password
 

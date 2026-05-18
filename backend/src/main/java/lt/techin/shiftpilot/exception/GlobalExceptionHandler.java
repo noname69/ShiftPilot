@@ -1,17 +1,21 @@
 package lt.techin.shiftpilot.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lt.techin.shiftpilot.exception.core.DuplicateException;
 import lt.techin.shiftpilot.exception.core.NotFoundException;
-import lt.techin.shiftpilot.exception.user.DuplicateEmailException;
+import lt.techin.shiftpilot.exception.core.TokenException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -30,8 +34,10 @@ public class GlobalExceptionHandler {
                 ));
     }
 
-    @ExceptionHandler(DuplicateEmailException.class)
-    public ResponseEntity<ApiError> handleDuplicate(DuplicateEmailException ex, HttpServletRequest request) {
+    @ExceptionHandler(DuplicateException.class)
+    public ResponseEntity<ApiError> handleDuplicate(
+            DuplicateException ex,
+            HttpServletRequest request) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(new ApiError(
                         HttpStatus.CONFLICT.value(),
@@ -41,6 +47,61 @@ public class GlobalExceptionHandler {
                         LocalDateTime.now()
                 ));
     }
+
+    @ExceptionHandler(TokenException.class)
+    public ResponseEntity<ApiError> handleToken(
+            TokenException ex,
+            HttpServletRequest request) {
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new ApiError(
+                        HttpStatus.UNAUTHORIZED.value(),
+                        HttpStatus.UNAUTHORIZED.getReasonPhrase(),
+                        ex.getMessage(),
+                        request.getRequestURI(),
+                        LocalDateTime.now()
+                ));
+    }
+
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<?> handleAccessDenied(AccessDeniedException ex) {
+
+        return ResponseEntity.status(403).body(
+                Map.of(
+                        "status", 403,
+                        "error", "FORBIDDEN",
+                        "message", ex.getMessage()
+                )
+        );
+    }
+
+    @ExceptionHandler(DisabledException.class)
+    public ResponseEntity<ApiError> handleDisabledException(
+            DisabledException ex,
+            HttpServletRequest request) {
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(new ApiError(
+                        HttpStatus.FORBIDDEN.value(),
+                        HttpStatus.FORBIDDEN.getReasonPhrase(),
+                        ex.getMessage(),
+                        request.getRequestURI(),
+                        LocalDateTime.now()
+                ));
+    }
+
+//    @ExceptionHandler(DuplicateEmailException.class)
+//    public ResponseEntity<ApiError> handleDuplicate(DuplicateEmailException ex, HttpServletRequest request) {
+//        return ResponseEntity.status(HttpStatus.CONFLICT)
+//                .body(new ApiError(
+//                        HttpStatus.CONFLICT.value(),
+//                        HttpStatus.CONFLICT.getReasonPhrase(),
+//                        ex.getMessage(),
+//                        request.getRequestURI(),
+//                        LocalDateTime.now()
+//                ));
+//    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ValidationError> handleValidationException(
