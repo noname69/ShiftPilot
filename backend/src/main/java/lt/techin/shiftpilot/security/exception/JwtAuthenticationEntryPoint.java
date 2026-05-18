@@ -20,12 +20,23 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json");
 
+        String path = request.getRequestURI();
+
+        String message;
+
+        if (path.contains("/login")) {
+            message = "Invalid username or password";
+        }
+        else {
+            message = "Authentication required or token expired";
+        }
+
         response.getWriter().write("""
         {
             "status": 401,
             "error": "UNAUTHORIZED",
-            "message": "Invalid or expired JWT token"
+            "message": "%s"
         }
-        """);
+        """.formatted(message));
     }
 }

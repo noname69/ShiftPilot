@@ -49,14 +49,20 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(TokenException.class)
-    public ResponseEntity<?> handleInvalidRefresh(TokenException ex) {
-        return ResponseEntity.status(401).body(
-                Map.of(
-                        "error", "INVALID_REFRESH_TOKEN",
-                        "message", ex.getMessage()
-                )
-        );
+    public ResponseEntity<ApiError> handleToken(
+            TokenException ex,
+            HttpServletRequest request) {
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new ApiError(
+                        HttpStatus.UNAUTHORIZED.value(),
+                        HttpStatus.UNAUTHORIZED.getReasonPhrase(),
+                        ex.getMessage(),
+                        request.getRequestURI(),
+                        LocalDateTime.now()
+                ));
     }
+
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<?> handleAccessDenied(AccessDeniedException ex) {

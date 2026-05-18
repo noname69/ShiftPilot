@@ -1,6 +1,9 @@
 package lt.techin.shiftpilot.security.filter;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.io.IOException;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -8,7 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lt.techin.shiftpilot.security.service.CustomUserDetailsService;
 import lt.techin.shiftpilot.security.jwt.JwtService;
-import org.springframework.security.authentication.BadCredentialsException;
+import org.jspecify.annotations.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,8 +29,8 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
-            HttpServletResponse response,
-            FilterChain filterChain
+            @NonNull HttpServletResponse response,
+            @NonNull FilterChain filterChain
     ) throws ServletException, IOException, java.io.IOException {
 
         String authHeader = request.getHeader("Authorization");
@@ -72,9 +75,34 @@ public class JwtFilter extends OncePerRequestFilter {
                 }
             }
 
-        } catch (io.jsonwebtoken.ExpiredJwtException ex) {
-            throw new BadCredentialsException("Invalid JWT token");
+        } catch (ExpiredJwtException ex) {
+            writeError(response, "Token expired");
+            return;
+        }
+
+        catch (SignatureException | MalformedJwtException ex) {
+            writeError(response, "Invalid token");
+            return;
+        }
+
+        catch (Exception ex) {
+            writeError(response, "Authentication failed");
+            return;
         }
         filterChain.doFilter(request, response);
+    }
+
+    private void writeError(HttpServletResponse response, String message) throws java.io.IOException {
+
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType("application/json");
+
+        response.getWriter().write("""
+    {
+        "status": 401,
+        "error": "UNAUTHORIZED",
+        "message": "%s"
+    }
+    """.formatted(message));
     }
 }
