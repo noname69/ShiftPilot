@@ -14,6 +14,7 @@ public class UserMapper {
                 .firstName(request.firstName())
                 .lastName(request.lastName())
                 .email(request.email())
+                .username(request.username())
                 .password(request.password())
                 .role(request.role())
 //                .status(request.status())
