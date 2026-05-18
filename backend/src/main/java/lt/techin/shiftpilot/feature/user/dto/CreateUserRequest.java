@@ -10,11 +10,11 @@ import lt.techin.shiftpilot.feature.user.model.UserStatus;
 public record CreateUserRequest(
 
         @NotBlank(message = "First name is required")
-        @Size(min = 3, max = 50)
+        @Size(min = 2, max = 50)
         String firstName,
 
         @NotBlank(message = "Last name is required")
-        @Size(min = 3, max = 50)
+        @Size(min = 2, max = 50)
         String lastName,
 
         @NotBlank(message = "Email is required")
@@ -23,6 +23,10 @@ public record CreateUserRequest(
                 message = "Email must be valid (example: user@domain.com)"
         )
         String email,
+
+        @NotBlank
+        @Size(min = 2, max = 50)
+        String username,
 
         @NotBlank(message = "Password is required")
         @Size(min = 6, message = "Password must be at least 6 characters")
