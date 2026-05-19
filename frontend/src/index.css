@@ -44,7 +44,7 @@ body {
   }
 
   .my-input {
-    @apply bg-white border border-gray-300 active:border-accent active:border-gray-400
+    @apply bg-white border border-gray-300
   }
 
   .my-btn-primary {

@@ -26,7 +26,7 @@ const Login = () => {
       <div className="flex flex-col flex-1 justify-between bg-[#F4F4F2]">
         <Header />
         <main className="flex flex-col items-center">
-          <div className="flex flex-col items-start w-[50%] self-center">
+          <div className="flex flex-col items-start w-[80%] sm:w-[50%] self-center">
             <div className="flex flex-col gap-2 items-start">
               <p className="my-para">Welcome back</p>
               <h1 className="text-4xl font-serif">

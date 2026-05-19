@@ -5,7 +5,7 @@ import api from "../api/api";
 const initialState = {
   "username": null,
   "userId": null,
-  "roles": []
+  "role" : ""
 }
 
 const useUsersStore = create(
