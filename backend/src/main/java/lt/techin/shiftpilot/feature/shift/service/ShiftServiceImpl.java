@@ -1,0 +1,236 @@
+package lt.techin.shiftpilot.feature.shift.service;
+
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lt.techin.shiftpilot.feature.shift.dto.ShiftCreateRequest;
+import lt.techin.shiftpilot.feature.shift.dto.ShiftResponse;
+import lt.techin.shiftpilot.feature.shift.dto.ShiftUpdateRequest;
+import lt.techin.shiftpilot.feature.shift.mapper.ShiftMapper;
+import lt.techin.shiftpilot.feature.shift.model.Shift;
+import lt.techin.shiftpilot.feature.shift.model.ShiftStatus;
+import lt.techin.shiftpilot.feature.shift.repository.ShiftRepository;
+import lt.techin.shiftpilot.feature.user.model.User;
+import lt.techin.shiftpilot.feature.user.repository.UserRepository;
+import lt.techin.shiftpilot.security.principal.UserPrincipal;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
+
+@Slf4j
+@Service
+@RequiredArgsConstructor
+@Transactional
+public class ShiftServiceImpl implements ShiftService {
+
+    private final ShiftRepository shiftRepository;
+    private final ShiftMapper shiftMapper;
+    private final UserRepository userRepository;
+
+    @Override
+    public ShiftResponse createShift(ShiftCreateRequest request, String username) {
+        log.info("event=SHIFT_CREATE_REQUEST title={} shiftDate={} startTime={} endTime={} minEmployees={} createdByUsername={}",
+                request.title(),
+                request.shiftDate(),
+                request.startTime(),
+                request.endTime(),
+                request.minEmployees(),
+                username
+        );
+
+        validateShiftTime(request.startTime(), request.endTime());
+
+        User creator = userRepository.findByUsername(username)
+                .orElseThrow(() -> {
+                    log.warn("event=SHIFT_CREATOR_NOT_FOUND username={}", username);
+                    return new IllegalArgumentException("Creator user not found: " + username);
+                });
+
+        Shift shift = shiftMapper.toEntity(request);
+        shift.setCreatedBy(creator);
+        shift.setStatus(calculateStatus(
+                shift.getShiftDate(),
+                shift.getStartTime(),
+                shift.getEndTime()
+        ));
+
+        Shift savedShift = shiftRepository.save(shift);
+
+        log.info("event=SHIFT_CREATED shiftId={} createdByUserId={} createdByUsername={}",
+                savedShift.getId(),
+                creator.getId(),
+                creator.getUsername()
+        );
+
+        return shiftMapper.toResponse(savedShift);
+    }
+
+    @Override
+    public List<ShiftResponse> getAllShifts() {
+        log.info("event=SHIFT_LIST_REQUEST");
+
+        List<ShiftResponse> shifts = shiftRepository.findAll()
+                .stream()
+                .map(this::refreshStatusIfNeeded)
+                .map(shiftMapper::toResponse)
+                .toList();
+
+        log.info("event=SHIFT_LIST_RETURNED count={}", shifts.size());
+
+        return shifts;
+    }
+
+    @Override
+    public ShiftResponse getShiftById(Long id) {
+        log.info("event=SHIFT_GET_REQUEST shiftId={}", id);
+
+        Shift shift = findShiftById(id);
+        Shift updatedShift = refreshStatusIfNeeded(shift);
+
+        log.info("event=SHIFT_GET_SUCCESS shiftId={} status={}",
+                updatedShift.getId(),
+                updatedShift.getStatus()
+        );
+
+        return shiftMapper.toResponse(updatedShift);
+    }
+
+    @Override
+    public ShiftResponse updateShift(Long id, ShiftUpdateRequest request) {
+        log.info("event=SHIFT_UPDATE_REQUEST shiftId={} newTitle={} newDate={} newStartTime={} newEndTime={} newMinEmployees={}",
+                id,
+                request.title(),
+                request.shiftDate(),
+                request.startTime(),
+                request.endTime(),
+                request.minEmployees()
+        );
+
+        validateShiftTime(request.startTime(), request.endTime());
+
+        Shift shift = findShiftById(id);
+
+        ShiftStatus oldStatus = shift.getStatus();
+        LocalDate oldDate = shift.getShiftDate();
+        LocalTime oldStartTime = shift.getStartTime();
+        LocalTime oldEndTime = shift.getEndTime();
+
+        shift.setTitle(request.title());
+        shift.setDescription(request.description());
+        shift.setShiftDate(request.shiftDate());
+        shift.setStartTime(request.startTime());
+        shift.setEndTime(request.endTime());
+        shift.setMinEmployees(request.minEmployees());
+        shift.setStatus(calculateStatus(
+                request.shiftDate(),
+                request.startTime(),
+                request.endTime()
+        ));
+
+        Shift savedShift = shiftRepository.save(shift);
+
+        log.info("event=SHIFT_UPDATED shiftId={} oldDate={} newDate={} oldStartTime={} newStartTime={} oldEndTime={} newEndTime={} oldStatus={} newStatus={} createdByUserId={}",
+                savedShift.getId(),
+                oldDate,
+                savedShift.getShiftDate(),
+                oldStartTime,
+                savedShift.getStartTime(),
+                oldEndTime,
+                savedShift.getEndTime(),
+                oldStatus,
+                savedShift.getStatus(),
+                savedShift.getCreatedBy() != null ? savedShift.getCreatedBy().getId() : null
+        );
+
+        return shiftMapper.toResponse(savedShift);
+    }
+
+    @Override
+    public void deleteShift(Long id) {
+        log.info("event=SHIFT_DELETE_REQUEST shiftId={}", id);
+
+        Shift shift = findShiftById(id);
+
+        Long createdByUserId = shift.getCreatedBy() != null
+                ? shift.getCreatedBy().getId()
+                : null;
+
+        shiftRepository.delete(shift);
+
+        log.info("event=SHIFT_DELETED shiftId={} title={} shiftDate={} createdByUserId={}",
+                shift.getId(),
+                shift.getTitle(),
+                shift.getShiftDate(),
+                createdByUserId
+        );
+    }
+
+    private Shift findShiftById(Long id) {
+        return shiftRepository.findById(id)
+                .orElseThrow(() -> {
+                    log.warn("event=SHIFT_NOT_FOUND shiftId={}", id);
+                    return new IllegalArgumentException("Shift not found with id: " + id);
+                });
+    }
+
+    private void validateShiftTime(LocalTime startTime, LocalTime endTime) {
+        if (!endTime.isAfter(startTime)) {
+            log.warn("event=INVALID_SHIFT_TIME startTime={} endTime={}", startTime, endTime);
+            throw new IllegalArgumentException("End time must be later than start time.");
+        }
+    }
+
+    private ShiftStatus calculateStatus(
+            LocalDate shiftDate,
+            LocalTime startTime,
+            LocalTime endTime
+    ) {
+        LocalDate today = LocalDate.now();
+        LocalTime now = LocalTime.now();
+
+        if (shiftDate.isAfter(today)) {
+            return ShiftStatus.OPEN;
+        }
+
+        if (shiftDate.isBefore(today)) {
+            return ShiftStatus.COMPLETED;
+        }
+
+        if (now.isBefore(startTime)) {
+            return ShiftStatus.OPEN;
+        }
+
+        if (!now.isBefore(startTime) && now.isBefore(endTime)) {
+            return ShiftStatus.ONGOING;
+        }
+
+        return ShiftStatus.COMPLETED;
+    }
+
+    private Shift refreshStatusIfNeeded(Shift shift) {
+        ShiftStatus calculatedStatus = calculateStatus(
+                shift.getShiftDate(),
+                shift.getStartTime(),
+                shift.getEndTime()
+        );
+
+        if (shift.getStatus() != calculatedStatus) {
+            ShiftStatus oldStatus = shift.getStatus();
+
+            shift.setStatus(calculatedStatus);
+            Shift savedShift = shiftRepository.save(shift);
+
+            log.info("event=SHIFT_STATUS_CHANGED shiftId={} oldStatus={} newStatus={}",
+                    savedShift.getId(),
+                    oldStatus,
+                    calculatedStatus
+            );
+
+            return savedShift;
+        }
+
+        return shift;
+    }
+}

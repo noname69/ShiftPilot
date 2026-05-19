@@ -4,7 +4,8 @@ import jakarta.persistence.Entity;
 
 
 public enum ShiftStatus {
-    STARTED,
+    OPEN,
     ONGOING,
-    ENDED
+    COMPLETED,
+    CANCELLED
 }

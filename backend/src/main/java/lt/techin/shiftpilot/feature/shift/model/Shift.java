@@ -33,7 +33,7 @@ public class Shift {
     private ShiftStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "created_by_user_id")
+    @JoinColumn(name = "created_by_user_id", nullable = false)
     private User createdBy;
 
     private LocalDateTime createdAt;
