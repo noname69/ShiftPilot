@@ -1,4 +1,4 @@
-import "./App.css";
+import "./index.css";
 import { Routes, Route } from "react-router";
 import Register from "./pages/auth/Register";
 import Login from "./pages/auth/Login";
@@ -8,7 +8,6 @@ import HomePage from "./pages/auth/HomePage";
 function App() {
   return (
     <>
-      <Header />
       <Routes>
         <Route index element={<HomePage />} />
         <Route path="/register" element={<Register />} />
