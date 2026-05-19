@@ -10,10 +10,21 @@ const initialState = {
 
 const useUsersStore = create(
 
-  devtools(() => ({
+  devtools((set) => ({
 
     user: initialState,
     isLoading: false,
+
+    loginUser: async (formData, navigate) => {
+      try {
+        const { data } = await api.post(`/auth/login`, formData);
+        set(() => ({ user: { ...data } }))
+        console.log(data);
+        navigate("/user");
+      } catch (error) {
+        console.log(error);
+      }
+    },
 
     registerUser: async (formData, navigate) => {
       try {

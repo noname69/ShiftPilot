@@ -3,17 +3,22 @@ import Header from "../../../components/shared/Header";
 import { useForm } from "react-hook-form";
 import Footer from "../../../components/shared/Footer";
 import LoginAside from "./LoginAside";
-
+import useUsersStore from "../../../store/userStore";
+import { useNavigate } from "react-router";
 
 const Login = () => {
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
+  const navigate = useNavigate();
+  const { loginUser } = useUsersStore(state => state);
+
   const onSubmit = (formData) => {
-    console.log(formData);
+    loginUser(formData, navigate);
   };
 
   return (

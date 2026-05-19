@@ -20,11 +20,8 @@ const getColor = (value) => {
 export default function LoginChart() {
     return (
         <div className="w-full h-30">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height={120}>
                 <BarChart data={data}>
-                    {/* <XAxis dataKey="name" /> */}
-                    {/* <YAxis /> */}
-                    {/* <Tooltip /> */}
                     <Bar dataKey="value" radius={[4, 4, 0, 0]}>
                         {data.map((entry, index) => (
                             <Cell key={index} fill={getColor(entry.value)} />

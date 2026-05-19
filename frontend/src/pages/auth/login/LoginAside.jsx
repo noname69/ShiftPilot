@@ -4,8 +4,16 @@ const LoginAside = () => {
     return (
         <aside className="hidden lg:flex flex-col w-1/2 h-full gap-4 items-center justify-center p-20">
             <div className="my-card w-full">
-                <p className="my-para">THIS WEEK</p>
-                <h1 className="font-bold">42 Shifts scheduled</h1>
+                <div className="flex justify-between items-center">
+                    <div>
+                        <p className="my-para">THIS WEEK</p>
+                        <h1 className="font-bold">42 Shifts scheduled</h1>
+                    </div>
+                    <div className="items-center px-2 py-1 rounded h-fit bg-green-100 text-green-700 text-xs font-medium">
+                        94% covered
+                    </div>
+                </div>
+
                 <LoginChart></LoginChart>
                 <hr className="my-hr" />
                 <div className="flex justify-end">
