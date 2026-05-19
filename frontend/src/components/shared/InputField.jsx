@@ -11,9 +11,9 @@ const InputField = ({
   theme,
 }) => {
   return (
-    <div>
-      <div className="flex items-center">
-        {label && <label htmlFor={id}>{label}</label>}
+    <div className="w-full">
+      <div className="flex flex-col items-start gap-2 w-full">
+        {label && <label htmlFor={id} className="my-para">{label}</label>}
         <input
           type={type}
           id={id}

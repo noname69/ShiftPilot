@@ -1,12 +1,12 @@
-import { Link } from "react-router"
+import { Link } from "react-router";
+import { ImCheckboxChecked } from "react-icons/im";
 
 const Header = () => {
   return (
-    <div className="flex gap-4 text-black">
-      <Link to="/">HOMEPAGE</Link>
-      <Link to="/login">LOGIN</Link>
-      <Link to="/register">REGISTER</Link>
-    </div>
+    <header className="flex p-8 gap-2 items-center font-bold">
+      <ImCheckboxChecked className="text-3xl" />
+      <Link to="/"><h1>ShiftPilot</h1></Link>
+    </header>
   )
 }
 

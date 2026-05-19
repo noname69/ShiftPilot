@@ -5,16 +5,23 @@
   box-sizing: border-box;
 }
 
-html {
-  background-color: #f8f8f8;
+html,
+body,
+#root {
   height: 100%;
+  margin: 0;
 }
 
 body {
-  min-height: 100%;
-  margin: auto;
-  max-width: 1440px;
+  margin: 0 auto;
   background-color: #f3efef;
+}
+
+#root {
+  overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 @layer components {
@@ -24,8 +31,24 @@ body {
     margin-bottom: 5px;
   }
 
+  .my-para {
+    @apply text-[#48484A] text-sm
+  }
+
+  .my-hr {
+    @apply text-gray-300 mt-2 mb-2
+  }
+
+  .my-card {
+    @apply bg-white border-gray-300 p-5 rounded-lg shadow-lg
+  }
+
+  .my-input {
+    @apply bg-white border border-gray-300
+  }
+
   .my-btn-primary {
-    @apply btn btn-primary border-none;
+    @apply btn btn-primary border-none bg-[#0F0F10] text-white shadow-none;
   }
 
   .my-btn-secondary {
