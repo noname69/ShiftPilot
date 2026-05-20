@@ -1,11 +1,11 @@
 import InputField from "../components/shared/InputField";
 import { useForm } from "react-hook-form";
-import useUsersStore from "../../store/userStore";
+import useAuthStore from "../../store/authStore";
 import { useNavigate } from "react-router";
 
 const Register = () => {
 
-  const { registerUser } = useUsersStore(state => state);
+  const { registerUser } = useAuthStore(state => state);
   const navigate = useNavigate();
 
   const {
