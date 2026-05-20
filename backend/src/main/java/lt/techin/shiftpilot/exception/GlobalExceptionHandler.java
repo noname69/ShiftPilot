@@ -91,18 +91,6 @@ public class GlobalExceptionHandler {
                 ));
     }
 
-//    @ExceptionHandler(DuplicateEmailException.class)
-//    public ResponseEntity<ApiError> handleDuplicate(DuplicateEmailException ex, HttpServletRequest request) {
-//        return ResponseEntity.status(HttpStatus.CONFLICT)
-//                .body(new ApiError(
-//                        HttpStatus.CONFLICT.value(),
-//                        HttpStatus.CONFLICT.getReasonPhrase(),
-//                        ex.getMessage(),
-//                        request.getRequestURI(),
-//                        LocalDateTime.now()
-//                ));
-//    }
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ValidationError> handleValidationException(
             MethodArgumentNotValidException ex,
@@ -154,6 +142,23 @@ public class GlobalExceptionHandler {
                 request.getRequestURI(),
                 LocalDateTime.now(),
                 errors
+        );
+
+        return ResponseEntity.badRequest().body(apiError);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiError> handleIllegalArgument(
+            IllegalArgumentException ex,
+            HttpServletRequest request
+    ) {
+
+        ApiError apiError = new ApiError(
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                ex.getMessage(),
+                request.getRequestURI(),
+                LocalDateTime.now()
         );
 
         return ResponseEntity.badRequest().body(apiError);

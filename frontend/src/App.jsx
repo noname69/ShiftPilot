@@ -6,6 +6,9 @@ import ManagerPanel from "./pages/manager/ManagerPanel";
 import Login from "./pages/auth/login/Login";
 import UserPanel from "./pages/user/UserPanel";
 import PrivateRoute from "./components/shared/PrivateRoute";
+import ShiftsPage from "./pages/shifts/ShiftsPage";
+import ShiftCreatePage from "./pages/shifts/ShiftCreatePage";
+import ShiftEditPage from "./pages/shifts/ShiftEditPage";
 
 function App() {
   return (
@@ -25,6 +28,10 @@ function App() {
           <Route path="/admin" element={<AdminPanel />} />
         </Route>
 
+        <Route path="/user" element={<UserPanel />} />
+        <Route path="/shifts" element={<ShiftsPage />} />
+        <Route path="/shifts/new" element={<ShiftCreatePage />} />
+        <Route path="/shifts/:id/edit" element={<ShiftEditPage />} />
       </Routes>
     </AuthProvider>
   );
