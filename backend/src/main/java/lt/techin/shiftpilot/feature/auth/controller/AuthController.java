@@ -9,14 +9,17 @@ import lt.techin.shiftpilot.feature.auth.dto.RefreshTokenRequest;
 import lt.techin.shiftpilot.feature.auth.model.RefreshToken;
 import lt.techin.shiftpilot.feature.auth.service.AuthService;
 import lt.techin.shiftpilot.feature.auth.service.RefreshTokenService;
+import lt.techin.shiftpilot.feature.user.model.UserRole;
 import lt.techin.shiftpilot.security.jwt.JwtService;
 import lt.techin.shiftpilot.feature.user.model.User;
 import lt.techin.shiftpilot.feature.user.repository.UserRepository;
+import lt.techin.shiftpilot.security.principal.UserPrincipal;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -42,4 +45,17 @@ public class AuthController {
     public void logout(@RequestBody RefreshTokenRequest request, HttpServletResponse response) {
         authService.logout(request.refreshToken(), response);
     }
+
+    @GetMapping("/me")
+    public ResponseEntity<AuthResponse> me(Authentication authentication) {
+        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+
+        UserRole role = UserRole.valueOf(userPrincipal.getAuthorities().stream()
+                .findFirst().toString());
+
+        AuthResponse response = new AuthResponse("", userPrincipal.getUsername(), userPrincipal.getId(), role);
+
+        return ResponseEntity.ok().body(response);
+    }
+
 }

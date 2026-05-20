@@ -5,7 +5,7 @@ import api from "../api/api";
 const initialState = {
   "username": null,
   "userId": null,
-  "role" : ""
+  "role": ""
 }
 
 const useUsersStore = create(
@@ -19,8 +19,25 @@ const useUsersStore = create(
       try {
         const { data } = await api.post(`/auth/login`, formData);
         set(() => ({ user: { ...data } }))
-        console.log(data);
-        navigate("/user");
+        const { role } = data;
+        console.log(role)
+        switch (role) {
+          case "USER": {
+            navigate("/user")
+            break
+          }
+          case "MANAGER": {
+            navigate("/manager")
+            break
+          }
+          case "ADMIN": {
+            navigate("/admin")
+            break
+          }
+          default:
+            navigate("/login")
+        }
+
       } catch (error) {
         console.log(error);
       }
@@ -32,6 +49,29 @@ const useUsersStore = create(
         navigate("/");
       } catch (error) {
         console.log(error);
+      }
+    },
+
+    logoutUser: async (navigate) => {
+      console.log("logout")
+      try {
+        await api.post(`/auth/logout`);
+        set(() => ({ user: initialState }))
+        navigate("/");
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
+    fetchCurrentUser: async () => {
+      try {
+        set({ isLoading: true })
+        const { data } = await api.get("/auth/me");
+        set(() => ({ user: data }));
+      } catch {
+        set({ user: initialState });
+      } finally {
+        set({ isLoading: false })
       }
     },
 

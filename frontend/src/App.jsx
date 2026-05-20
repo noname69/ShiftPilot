@@ -1,21 +1,32 @@
 import "./index.css";
 import { Routes, Route } from "react-router";
-import Register from "./pages/auth/Register";
+import AuthProvider from "./pages/auth/AuthProvider";
+import AdminPanel from "./pages/admin/AdminPanel";
+import ManagerPanel from "./pages/manager/ManagerPanel";
 import Login from "./pages/auth/login/Login";
-import Header from "./components/shared/Header";
-import HomePage from "./pages/HomePage";
 import UserPanel from "./pages/user/UserPanel";
+import PrivateRoute from "./components/shared/PrivateRoute";
 
 function App() {
   return (
-    <>
+    <AuthProvider>
       <Routes>
-        <Route index element={<HomePage />} />
-        <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/user" element={<UserPanel />} />
+
+        <Route path="/" element={<PrivateRoute userOnly />}>
+          <Route path="/user" element={<UserPanel />} />
+        </Route>
+
+        <Route path="/" element={<PrivateRoute managerOnly />}>
+          <Route path="/manager" element={<ManagerPanel />} />
+        </Route>
+
+        <Route path="/" element={<PrivateRoute adminOnly />}>
+          <Route path="/admin" element={<AdminPanel />} />
+        </Route>
+
       </Routes>
-    </>
+    </AuthProvider>
   );
 }
 
