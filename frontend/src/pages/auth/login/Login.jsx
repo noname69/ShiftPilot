@@ -1,7 +1,7 @@
-import InputField from "../../../components/shared/InputField";
-import Header from "../../../components/shared/Header";
+import InputField from "../../components/shared/InputField";
+import Header from "../../components/shared/Header";
 import { useForm } from "react-hook-form";
-import Footer from "../../../components/shared/Footer";
+import Footer from "../../components/shared/Footer";
 import LoginAside from "./LoginAside";
 import useUsersStore from "../../../store/userStore";
 import { useNavigate } from "react-router";
