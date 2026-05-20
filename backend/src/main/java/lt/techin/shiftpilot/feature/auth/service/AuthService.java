@@ -2,6 +2,8 @@ package lt.techin.shiftpilot.feature.auth.service;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lt.techin.shiftpilot.exception.auth.AuthenticationException;
+import lt.techin.shiftpilot.exception.user.UserNotFoundException;
 import lt.techin.shiftpilot.feature.auth.dto.AuthResponse;
 import lt.techin.shiftpilot.feature.auth.model.RefreshToken;
 import lt.techin.shiftpilot.feature.user.model.User;
@@ -11,6 +13,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -132,5 +135,14 @@ public class AuthService {
 
         response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
         response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
+    }
+
+    public AuthResponse getMe(String username) {
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new AuthenticationException("User with username '" + username + "' is not authenticated."));
+
+        return new AuthResponse("Authenticated", user.getUsername(), user.getId(), user.getRole());
+
     }
 }

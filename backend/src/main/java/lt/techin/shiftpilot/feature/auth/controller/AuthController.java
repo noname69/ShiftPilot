@@ -17,6 +17,7 @@ import lt.techin.shiftpilot.security.principal.UserPrincipal;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -48,12 +49,11 @@ public class AuthController {
 
     @GetMapping("/me")
     public ResponseEntity<AuthResponse> me(Authentication authentication) {
-        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
 
-        UserRole role = UserRole.valueOf(userPrincipal.getAuthorities().stream()
-                .findFirst().toString());
+        Jwt jwt = (Jwt) authentication.getPrincipal();
+        String username = jwt.getSubject();
 
-        AuthResponse response = new AuthResponse("", userPrincipal.getUsername(), userPrincipal.getId(), role);
+        AuthResponse response = authService.getMe(username);
 
         return ResponseEntity.ok().body(response);
     }
