@@ -14,30 +14,13 @@ const useUsersStore = create(
 
     user: initialState,
     isLoading: false,
+    authMeIsLoading: true,
 
     loginUser: async (formData, navigate) => {
       try {
         const { data } = await api.post(`/auth/login`, formData);
-        set(() => ({ user: { ...data } }))
-        const { role } = data;
-        console.log(role)
-        switch (role) {
-          case "USER": {
-            navigate("/user")
-            break
-          }
-          case "MANAGER": {
-            navigate("/manager")
-            break
-          }
-          case "ADMIN": {
-            navigate("/admin")
-            break
-          }
-          default:
-            navigate("/login")
-        }
-
+        set(() => ({ user: { ...data } }));
+        navigate("/login")
       } catch (error) {
         console.log(error);
       }
@@ -68,8 +51,10 @@ const useUsersStore = create(
         set({ isLoading: true })
         const { data } = await api.get("/auth/me");
         set(() => ({ user: data }));
+        set({ authMeIsLoading: false });
       } catch {
         set({ user: initialState });
+        set({ authMeIsLoading: false });
       } finally {
         set({ isLoading: false })
       }

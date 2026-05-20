@@ -14,18 +14,21 @@ function App() {
   return (
     <AuthProvider>
       <Routes>
-        <Route path="/login" element={<Login />} />
+
+        <Route path="/" element={<PrivateRoute publicPage />}>
+          <Route path="login" element={<Login />} />
+        </Route>
 
         <Route path="/" element={<PrivateRoute userOnly />}>
-          <Route path="/user" element={<UserPanel />} />
+          <Route path="user" element={<UserPanel />} />
         </Route>
 
         <Route path="/" element={<PrivateRoute managerOnly />}>
-          <Route path="/manager" element={<ManagerPanel />} />
+          <Route path="manager" element={<ManagerPanel />} />
         </Route>
 
         <Route path="/" element={<PrivateRoute adminOnly />}>
-          <Route path="/admin" element={<AdminPanel />} />
+          <Route path="admin" element={<AdminPanel />} />
         </Route>
 
         <Route path="/user" element={<UserPanel />} />
