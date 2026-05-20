@@ -1,6 +1,39 @@
 @import "tailwindcss";
 @plugin "daisyui";
 
+a, button, [role="button"] {
+  cursor: pointer;
+}
+
+@theme {
+  --color-ink-50: #FAFAF9;
+  --color-ink-100: #F4F4F2;
+  --color-ink-200: #E8E8E4;
+  --color-ink-300: #D4D4CE;
+  --color-ink-400: #9C9C95;
+  --color-ink-500: #6B6B66;
+  --color-ink-600: #48484A;
+  --color-ink-700: #2E2E30;
+  --color-ink-800: #1C1C1E;
+  --color-ink-900: #0F0F10;
+  --color-mint-soft: #E7F3EC;
+  --color-mint-ink: #1F6B3A;
+  --color-amber-soft: #FBF1DC;
+  --color-amber-ink: #7A5712;
+  --color-rose-soft: #FAE7E7;
+  --color-rose-ink: #923232;
+  --color-violet-soft: #EFEAF8;
+  --color-violet-ink: #4B3B86;
+  --color-accent: #3B5BDB;
+  --color-accent-soft: #EEF1FB;
+  --font-sans: "Inter Tight", system-ui, sans-serif;
+  --font-serif: "Instrument Serif", Georgia, serif;
+  --font-mono: "JetBrains Mono", monospace;
+  --shadow-soft: 0 1px 2px rgba(15,15,16,0.04), 0 1px 1px rgba(15,15,16,0.03);
+  --shadow-pop: 0 8px 24px -8px rgba(15,15,16,0.10), 0 2px 6px rgba(15,15,16,0.04);
+  --radius-xl2: 14px;
+}
+
 * {
   box-sizing: border-box;
 }
