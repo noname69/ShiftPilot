@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import SelectField from "../../components/shared/SelectField";
-import InputField from "../../components/shared/InputField";
+import SelectField from "../components/shared/SelectField";
+import InputField from "../components/shared/InputField";
 
 const generatePassword = () => {
   return Math.random().toString(36).slice(-10);
