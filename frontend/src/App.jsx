@@ -9,7 +9,7 @@ import PrivateRoute from "./pages/components/shared/PrivateRoute";
 import ShiftsPage from "./pages/shifts/ShiftsPage";
 import ShiftCreatePage from "./pages/shifts/ShiftCreatePage";
 import ShiftEditPage from "./pages/shifts/ShiftEditPage";
-import Schedule from "./pages/shedule/Shedule"
+import Schedule from "./pages/schedule/Schedule";
 import MySchedule from "./pages/mySchedule/MySchedule";
 import Dashboard from "./pages/dashboard/Dashboard";
 import Requests from "./pages/Requests/Requests";
@@ -20,29 +20,26 @@ function App() {
     <AuthProvider>
       <Routes>
 
-        <Route index element={<Navigate to="/login" />} />
-
-        <Route path="/" element={<PrivateRoute publicPage />}>
+        <Route element={<PrivateRoute publicPage />}>
           <Route path="login" element={<Login />} />
         </Route>
 
-        <Route path="/" element={<PrivateRoute userOnly />}>
+        <Route element={<PrivateRoute userOnly />}>
           <Route path="user" element={<UserPanel />}>
-            <Route path="" element={<Dashboard />} />
-            <Route path="shedule" element={<Schedule />} />
+            <Route index element={<Dashboard />} />
+            <Route path="schedule" element={<Schedule />} />
             <Route path="myschedule" element={<MySchedule />} />
             <Route path="requests" element={<Requests />} />
           </Route>
         </Route>
 
-        <Route path="/" element={<PrivateRoute managerOnly />}>
+        <Route element={<PrivateRoute managerOnly />}>
           <Route path="manager" element={<ManagerPanel />} >
-            <Route path="" element={<Dashboard />} />
+            <Route index element={<Dashboard />} />
             <Route path="schedule" element={<Schedule />} />
-            <Route path="myschedule" element={<MySchedule />} />
             <Route path="shifts" element={<ShiftsPage />} />
-            <Route path="new" element={<ShiftCreatePage />} />
-            <Route path=":id/edit" element={<ShiftEditPage />} />
+            <Route path="shifts/new" element={<ShiftCreatePage />} />
+            <Route path="shifts/:id/edit" element={<ShiftEditPage />} />
             <Route path="employees" element={<Employees />} />
           </Route>
         </Route>
@@ -59,7 +56,6 @@ function App() {
             <Route path="employees" element={<Employees />} />
           </Route>
         </Route>
-
 
         <Route path="*" element={<Navigate to="/login" />} />
 

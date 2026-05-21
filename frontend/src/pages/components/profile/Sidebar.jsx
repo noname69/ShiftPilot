@@ -1,17 +1,11 @@
 import { NavLink } from "react-router";
 import { UserNavigation, ManagerNavigation, AdminNavigation } from "./SidebarNavigation";
 
-// const Sidebar = ({ role }) => {
-const Sidebar = () => {
-  const role = "ADMIN"
-  const sideBarLayout =
-    role === "USER"
-      ? UserNavigation
-      : role === "MANAGER"
-        ? ManagerNavigation
-        : role === "ADMIN"
-          ? AdminNavigation
-          : null;
+const Sidebar = ({ role }) => {
+
+  const sideBarLayout = role === "USER" ? UserNavigation
+                      : role === "MANAGER" ? ManagerNavigation
+                      : role === "ADMIN" ? AdminNavigation : null;
 
   return (
 
