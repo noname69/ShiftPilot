@@ -36,6 +36,7 @@ a, button, [role="button"] {
 
 * {
   box-sizing: border-box;
+  color: "black";
 }
 
 html,

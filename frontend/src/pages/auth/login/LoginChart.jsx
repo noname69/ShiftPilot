@@ -1,4 +1,4 @@
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
+import { BarChart, Bar, ResponsiveContainer, Cell } from "recharts";
 
 const data = [
     { name: "Mon", value: 4 },

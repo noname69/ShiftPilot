@@ -2,6 +2,8 @@ package lt.techin.shiftpilot.feature.auth.service;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lt.techin.shiftpilot.exception.auth.AuthenticationException;
+import lt.techin.shiftpilot.exception.user.UserNotFoundException;
 import lt.techin.shiftpilot.feature.auth.dto.AuthResponse;
 import lt.techin.shiftpilot.feature.auth.model.RefreshToken;
 import lt.techin.shiftpilot.feature.user.model.User;
@@ -11,6 +13,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -44,7 +47,7 @@ public class AuthService {
                 .httpOnly(true)
                 .secure(false)
                 .path("/")
-                .maxAge(Duration.ofMinutes(15))
+                .maxAge(Duration.ofMinutes(60))
                 .sameSite("Lax")
                 .build();
 
@@ -103,10 +106,38 @@ public class AuthService {
         );
     }
 
-    public void logout(String refreshTokenValue,
-                       HttpServletResponse response) {
+//    public void logout(String refreshTokenValue,
+//                       HttpServletResponse response) {
+//
+//        refreshTokenService.deleteByToken(refreshTokenValue);
+//
+//        ResponseCookie accessCookie = ResponseCookie.from(
+//                        "accessToken",
+//                        ""
+//                )
+//                .httpOnly(true)
+//                .secure(false)
+//                .path("/")
+//                .maxAge(0)
+//                .sameSite("Lax")
+//                .build();
+//
+//        ResponseCookie refreshCookie = ResponseCookie.from(
+//                        "refreshToken",
+//                        ""
+//                )
+//                .httpOnly(true)
+//                .secure(false)
+//                .path("/api/auth")
+//                .maxAge(0)
+//                .sameSite("Lax")
+//                .build();
+//
+//        response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
+//        response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
+//    }
 
-        refreshTokenService.deleteByToken(refreshTokenValue);
+    public void logout(HttpServletResponse response) {
 
         ResponseCookie accessCookie = ResponseCookie.from(
                         "accessToken",
@@ -119,18 +150,15 @@ public class AuthService {
                 .sameSite("Lax")
                 .build();
 
-        ResponseCookie refreshCookie = ResponseCookie.from(
-                        "refreshToken",
-                        ""
-                )
-                .httpOnly(true)
-                .secure(false)
-                .path("/api/auth")
-                .maxAge(0)
-                .sameSite("Lax")
-                .build();
-
         response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
-        response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
+    }
+
+    public AuthResponse getMe(String username) {
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new AuthenticationException("User with username '" + username + "' is not authenticated."));
+
+        return new AuthResponse("Authenticated", user.getUsername(), user.getId(), user.getRole());
+
     }
 }

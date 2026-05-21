@@ -15,7 +15,11 @@ const Login = () => {
   } = useForm();
 
   const navigate = useNavigate();
+<<<<<<< HEAD
   const { loginUser } = useAuthStore(state => state);
+=======
+  const { loginUser } = useAuthStore((state) => state);
+>>>>>>> origin/main
 
   const onSubmit = (formData) => {
     loginUser(formData, navigate);

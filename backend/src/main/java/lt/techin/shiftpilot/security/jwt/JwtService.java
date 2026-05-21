@@ -16,7 +16,7 @@ import java.util.Date;
 public class JwtService {
 
     private static final long EXPIRATION =
-            1000 * 60 * 10 ; // 10 min
+            1000 * 60 * 60 ; // 60 min
 
     @Value("${jwt.secret}")
     private String secretKey;
