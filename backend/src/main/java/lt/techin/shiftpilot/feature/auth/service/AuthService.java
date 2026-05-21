@@ -47,7 +47,7 @@ public class AuthService {
                 .httpOnly(true)
                 .secure(false)
                 .path("/")
-                .maxAge(Duration.ofMinutes(15))
+                .maxAge(Duration.ofMinutes(60))
                 .sameSite("Lax")
                 .build();
 
@@ -106,10 +106,38 @@ public class AuthService {
         );
     }
 
-    public void logout(String refreshTokenValue,
-                       HttpServletResponse response) {
+//    public void logout(String refreshTokenValue,
+//                       HttpServletResponse response) {
+//
+//        refreshTokenService.deleteByToken(refreshTokenValue);
+//
+//        ResponseCookie accessCookie = ResponseCookie.from(
+//                        "accessToken",
+//                        ""
+//                )
+//                .httpOnly(true)
+//                .secure(false)
+//                .path("/")
+//                .maxAge(0)
+//                .sameSite("Lax")
+//                .build();
+//
+//        ResponseCookie refreshCookie = ResponseCookie.from(
+//                        "refreshToken",
+//                        ""
+//                )
+//                .httpOnly(true)
+//                .secure(false)
+//                .path("/api/auth")
+//                .maxAge(0)
+//                .sameSite("Lax")
+//                .build();
+//
+//        response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
+//        response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
+//    }
 
-        refreshTokenService.deleteByToken(refreshTokenValue);
+    public void logout(HttpServletResponse response) {
 
         ResponseCookie accessCookie = ResponseCookie.from(
                         "accessToken",
@@ -122,19 +150,7 @@ public class AuthService {
                 .sameSite("Lax")
                 .build();
 
-        ResponseCookie refreshCookie = ResponseCookie.from(
-                        "refreshToken",
-                        ""
-                )
-                .httpOnly(true)
-                .secure(false)
-                .path("/api/auth")
-                .maxAge(0)
-                .sameSite("Lax")
-                .build();
-
         response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
-        response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
     }
 
     public AuthResponse getMe(String username) {

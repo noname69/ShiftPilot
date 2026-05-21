@@ -42,9 +42,14 @@ public class AuthController {
     }
 
     // LOGOUT
+//    @PostMapping("/logout")
+//    public void logout(@RequestBody RefreshTokenRequest request, HttpServletResponse response) {
+//        authService.logout(request.refreshToken(), response);
+//    }
+
     @PostMapping("/logout")
-    public void logout(@RequestBody RefreshTokenRequest request, HttpServletResponse response) {
-        authService.logout(request.refreshToken(), response);
+    public void logout(HttpServletResponse response) {
+        authService.logout(response);
     }
 
     @GetMapping("/me")
