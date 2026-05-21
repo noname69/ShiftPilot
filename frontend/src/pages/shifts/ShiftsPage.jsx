@@ -3,6 +3,7 @@ import { Link } from "react-router";
 import Header from "../components/shared/Header";
 import Footer from "../components/shared/Footer";
 import useShiftStore from "../../store/shiftStore";
+import useAuthStore from "../../store/authStore";
 
 const STATUS_CONFIG = {
   OPEN: {
@@ -56,7 +57,11 @@ const formatDate = (d) => {
 };
 
 const ShiftsPage = () => {
+
   const { shifts, isLoading, fetchShifts, removeShift } = useShiftStore();
+
+  const { user } = useAuthStore(state => state);
+  const role = user?.role.toLowerCase();
 
   useEffect(() => {
     fetchShifts();
@@ -81,7 +86,7 @@ const ShiftsPage = () => {
               Manage all scheduled shifts
             </p>
           </div>
-          <Link to="/shifts/new">
+          <Link to={`/${role}/shifts/new`}>
             <button className="inline-flex items-center gap-1.5 text-[13px] font-medium text-white bg-ink-900 hover:bg-ink-800 px-3 py-1.5 rounded-md shadow-soft transition-colors">
               <svg
                 width="14"
@@ -108,7 +113,7 @@ const ShiftsPage = () => {
               <div className="flex flex-col items-center justify-center py-20 gap-3">
                 <p className="text-[14px] text-ink-500">No shifts yet.</p>
                 <Link
-                  to="/shifts/new"
+                  to={`/${role}/shifts/new`}
                   className="inline-flex items-center gap-1.5 text-[13px] font-medium text-white bg-ink-900 hover:bg-ink-800 px-3 py-1.5 rounded-md shadow-soft transition-colors cursor-pointer"
                 >
                   <svg
@@ -180,7 +185,7 @@ const ShiftsPage = () => {
                       </td>
                       <td className="px-4 py-3 text-right">
                         <div className="inline-flex gap-1.5">
-                          <Link to={`/shifts/${shift.id}/edit`}>
+                          <Link to={`/${role}/shifts/${shift.id}/edit`}>
                             <button className="text-[12px] font-medium bg-white border border-ink-200 hover:bg-ink-50 px-2.5 py-1 rounded-md text-ink-700 transition-colors">
                               Edit
                             </button>
