@@ -24,8 +24,8 @@ function App() {
       <Routes>
 
         
-        <Route path="/users/new" element={<UserCreatePage />} />
-        <Route path="/users/:id/edit" element={<UserEditPage />} />
+        {/* <Route path="/users/new" element={<UserCreatePage />} />
+        <Route path="/users/:id/edit" element={<UserEditPage />} /> */}
        
 
         <Route element={<PrivateRoute publicPage />}>
@@ -38,7 +38,7 @@ function App() {
             <Route path="schedule" element={<Schedule />} />
             <Route path="myschedule" element={<MySchedule />} />
             <Route path="requests" element={<Requests />} />
-            <Route path="employees/users" element={<UsersPage />} />
+            <Route path="users" element={<UsersPage />} />
           </Route>
         </Route>
 
@@ -49,10 +49,10 @@ function App() {
             <Route path="shifts" element={<ShiftsPage />} />
             <Route path="shifts/new" element={<ShiftCreatePage />} />
             <Route path="shifts/:id/edit" element={<ShiftEditPage />} />
-            <Route path="employees" element={<Employees />} />
-            <Route path="employees/users" element={<UsersPage />} />
-            <Route path="employees/users/new" element={<UserCreatePage />} />
-            <Route path="employees/users/:id/edit" element={<UserEditPage />} />
+            {/* <Route path="employees" element={<Employees />} /> */}
+            <Route path="users" element={<UsersPage />} />
+            <Route path="users/new" element={<UserCreatePage />} />
+            <Route path="users/:id/edit" element={<UserEditPage />} />
 
           </Route>
         </Route>
@@ -66,8 +66,10 @@ function App() {
             <Route path="shifts/new" element={<ShiftCreatePage />} />
             <Route path="shifts/:id/edit" element={<ShiftEditPage />} />
             <Route path="requests" element={<Requests />} />
-            <Route path="employees" element={<Employees />} />
-            <Route path="employees/users" element={<UsersPage />} />
+            {/* <Route path="employees" element={<Employees />} /> */}
+            <Route path="users" element={<UsersPage />} />
+            <Route path="users/new" element={<UserCreatePage />} />
+
 
           </Route>
         </Route>

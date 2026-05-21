@@ -50,7 +50,7 @@ export const ManagerNavigation = [
   },
   {
     name: "Employees",
-    href: "/manager/employees",
+    href: "/manager/users",
     icon: icons.employees
   },
 ]
@@ -83,7 +83,7 @@ export const AdminNavigation = [
   },
   {
     name: "Employees",
-    href: "/admin/employees",
+    href: "/admin/users",
     icon: icons.employees
   },
 

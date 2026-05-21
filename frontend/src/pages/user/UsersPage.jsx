@@ -3,6 +3,7 @@ import { Link } from "react-router";
 import Header from "../components/shared/Header";
 import Footer from "../components/shared/Footer";
 import useUserStore from "../../store/userStore";
+import useAuthStore from "../../store/authStore";
 
 const STATUS_CONFIG = {
   ACTIVE: {
@@ -32,8 +33,12 @@ const StatusBadge = ({ status }) => {
   );
 };
 
+
+
 const UsersPage = () => {
+
   const { users, isLoading, fetchUsers, removeUser, udeleteUser } = useUserStore();
+  const role = useAuthStore(state => state.user.role);
 
   useEffect(() => {
     fetchUsers();
@@ -100,7 +105,7 @@ const UsersPage = () => {
                 <p className="text-[14px] text-ink-500">No users yet.</p>
 
                 <Link
-                  to="/users/new"
+                  to={`/${role}/users/new`}
                   className="inline-flex items-center gap-1.5 text-[13px] font-medium text-white bg-ink-900 hover:bg-ink-800 px-3 py-1.5 rounded-md shadow-soft transition-colors cursor-pointer"
                 >
                   <svg
