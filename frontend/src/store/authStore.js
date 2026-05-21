@@ -8,7 +8,7 @@ const initialState = {
   "role": ""
 }
 
-const useUsersStore = create(
+const useAuthStore = create(
 
   devtools((set) => ({
 
@@ -36,11 +36,10 @@ const useUsersStore = create(
     },
 
     logoutUser: async (navigate) => {
-      console.log("logout")
       try {
         await api.post(`/auth/logout`);
         set(() => ({ user: initialState }))
-        navigate("/");
+        navigate("/login");
       } catch (error) {
         console.log(error);
       }
@@ -63,4 +62,4 @@ const useUsersStore = create(
   })),
 );
 
-export default useUsersStore;
+export default useAuthStore;

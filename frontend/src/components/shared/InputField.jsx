@@ -9,6 +9,7 @@ const InputField = ({
   max,
   placeholder,
   theme,
+  validation = {},
 }) => {
   return (
     <div className="w-full">
@@ -27,7 +28,7 @@ const InputField = ({
               ? { value: min, message: `Minimum ${min} characters is required` }
               : null,
             maxLength: max
-              ? { value: max, message: `Maximum ${min} characters is required` }
+              ? { value: max, message: `Maximum ${max} characters is required` }
               : null,
             pattern:
               type === "email"
@@ -36,6 +37,7 @@ const InputField = ({
                     message: "Invalid email",
                   }
                 : null,
+            ...validation,
           })}
         />
       </div>

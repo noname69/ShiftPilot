@@ -3,7 +3,7 @@ import Header from "../../components/shared/Header";
 import { useForm } from "react-hook-form";
 import Footer from "../../components/shared/Footer";
 import LoginAside from "./LoginAside";
-import useUsersStore from "../../../store/userStore";
+import useAuthStore from "../../../store/authStore";
 import { useNavigate } from "react-router";
 
 const Login = () => {
@@ -15,7 +15,7 @@ const Login = () => {
   } = useForm();
 
   const navigate = useNavigate();
-  const { loginUser } = useUsersStore(state => state);
+  const { loginUser } = useAuthStore((state) => state);
 
   const onSubmit = (formData) => {
     loginUser(formData, navigate);

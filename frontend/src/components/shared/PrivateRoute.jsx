@@ -1,9 +1,9 @@
-import useUsersStore from "../../store/userStore";
+import useAuthStore from "../../store/authStore";
 import { Navigate, Outlet } from "react-router";
 
 const PrivateRoute = ({ publicPage = false, userOnly = false, managerOnly = false, adminOnly = false }) => {
 
-  const { user } = useUsersStore(state => state);
+  const { user } = useAuthStore((state) => state);
   const { role } = user;
   const isUser = role === "USER";
   const isManager = role === "MANAGER";

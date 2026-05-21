@@ -1,5 +1,5 @@
 import "./index.css";
-import { Routes, Route } from "react-router";
+import { Routes, Route, Navigate } from "react-router";
 import AuthProvider from "./pages/auth/AuthProvider";
 import AdminPanel from "./pages/admin/AdminPanel";
 import ManagerPanel from "./pages/manager/ManagerPanel";
@@ -9,18 +9,23 @@ import PrivateRoute from "./components/shared/PrivateRoute";
 import ShiftsPage from "./pages/shifts/ShiftsPage";
 import ShiftCreatePage from "./pages/shifts/ShiftCreatePage";
 import ShiftEditPage from "./pages/shifts/ShiftEditPage";
+import Schedule from "./pages/shedule/Shedule"
 
 function App() {
   return (
     <AuthProvider>
       <Routes>
 
+        <Route index element={<Navigate to="/login" />} />
+
         <Route path="/" element={<PrivateRoute publicPage />}>
           <Route path="login" element={<Login />} />
         </Route>
 
         <Route path="/" element={<PrivateRoute userOnly />}>
-          <Route path="user" element={<UserPanel />} />
+          <Route path="/user" element={<UserPanel />}>
+            <Route path="shedule" element={<Schedule />} />
+          </Route>
         </Route>
 
         <Route path="/" element={<PrivateRoute managerOnly />}>
@@ -28,13 +33,19 @@ function App() {
         </Route>
 
         <Route path="/" element={<PrivateRoute adminOnly />}>
-          <Route path="admin" element={<AdminPanel />} />
+          <Route path="/admin" element={<AdminPanel />} >
+            <Route path="schedule" element={<Schedule />} />
+          </Route>
         </Route>
 
         <Route path="/user" element={<UserPanel />} />
+
         <Route path="/shifts" element={<ShiftsPage />} />
         <Route path="/shifts/new" element={<ShiftCreatePage />} />
         <Route path="/shifts/:id/edit" element={<ShiftEditPage />} />
+
+        <Route path="*" element={<Navigate to="/login" />} />
+
       </Routes>
     </AuthProvider>
   );
