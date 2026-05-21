@@ -19,7 +19,7 @@ const ProfileHeader = () => {
           <span id="crumb" className="text-ink-800 font-medium truncate">{name}</span>
         </nav>
 
-        <div className="ml-auto flex items-center gap-2">
+        <div className="ml-auto flex items-center gap-4">
 
           <div className="hidden md:flex items-center gap-2 text-[12.5px] text-ink-500 px-2.5 py-1 rounded-md border border-ink-200 bg-white">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="3" y="4" width="18" height="17" rx="2"></rect><path d="M3 9h18"></path></svg>
@@ -32,11 +32,6 @@ const ProfileHeader = () => {
               <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-rose-ink"></span>
             </button>
           </div>
-
-          <button className="hidden sm:inline-flex items-center gap-1.5 text-[13px] font-medium text-white bg-ink-900 hover:bg-ink-800 px-3 py-1.5 rounded-md shadow-soft">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M12 5v14M5 12h14"></path></svg>
-            New shift
-          </button>
           <ProfileDropdown />
         </div>
       </div>

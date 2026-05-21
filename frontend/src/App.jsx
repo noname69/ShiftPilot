@@ -16,7 +16,7 @@ import Schedule from "./pages/schedule/Schedule";
 import MySchedule from "./pages/mySchedule/MySchedule";
 import Dashboard from "./pages/dashboard/Dashboard";
 import Requests from "./pages/Requests/Requests";
-import Employees from "./pages/employees/Employees";
+import ShiftAssignments from "./pages/shiftAssignments/ShiftAssignments";
 
 function App() {
   return (
@@ -44,11 +44,10 @@ function App() {
             <Route path="shifts" element={<ShiftsPage />} />
             <Route path="shifts/new" element={<ShiftCreatePage />} />
             <Route path="shifts/:id/edit" element={<ShiftEditPage />} />
-            {/* <Route path="employees" element={<Employees />} /> */}
             <Route path="users" element={<UsersPage />} />
             <Route path="users/new" element={<UserCreatePage />} />
             <Route path="users/:id/edit" element={<UserEditPage />} />
-
+            <Route path="shifts/:id/assign-shift" element={<ShiftAssignments />} />
           </Route>
         </Route>
 
@@ -61,11 +60,8 @@ function App() {
             <Route path="shifts/new" element={<ShiftCreatePage />} />
             <Route path="shifts/:id/edit" element={<ShiftEditPage />} />
             <Route path="requests" element={<Requests />} />
-            {/* <Route path="employees" element={<Employees />} /> */}
             <Route path="users" element={<UsersPage />} />
             <Route path="users/new" element={<UserCreatePage />} />
-
-
           </Route>
         </Route>
 

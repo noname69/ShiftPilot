@@ -1,10 +1,11 @@
 import { useEffect } from "react";
 import { Link } from "react-router";
-import Header from "../components/shared/Header";
 import Footer from "../components/shared/Footer";
 import useShiftStore from "../../store/shiftStore";
 import useAuthStore from "../../store/authStore";
-import { FiEdit2, FiTrash2} from "react-icons/fi";
+import { FiEdit2, FiTrash2 } from "react-icons/fi";
+import { CgAddR } from "react-icons/cg";
+
 
 const STATUS_CONFIG = {
   OPEN: {
@@ -76,7 +77,6 @@ const ShiftsPage = () => {
 
   return (
     <div className="flex flex-col flex-1">
-      <Header />
       <main className="flex-1 px-5 lg:px-8 py-7 max-w-350 mx-auto w-full">
         <div className="flex flex-wrap items-end justify-between gap-4 mb-6">
           <div>
@@ -192,6 +192,13 @@ const ShiftsPage = () => {
                             </button>
                           </Link>
 
+                          <Link to={`/${role}/shifts/${shift.id}/assign-shift`}>
+                            <button
+                              className="inline-flex items-center gap-1 text-[12px] font-medium bg-green-100 border border-green-300 px-2.5 py-1 rounded-md text-green-800 transition-colors"
+                            >
+                              <CgAddR size={13} />
+                            </button>
+                          </Link>
                           <button
                             onClick={() => handleDelete(shift.id, shift.title)}
                             className="inline-flex items-center gap-1 text-[12px] font-medium bg-rose-soft hover:bg-rose-soft/80 border border-rose-ink/20 px-2.5 py-1 rounded-md text-rose-ink transition-colors"
