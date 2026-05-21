@@ -23,11 +23,6 @@ function App() {
     <AuthProvider>
       <Routes>
 
-        
-        {/* <Route path="/users/new" element={<UserCreatePage />} />
-        <Route path="/users/:id/edit" element={<UserEditPage />} /> */}
-       
-
         <Route element={<PrivateRoute publicPage />}>
           <Route path="login" element={<Login />} />
         </Route>

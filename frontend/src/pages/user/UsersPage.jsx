@@ -78,7 +78,7 @@ const UsersPage = () => {
             </h1>
             <p className="text-[13px] text-ink-500 mt-0.5">Manage all users</p>
           </div>
-          <Link to="/users/new">
+          <Link to={`/${role}/users/new`}>
             <button className="inline-flex items-center gap-1.5 text-[13px] font-medium text-white bg-ink-900 hover:bg-ink-800 px-3 py-1.5 rounded-md shadow-soft transition-colors">
               <svg
                 width="14"
@@ -188,7 +188,7 @@ const UsersPage = () => {
                       {/* ACTIONS */}
                       <td className="px-4 py-3 text-right">
                         <div className="inline-flex gap-1.5">
-                          <Link to={`/users/${user.id}/edit`}>
+                          <Link to={`/${role}/users/${user.id}/edit`}>
                             <button className="text-[12px] font-medium bg-white border border-ink-200 hover:bg-ink-50 px-2.5 py-1 rounded-md text-ink-700 transition-colors">
                               Edits
                             </button>

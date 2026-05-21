@@ -3,18 +3,19 @@ import Header from "../components/shared/Header";
 import Footer from "../components/shared/Footer";
 import UserForm from "./UserForm";
 import useUserStore from "../../store/userStore";
+import useAuthStore from "../../store/authStore";
 
 const UserCreatePage = () => {
   const navigate = useNavigate();
   const { addUser, error } = useUserStore();
+  const role = useAuthStore(state => state.user.role);
 
   const onSubmit = async (data) => {
     const result = await addUser(data);
     if (!result.success) {
       return;
     }
-
-    navigate("/users");
+    navigate(`/${role}/users`);
   };
 
   return (
@@ -50,7 +51,7 @@ const UserCreatePage = () => {
 
           <div className="mt-4">
             <Link
-              to="/users"
+              to={`/${role}/users`}
               className="text-[13px] text-ink-500 hover:text-ink-900 transition-colors"
             >
               ← Back to users
