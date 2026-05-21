@@ -2,39 +2,28 @@ import { useEffect } from "react";
 import { Link } from "react-router";
 import Header from "../components/shared/Header";
 import Footer from "../components/shared/Footer";
-import useShiftStore from "../../store/shiftStore";
+import useUserStore from "../../store/userStore";
 import useAuthStore from "../../store/authStore";
-import { FiEdit2, FiTrash2} from "react-icons/fi";
+import { FiEdit2, FiTrash2, FiRotateCcw } from "react-icons/fi";
 
 const STATUS_CONFIG = {
-  OPEN: {
+  ACTIVE: {
     bg: "bg-mint-soft",
     text: "text-mint-ink",
     dot: "bg-mint-ink",
-    label: "Open",
+    label: "Active",
   },
-  ONGOING: {
-    bg: "bg-amber-soft",
-    text: "text-amber-ink",
-    dot: "bg-amber-ink",
-    label: "Ongoing",
-  },
-  COMPLETED: {
-    bg: "bg-ink-100",
-    text: "text-ink-600",
-    dot: "bg-ink-400",
-    label: "Completed",
-  },
-  CANCELLED: {
+
+  INACTIVE: {
     bg: "bg-rose-soft",
     text: "text-rose-ink",
     dot: "bg-rose-ink",
-    label: "Cancelled",
+    label: "Inactive",
   },
 };
 
 const StatusBadge = ({ status }) => {
-  const cfg = STATUS_CONFIG[status] ?? STATUS_CONFIG.OPEN;
+  const cfg = STATUS_CONFIG[status] ?? STATUS_CONFIG.ACTIVE;
   return (
     <span
       className={`inline-flex items-center gap-1 text-[11px] px-1.5 py-0.5 rounded font-medium ${cfg.bg} ${cfg.text}`}
@@ -45,32 +34,35 @@ const StatusBadge = ({ status }) => {
   );
 };
 
-const formatTime = (t) => t?.slice(0, 5) ?? "";
-
-const formatDate = (d) => {
-  if (!d) return "";
-  const date = new Date(d + "T00:00:00");
-  return date.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-};
-
-const ShiftsPage = () => {
-
-  const { shifts, isLoading, fetchShifts, removeShift } = useShiftStore();
-
-  const { user } = useAuthStore(state => state);
-  const role = user?.role.toLowerCase();
+const UsersPage = () => {
+  const { users, isLoading, fetchUsers, removeUser, udeleteUser } =
+    useUserStore();
+  const role = useAuthStore((state) => state.user.role);
 
   useEffect(() => {
-    fetchShifts();
-  }, [fetchShifts]);
+    fetchUsers();
+  }, [fetchUsers]);
 
-  const handleDelete = (id, title) => {
-    if (window.confirm(`Delete shift "${title}"?`)) {
-      removeShift(id);
+  const handleDelete = async (id) => {
+    const confirmDelete = window.confirm("Delete this user?");
+
+    if (!confirmDelete) return;
+
+    const success = await removeUser(id);
+
+    if (!success) {
+      console.log("Delete failed");
+    }
+  };
+
+  const handleRestore = async (id) => {
+    const confirmRestore = window.confirm("Restore this user?");
+
+    if (!confirmRestore) return;
+    const success = await udeleteUser(id);
+
+    if (!success) {
+      console.log("Restore failed");
     }
   };
 
@@ -81,13 +73,11 @@ const ShiftsPage = () => {
         <div className="flex flex-wrap items-end justify-between gap-4 mb-6">
           <div>
             <h1 className="font-serif text-[32px] leading-tight text-ink-900 tracking-tight">
-              Shifts
+              Users
             </h1>
-            <p className="text-[13px] text-ink-500 mt-0.5">
-              Manage all scheduled shifts
-            </p>
+            <p className="text-[13px] text-ink-500 mt-0.5">Manage all users</p>
           </div>
-          <Link to={`/${role}/shifts/new`}>
+          <Link to={`/${role}/users/new`}>
             <button className="inline-flex items-center gap-1.5 text-[13px] font-medium text-white bg-ink-900 hover:bg-ink-800 px-3 py-1.5 rounded-md shadow-soft transition-colors">
               <svg
                 width="14"
@@ -99,22 +89,22 @@ const ShiftsPage = () => {
               >
                 <path d="M12 5v14M5 12h14" />
               </svg>
-              New shift
+              New user
             </button>
           </Link>
         </div>
-
         {isLoading ? (
           <div className="flex items-center justify-center py-20 text-[13px] text-ink-400">
-            Loading shifts…
+            Loading users…
           </div>
         ) : (
           <div className="bg-white rounded-xl2 border border-ink-200 shadow-soft overflow-hidden">
-            {shifts.length === 0 ? (
+            {users.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-20 gap-3">
-                <p className="text-[14px] text-ink-500">No shifts yet.</p>
+                <p className="text-[14px] text-ink-500">No users yet.</p>
+
                 <Link
-                  to={`/${role}/shifts/new`}
+                  to={`/${role}/users/new`}
                   className="inline-flex items-center gap-1.5 text-[13px] font-medium text-white bg-ink-900 hover:bg-ink-800 px-3 py-1.5 rounded-md shadow-soft transition-colors cursor-pointer"
                 >
                   <svg
@@ -127,76 +117,94 @@ const ShiftsPage = () => {
                   >
                     <path d="M12 5v14M5 12h14" />
                   </svg>
-                  Create your first shift
+                  Create first user
                 </Link>
               </div>
             ) : (
               <table className="w-full text-[13px]">
                 <thead className="bg-ink-50 text-ink-500 text-[11.5px] uppercase tracking-wider border-b border-ink-200">
                   <tr>
-                    <th className="text-left font-medium px-4 py-2.5">Title</th>
-                    <th className="text-left font-medium px-4 py-2.5 hidden md:table-cell">
-                      Description
-                    </th>
-                    <th className="text-left font-medium px-4 py-2.5">Date</th>
-                    <th className="text-left font-medium px-4 py-2.5 hidden sm:table-cell">
-                      Time
-                    </th>
-                    <th className="text-left font-medium px-4 py-2.5 hidden lg:table-cell">
-                      Min. Staff
-                    </th>
+                    <th className="text-left font-medium px-4 py-2.5">Name</th>
+
+                    <th className="text-left font-medium px-4 py-2.5">Role</th>
+
                     <th className="text-left font-medium px-4 py-2.5">
                       Status
                     </th>
-                    <th className="text-left font-medium px-4 py-2.5 hidden xl:table-cell">
-                      Created by
+
+                    <th className="text-left font-medium px-4 py-2.5">
+                      Hours this week
                     </th>
+
+                    <th className="text-left font-medium px-4 py-2.5">
+                      Contact
+                    </th>
+
                     <th className="text-right font-medium px-4 py-2.5">
                       Actions
                     </th>
                   </tr>
                 </thead>
+
                 <tbody className="divide-y divide-ink-100">
-                  {shifts.map((shift) => (
+                  {users.map((user) => (
                     <tr
-                      key={shift.id}
+                      key={user.id}
                       className="hover:bg-ink-50/60 transition-colors"
                     >
-                      <td className="px-4 py-3 font-medium text-ink-900">
-                        {shift.title}
-                      </td>
-                      <td className="px-4 py-3 text-ink-600 max-w-50 truncate hidden md:table-cell">
-                        {shift.description}
-                      </td>
-                      <td className="px-4 py-3 text-ink-700 font-mono text-[12px]">
-                        {formatDate(shift.shiftDate)}
-                      </td>
-                      <td className="px-4 py-3 text-ink-600 font-mono text-[12px] hidden sm:table-cell">
-                        {formatTime(shift.startTime)} –{" "}
-                        {formatTime(shift.endTime)}
-                      </td>
-                      <td className="px-4 py-3 text-ink-700 hidden lg:table-cell">
-                        {shift.minEmployees}
-                      </td>
+                      {/* NAME */}
                       <td className="px-4 py-3">
-                        <StatusBadge status={shift.status} />
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-7 h-7 rounded-full bg-violet-soft text-violet-ink text-[11px] font-semibold flex items-center justify-center">
+                            {user.firstName?.[0]}
+                            {user.lastName?.[0]}
+                          </div>
+
+                          <div className="font-medium text-ink-900">
+                            {user.firstName} {user.lastName}
+                          </div>
+                        </div>
                       </td>
-                      <td className="px-4 py-3 text-ink-500 hidden xl:table-cell">
-                        {shift.createdByUsername}
+
+                      {/* ROLE */}
+                      <td className="px-4 py-3 text-ink-700">{user.role}</td>
+
+                      {/* STATUS */}
+                      <td className="px-4 py-3">
+                        <StatusBadge status={user.status} />
                       </td>
+
+                      {/* HOURS */}
+                      <td className="px-4 py-3 font-mono text-[12px] text-ink-700">
+                        {user.weeklyHours ?? 0}h
+                      </td>
+
+                      {/* CONTACT */}
+                      <td className="px-4 py-3 text-ink-500 text-[12px]">
+                        {user.email}
+                      </td>
+
+                      {/* ACTIONS */}
                       <td className="px-4 py-3 text-right">
                         <div className="inline-flex gap-1.5">
-                          <Link to={`/${role}/shifts/${shift.id}/edit`}>
+                          <Link to={`/${role}/users/${user.id}/edit`}>
                             <button className="inline-flex items-center gap-1 text-[12px] font-medium bg-white border border-ink-200 hover:bg-ink-50 px-2.5 py-1 rounded-md text-ink-700 transition-colors">
                               <FiEdit2 size={13} />
                             </button>
                           </Link>
 
                           <button
-                            onClick={() => handleDelete(shift.id, shift.title)}
+                            onClick={() => handleDelete(user.id)}
                             className="inline-flex items-center gap-1 text-[12px] font-medium bg-rose-soft hover:bg-rose-soft/80 border border-rose-ink/20 px-2.5 py-1 rounded-md text-rose-ink transition-colors"
                           >
                             <FiTrash2 size={13} />
+                          </button>
+
+                          <button
+                            onClick={() => handleRestore(user.id)}
+                            className="inline-flex items-center gap-1 text-[12px] font-medium bg-mint-soft hover:bg-mint-soft/80 border border-mint-ink/20 px-2.5 py-1 rounded-md text-mint-ink transition-colors"
+                          >
+                            <FiRotateCcw size={13} />
                           </button>
                         </div>
                       </td>
@@ -213,4 +221,4 @@ const ShiftsPage = () => {
   );
 };
 
-export default ShiftsPage;
+export default UsersPage;

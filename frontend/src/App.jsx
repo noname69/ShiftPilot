@@ -4,11 +4,14 @@ import AuthProvider from "./pages/auth/AuthProvider";
 import AdminPanel from "./pages/AdminPanel";
 import ManagerPanel from "./pages/ManagerPanel";
 import Login from "./pages/auth/login/Login";
-import UserPanel from "./pages/UserPanel";
-import PrivateRoute from "./pages/components/shared/PrivateRoute";
 import ShiftsPage from "./pages/shifts/ShiftsPage";
 import ShiftCreatePage from "./pages/shifts/ShiftCreatePage";
 import ShiftEditPage from "./pages/shifts/ShiftEditPage";
+import UsersPage from "./pages/user/UsersPage";
+import UserCreatePage from "./pages/user/UserCreatePage";
+import UserEditPage from "./pages/user/UserEditPage";
+import UserPanel from "./pages/UserPanel";
+import PrivateRoute from "./pages/components/shared/PrivateRoute";
 import Schedule from "./pages/schedule/Schedule";
 import MySchedule from "./pages/mySchedule/MySchedule";
 import Dashboard from "./pages/dashboard/Dashboard";
@@ -30,6 +33,7 @@ function App() {
             <Route path="schedule" element={<Schedule />} />
             <Route path="myschedule" element={<MySchedule />} />
             <Route path="requests" element={<Requests />} />
+            <Route path="users" element={<UsersPage />} />
           </Route>
         </Route>
 
@@ -40,7 +44,11 @@ function App() {
             <Route path="shifts" element={<ShiftsPage />} />
             <Route path="shifts/new" element={<ShiftCreatePage />} />
             <Route path="shifts/:id/edit" element={<ShiftEditPage />} />
-            <Route path="employees" element={<Employees />} />
+            {/* <Route path="employees" element={<Employees />} /> */}
+            <Route path="users" element={<UsersPage />} />
+            <Route path="users/new" element={<UserCreatePage />} />
+            <Route path="users/:id/edit" element={<UserEditPage />} />
+
           </Route>
         </Route>
 
@@ -53,7 +61,11 @@ function App() {
             <Route path="shifts/new" element={<ShiftCreatePage />} />
             <Route path="shifts/:id/edit" element={<ShiftEditPage />} />
             <Route path="requests" element={<Requests />} />
-            <Route path="employees" element={<Employees />} />
+            {/* <Route path="employees" element={<Employees />} /> */}
+            <Route path="users" element={<UsersPage />} />
+            <Route path="users/new" element={<UserCreatePage />} />
+
+
           </Route>
         </Route>
 

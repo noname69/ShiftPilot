@@ -3,10 +3,10 @@ import { devtools } from "zustand/middleware";
 import api from "../api/api";
 
 const initialState = {
-  "username": null,
-  "userId": null,
-  "role": ""
-}
+  username: null,
+  userId: null,
+  role: "",
+};
 
 const useAuthStore = create(
 
