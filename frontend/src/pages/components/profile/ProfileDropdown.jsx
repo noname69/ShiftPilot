@@ -4,7 +4,7 @@ import { IoSettingsOutline } from "react-icons/io5";
 import { IoMdExit } from "react-icons/io";
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
-import useAuthStore from "../../store/authStore";
+import useAuthStore from "../../../store/authStore";
 
 export default function ProfileDropdown() {
 

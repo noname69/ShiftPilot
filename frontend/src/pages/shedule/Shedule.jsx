@@ -1,7 +1,7 @@
 const shedule = () => {
   return (
     <div>
-      <p>THIS IS SCHEDULE PAGE</p>
+      <p>Schedule Page</p>
     </div>
   )
 }

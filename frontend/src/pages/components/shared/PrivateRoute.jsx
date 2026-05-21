@@ -1,4 +1,4 @@
-import useAuthStore from "../../store/authStore";
+import useAuthStore from "../../../store/authStore";
 import { Navigate, Outlet } from "react-router";
 
 const PrivateRoute = ({ publicPage = false, userOnly = false, managerOnly = false, adminOnly = false }) => {

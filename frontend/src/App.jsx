@@ -1,15 +1,19 @@
 import "./index.css";
 import { Routes, Route, Navigate } from "react-router";
 import AuthProvider from "./pages/auth/AuthProvider";
-import AdminPanel from "./pages/admin/AdminPanel";
-import ManagerPanel from "./pages/manager/ManagerPanel";
+import AdminPanel from "./pages/AdminPanel";
+import ManagerPanel from "./pages/ManagerPanel";
 import Login from "./pages/auth/login/Login";
-import UserPanel from "./pages/user/UserPanel";
-import PrivateRoute from "./components/shared/PrivateRoute";
+import UserPanel from "./pages/UserPanel";
+import PrivateRoute from "./pages/components/shared/PrivateRoute";
 import ShiftsPage from "./pages/shifts/ShiftsPage";
 import ShiftCreatePage from "./pages/shifts/ShiftCreatePage";
 import ShiftEditPage from "./pages/shifts/ShiftEditPage";
 import Schedule from "./pages/shedule/Shedule"
+import MySchedule from "./pages/mySchedule/MySchedule";
+import Dashboard from "./pages/dashboard/Dashboard";
+import Requests from "./pages/Requests/Requests";
+import Employees from "./pages/employees/Employees";
 
 function App() {
   return (
@@ -23,26 +27,39 @@ function App() {
         </Route>
 
         <Route path="/" element={<PrivateRoute userOnly />}>
-          <Route path="/user" element={<UserPanel />}>
+          <Route path="user" element={<UserPanel />}>
+            <Route path="" element={<Dashboard />} />
             <Route path="shedule" element={<Schedule />} />
+            <Route path="myschedule" element={<MySchedule />} />
+            <Route path="requests" element={<Requests />} />
           </Route>
         </Route>
 
         <Route path="/" element={<PrivateRoute managerOnly />}>
-          <Route path="manager" element={<ManagerPanel />} />
-        </Route>
-
-        <Route path="/" element={<PrivateRoute adminOnly />}>
-          <Route path="/admin" element={<AdminPanel />} >
+          <Route path="manager" element={<ManagerPanel />} >
+            <Route path="" element={<Dashboard />} />
             <Route path="schedule" element={<Schedule />} />
+            <Route path="myschedule" element={<MySchedule />} />
+            <Route path="shifts" element={<ShiftsPage />} />
+            <Route path="new" element={<ShiftCreatePage />} />
+            <Route path=":id/edit" element={<ShiftEditPage />} />
+            <Route path="employees" element={<Employees />} />
           </Route>
         </Route>
 
-        <Route path="/user" element={<UserPanel />} />
+        <Route element={<PrivateRoute adminOnly />}>
+          <Route path="admin" element={<AdminPanel />} >
+            <Route index element={<Dashboard />} />
+            <Route path="schedule" element={<Schedule />} />
+            <Route path="myschedule" element={<MySchedule />} />
+            <Route path="shifts" element={<ShiftsPage />} />
+            <Route path="shifts/new" element={<ShiftCreatePage />} />
+            <Route path="shifts/:id/edit" element={<ShiftEditPage />} />
+            <Route path="requests" element={<Requests />} />
+            <Route path="employees" element={<Employees />} />
+          </Route>
+        </Route>
 
-        <Route path="/shifts" element={<ShiftsPage />} />
-        <Route path="/shifts/new" element={<ShiftCreatePage />} />
-        <Route path="/shifts/:id/edit" element={<ShiftEditPage />} />
 
         <Route path="*" element={<Navigate to="/login" />} />
 
