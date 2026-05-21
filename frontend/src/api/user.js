@@ -1,13 +1,8 @@
 import api from "./api";
 
 export const createUser = async (data) => {
-  try {
     const response = await api.post("/users", data);
     return response.data;
-  } catch (error) {
-    console.error("Error creating user:", error);
-    throw error;
-  }
 };
 
 export const updateUser = async (id, data) => {
