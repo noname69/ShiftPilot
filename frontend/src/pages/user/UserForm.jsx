@@ -48,6 +48,7 @@ const UserForm = ({
         required
         register={register}
         errors={errors}
+        theme="my-input"
       />
 
       <InputField
@@ -58,6 +59,7 @@ const UserForm = ({
         required
         register={register}
         errors={errors}
+        theme="my-input"
       />
 
       <InputField
@@ -67,6 +69,7 @@ const UserForm = ({
         required
         register={register}
         errors={errors}
+        theme="my-input"
       />
 
       {!isEdit && (
@@ -78,17 +81,9 @@ const UserForm = ({
         required
         register={register}
         errors={errors}
+        theme="my-input"
       />
       )}
-
-      <InputField
-        id="password"
-        label="Password"
-        type="text"
-        required
-        register={register}
-        errors={errors}
-      />
 
       <SelectField
         id="role"
@@ -96,6 +91,7 @@ const UserForm = ({
         required
         register={register}
         errors={errors}
+        theme="my-input"
         options={[
           { value: "USER", label: "User" },
           { value: "ADMIN", label: "Admin" },
@@ -109,6 +105,7 @@ const UserForm = ({
         required
         register={register}
         errors={errors}
+        theme="my-input"
         options={[
           { value: "ACTIVE", label: "Active" },
           { value: "INACTIVE", label: "Inactive" },

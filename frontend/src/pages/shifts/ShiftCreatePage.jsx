@@ -3,16 +3,17 @@ import Header from "../components/shared/Header";
 import Footer from "../components/shared/Footer";
 import ShiftForm from "./ShiftForm";
 import useShiftStore from "../../store/shiftStore";
+import useAuthStore from "../../store/authStore";
 
 const ShiftCreatePage = () => {
-
   const navigate = useNavigate();
   const { addShift } = useShiftStore();
+  const role = useAuthStore((state) => state.user.role);
 
-const onSubmit = async (data) => {
-  const success = await addShift(data);
-  if (success) navigate("/shifts");
-};
+  const onSubmit = async (data) => {
+    const success = await addShift(data);
+    if (success) navigate("/shifts");
+  };
 
   return (
     <div className="flex flex-col flex-1">
@@ -24,7 +25,9 @@ const onSubmit = async (data) => {
             <h1 className="font-serif text-[32px] leading-tight text-ink-900 tracking-tight">
               New Shift
             </h1>
-            <p className="text-[13px] text-ink-500 mt-0.5">Fill in the details to create a shift.</p>
+            <p className="text-[13px] text-ink-500 mt-0.5">
+              Fill in the details to create a shift.
+            </p>
           </div>
 
           <div className="my-card">
@@ -32,7 +35,10 @@ const onSubmit = async (data) => {
           </div>
 
           <div className="mt-4">
-            <Link to="/shifts" className="text-[13px] text-ink-500 hover:text-ink-900 transition-colors">
+            <Link
+              to={`/${role}/shifts`}
+              className="text-[13px] text-ink-500 hover:text-ink-900 transition-colors"
+            >
               ← Back to shifts
             </Link>
           </div>

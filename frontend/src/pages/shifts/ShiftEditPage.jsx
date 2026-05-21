@@ -5,6 +5,7 @@ import Footer from "../components/shared/Footer";
 import ShiftForm from "./ShiftForm";
 import useShiftStore from "../../store/shiftStore";
 import { getShiftById } from "../../api/shift";
+import useAuthStore from "../../store/authStore";
 
 const ShiftEditPage = () => {
   const { id } = useParams();
@@ -12,6 +13,7 @@ const ShiftEditPage = () => {
   const { editShift } = useShiftStore();
   const [defaultValues, setDefaultValues] = useState(null);
   const [loadError, setLoadError] = useState(null);
+  const role = useAuthStore(state => state.user.role);
 
   useEffect(() => {
     getShiftById(id)
@@ -63,7 +65,7 @@ const ShiftEditPage = () => {
 
           <div className="mt-4">
             <Link
-              to="/shifts"
+              to={`/${role}/shifts`}
               className="text-[13px] text-ink-500 hover:text-ink-900 transition-colors"
             >
               ← Back to shifts
