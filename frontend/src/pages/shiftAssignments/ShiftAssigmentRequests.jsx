@@ -1,37 +1,32 @@
 import { useState, useEffect } from "react";
 import Footer from "../components/shared/Footer";
-import useUserStore from "../../store/userStore";
-import ShiftAssignmentsBody from "./ShiftAssignmentsBody";
+import ShiftAssignmentRequestsBody from "./ShiftAssigmentRequestsBody";
 import useShiftAssignmentsStore from "../../store/shiftAssignmentsStore";
-import { useParams, useNavigate } from "react-router";
+import { useParams } from "react-router";
 import ConfirmationModal from "../components/shared/ConfirmationModal"
 
-const ShiftAssignments = () => {
-  const { users, fetchUsers } = useUserStore(state => state);
-  const [selectedUsers, setSelectedUsers] = useState([]);
-  const employees = users.filter(user => user.role === "USER");
+const ShiftAssignmentRequests = () => {
   const { shiftId } = useParams();
-  const { getShiftAssignees, assignees, assignEmployees } = useShiftAssignmentsStore(state => state);
+  const { getShiftAssignees, assignees } = useShiftAssignmentsStore(state => state);
   const [modal, setModal] = useState(null);
-  const navigate = useNavigate();
 
-  const handleAddToShift = () => {
-    setModal({
-      title: "Add employees to shift",
-      message: "Are you sure you want to add selected employees to shift?",
-      confirmButton: "Add",
-      onConfirm: () => {
-        assignEmployees({ userIds: selectedUsers }, shiftId, navigate);
-      }
-    })
-  }
+  // Modala palieku del pvz:
+  // const handleAddToShift = () => {
+  //   setModal({
+  //     title: "Add employees to shift",
+  //     message: "Are you sure you want to add selected employees to shift?",
+  //     confirmButton: "Add",
+  //     onConfirm: () => {
+  //       // onConfirm function() i zustand store.
+  //     }
+  //   })
+  // }
 
   useEffect(() => {
     if (shiftId) {
-      fetchUsers();
       getShiftAssignees(shiftId);
     }
-  }, [fetchUsers, getShiftAssignees, shiftId]);
+  }, [getShiftAssignees, shiftId]);
 
   return (
     <div className="flex flex-col flex-1">
@@ -39,7 +34,7 @@ const ShiftAssignments = () => {
         <div className="flex flex-wrap items-end justify-between gap-4 mb-6">
           <div>
             <h1 className="font-serif text-[32px] leading-tight text-ink-900 tracking-tight">
-              Add Employees to Shift
+              Handle Shift Assignments
             </h1>
             <p className="text-[13px] text-ink-500 mt-0.5">Employees</p>
           </div>
@@ -52,29 +47,16 @@ const ShiftAssignments = () => {
                 <th className="text-center font-medium px-4 py-2.5"> Status</th>
                 <th className="text-center font-medium px-4 py-2.5">Hours this week</th>
                 <th className="text-left font-medium px-4 py-2.5">Contact</th>
-                <th className="text-center font-medium px-4 py-2.5">Assign employee</th>
+                <th className="text-center font-medium px-4 py-2.5">Actions</th>
               </tr>
             </thead>
-            {employees.map(user =>
-              <ShiftAssignmentsBody
-                key={user.id}
-                user={user}
-                selectedUsers={selectedUsers}
-                setSelectedUsers={setSelectedUsers}
-                assignees={assignees}
+            {assignees.map(assignee =>
+              <ShiftAssignmentRequestsBody
+                key={assignee.id}
+                assignee={assignee}
               />)}
           </table>
         </div>
-        {selectedUsers.length > 0 ? (
-          <div className="flex justify-end m-5">
-            <button
-              className="my-btn-primary"
-              onClick={handleAddToShift}
-            >Add to shift
-            </button>
-          </div>
-        ) : ""}
-
       </main>
       <ConfirmationModal modal={modal} setModal={setModal} />
       <Footer />
@@ -82,4 +64,4 @@ const ShiftAssignments = () => {
   );
 };
 
-export default ShiftAssignments;
+export default ShiftAssignmentRequests;

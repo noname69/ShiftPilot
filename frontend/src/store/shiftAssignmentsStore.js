@@ -9,13 +9,14 @@ const useShiftAssignmentsStore = create(
     assignees: [],
     isLoading: false,
 
-    assignEmployees: async (formData, shiftId) => {
+    assignEmployees: async (formData, shiftId, navigate) => {
       try {
         set({ isLoading: true });
         const { data } = await api.post(`/shifts/${shiftId}/shift-assignments`, formData);
         set((state) => ({
           assignees: [...state.assignees, ...data.assignees]
         }));
+        navigate("/manager/shifts");
       } catch (error) {
         console.log(error);
       } finally {

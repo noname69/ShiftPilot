@@ -29,7 +29,10 @@ const StatusBadge = ({ status }) => {
 };
 
 
-const ShiftAssignmentBody = ({ user, selectedUsers, setSelectedUsers, assignees }) => {
+const ShiftAssignmentsBody = ({ user, selectedUsers, setSelectedUsers, assignees }) => {
+
+  const { id, firstName, lastName, weeklyHours, email } = user || {};
+  const isAssigned = assignees.some(assignee => assignee.id === id);
 
   const toggleUser = (userId) => {
     setSelectedUsers((prev) =>
@@ -39,23 +42,21 @@ const ShiftAssignmentBody = ({ user, selectedUsers, setSelectedUsers, assignees 
     );
   };
 
-  const isAssigned = assignees.some(assignee => assignee.id === user.id);
-
   return (
     <tbody className="divide-y divide-ink-100">
       <tr
-        key={user.id}
+        key={id}
         className="hover:bg-ink-50/60 transition-colors"
       >
         <td className="px-4 py-3">
           <div className="flex items-center gap-2.5">
             <div className="w-7 h-7 rounded-full bg-violet-soft text-violet-ink text-[11px] font-semibold flex items-center justify-center">
-              {user.firstName?.[0]}
-              {user.lastName?.[0]}
+              {firstName?.[0]}
+              {lastName?.[0]}
             </div>
 
             <div className="font-medium text-ink-900">
-              {user.firstName} {user.lastName}
+              {firstName} {lastName}
             </div>
           </div>
         </td>
@@ -65,17 +66,17 @@ const ShiftAssignmentBody = ({ user, selectedUsers, setSelectedUsers, assignees 
         </td>
 
         <td className="px-4 py-3 font-mono text-[12px] text-ink-700 text-center">
-          <p className="justify-center">{user.weeklyHours ?? 0}h</p>    
+          <p className="justify-center">{weeklyHours ?? 0}h</p>    
         </td>
 
         <td className="px-4 py-3 text-ink-500 text-[12px]">
-          {user.email}
+          {email}
         </td>
 
         <td className="px-4 py-3 flex justify-center">
           <MyCheckbox
-            checked={selectedUsers.includes(user.id)}
-            onChange={() => toggleUser(user.id)}
+            checked={selectedUsers.includes(id)}
+            onChange={() => toggleUser(id)}
             disabled={isAssigned}
           />
         </td>
@@ -84,4 +85,4 @@ const ShiftAssignmentBody = ({ user, selectedUsers, setSelectedUsers, assignees 
   )
 }
 
-export default ShiftAssignmentBody
+export default ShiftAssignmentsBody

@@ -17,6 +17,7 @@ import MySchedule from "./pages/mySchedule/MySchedule";
 import Dashboard from "./pages/dashboard/Dashboard";
 import Requests from "./pages/Requests/Requests";
 import ShiftAssignments from "./pages/shiftAssignments/ShiftAssignments";
+import ShiftAssignmentRequests from "./pages/shiftAssignments/ShiftAssigmentRequests";
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
             <Route path="requests" element={<Requests />} />
             <Route path="users" element={<UsersPage />} />
             <Route path="shifts" element={<ShiftsPage />} />
+            <Route path="shifts/:shiftId/shift-requests" element={<ShiftAssignmentRequests />} />
           </Route>
         </Route>
 
@@ -49,6 +51,7 @@ function App() {
             <Route path="users/new" element={<UserCreatePage />} />
             <Route path="users/:id/edit" element={<UserEditPage />} />
             <Route path="shifts/:shiftId/assign-shift" element={<ShiftAssignments />} />
+            <Route path="shifts/:shiftId/shift-requests" element={<ShiftAssignmentRequests />} />
           </Route>
         </Route>
 
@@ -63,6 +66,8 @@ function App() {
             <Route path="requests" element={<Requests />} />
             <Route path="users" element={<UsersPage />} />
             <Route path="users/new" element={<UserCreatePage />} />
+            <Route path="shifts/:shiftId/assign-shift" element={<ShiftAssignments />} />
+            <Route path="shifts/:shiftId/shift-requests" element={<ShiftAssignmentRequests />} />
           </Route>
         </Route>
 

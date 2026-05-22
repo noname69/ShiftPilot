@@ -1,6 +1,7 @@
 import api from "./api";
 
 export const createShift = async (data) => {
+  console.log(data)
   const response = await api.post("/shifts", data);
   return response.data;
 };
