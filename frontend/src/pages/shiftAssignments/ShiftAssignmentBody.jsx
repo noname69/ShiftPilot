@@ -1,23 +1,23 @@
 import MyCheckbox from "../components/shared/MyCheckbox";
 
 const STATUS_CONFIG = {
-  ACTIVE: {
+  UNASSIGNED: {
     bg: "bg-mint-soft",
     text: "text-mint-ink",
     dot: "bg-mint-ink",
-    label: "Active",
+    label: "Unassigned",
   },
 
-  INACTIVE: {
+  ASSIGNED: {
     bg: "bg-rose-soft",
     text: "text-rose-ink",
     dot: "bg-rose-ink",
-    label: "Inactive",
+    label: "Assigned",
   },
 };
 
 const StatusBadge = ({ status }) => {
-  const cfg = STATUS_CONFIG[status] ?? STATUS_CONFIG.ACTIVE;
+  const cfg = STATUS_CONFIG[status] ?? STATUS_CONFIG.UNASSIGNED;
   return (
     <span
       className={`inline-flex items-center gap-1 text-[11px] px-1.5 py-0.5 rounded font-medium ${cfg.bg} ${cfg.text}`}

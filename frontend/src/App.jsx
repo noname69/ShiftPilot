@@ -34,6 +34,7 @@ function App() {
             <Route path="myschedule" element={<MySchedule />} />
             <Route path="requests" element={<Requests />} />
             <Route path="users" element={<UsersPage />} />
+            <Route path="shifts" element={<ShiftsPage />} />
           </Route>
         </Route>
 

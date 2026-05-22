@@ -8,6 +8,7 @@ import { useState } from "react";
 const ShiftAssignments = () => {
   const { users, fetchUsers } = useUserStore(state => state);
   const [selectedUsers, setSelectedUsers] = useState([]);
+  const employees = users.filter(user => user.role === "USER");
 
   useEffect(() => {
     fetchUsers();
@@ -22,7 +23,7 @@ const ShiftAssignments = () => {
             <h1 className="font-serif text-[32px] leading-tight text-ink-900 tracking-tight">
               Shift assignments
             </h1>
-            <p className="text-[13px] text-ink-500 mt-0.5">Assignees</p>
+            <p className="text-[13px] text-ink-500 mt-0.5">Employees</p>
           </div>
         </div>
         <div className="bg-white rounded-xl2 border border-ink-200 shadow-soft overflow-hidden">
@@ -33,10 +34,10 @@ const ShiftAssignments = () => {
                 <th className="text-left font-medium px-4 py-2.5"> Status</th>
                 <th className="text-left font-medium px-4 py-2.5">Hours this week</th>
                 <th className="text-left font-medium px-4 py-2.5">Contact</th>
-                <th className="text-right font-medium px-4 py-2.5">Assign employee</th>
+                <th className="text-center font-medium px-4 py-2.5">Assign employee</th>
               </tr>
             </thead>
-            {users.map(user => <ShiftAssignmentBody key={user.id} user={user} selectedUsers={selectedUsers} setSelectedUsers={setSelectedUsers}></ShiftAssignmentBody>)}
+            {employees.map(user => <ShiftAssignmentBody key={user.id} user={user} selectedUsers={selectedUsers} setSelectedUsers={setSelectedUsers}></ShiftAssignmentBody>)}
           </table>
         </div>
 
