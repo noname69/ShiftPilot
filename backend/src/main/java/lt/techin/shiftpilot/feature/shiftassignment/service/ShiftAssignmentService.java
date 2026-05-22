@@ -5,4 +5,6 @@ import lt.techin.shiftpilot.feature.shiftassignment.dto.ShiftAssignResponse;
 
 public interface ShiftAssignmentService {
     ShiftAssignResponse assignShift(String username, ShiftAssignRequest request, Long shiftId);
+
+    ShiftAssignResponse getShiftAssignees(Long shiftId);
 }

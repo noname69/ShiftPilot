@@ -1,17 +1,16 @@
 package lt.techin.shiftpilot.feature.shiftassignment.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lt.techin.shiftpilot.feature.user.dto.UserResponse;
 
 import java.util.List;
 
 @Setter
 @Getter
-@NoArgsConstructor
+@AllArgsConstructor
 public class ShiftAssignResponse {
 
-    private List<UserResponse> assignees;
+    private List<AssigneeResponse> assignees;
 
 }

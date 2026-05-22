@@ -29,6 +29,14 @@ public class ShiftAssignmentController {
         ShiftAssignResponse response = shiftAssignmentService.assignShift(username, request, shiftId);
 
         return ResponseEntity.ok().body(response);
+    }
+
+    @GetMapping("/shifts/{shiftId}/shift-assignees")
+    ResponseEntity<ShiftAssignResponse> getShiftAssignees(@PathVariable Long shiftId){
+
+        ShiftAssignResponse response = shiftAssignmentService.getShiftAssignees(shiftId);
+
+        return ResponseEntity.ok().body(response);
 
     }
 
