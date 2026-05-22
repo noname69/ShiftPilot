@@ -48,7 +48,7 @@ function App() {
             <Route path="users" element={<UsersPage />} />
             <Route path="users/new" element={<UserCreatePage />} />
             <Route path="users/:id/edit" element={<UserEditPage />} />
-            <Route path="shifts/:id/assign-shift" element={<ShiftAssignments />} />
+            <Route path="shifts/:shiftId/assign-shift" element={<ShiftAssignments />} />
           </Route>
         </Route>
 

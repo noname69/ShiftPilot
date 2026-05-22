@@ -1,19 +1,37 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import Footer from "../components/shared/Footer";
 import useUserStore from "../../store/userStore";
 import ShiftAssignmentBody from "./ShiftAssignmentBody";
-import { useState } from "react";
+import useShiftAssignmentsStore from "../../store/shiftAssignmentsStore";
+import { useParams } from "react-router";
+import ConfirmationModal from "../components/shared/ConfirmationModal"
 
 
 const ShiftAssignments = () => {
   const { users, fetchUsers } = useUserStore(state => state);
   const [selectedUsers, setSelectedUsers] = useState([]);
   const employees = users.filter(user => user.role === "USER");
+  const { shiftId } = useParams();
+  const { getShiftAssignees, assignees, assignEmployees } = useShiftAssignmentsStore(state => state);
+  const [modal, setModal] = useState(null);
+
+  const handleAddToShift = () => {
+    setModal({
+      title: "Add employees to shift",
+      message: "Are you sure you want to add selected employees to shift?",
+      confirmButton: "Add",
+      onConfirm: () => {
+        assignEmployees({ userIds: selectedUsers }, shiftId);
+      }
+    })
+  }
 
   useEffect(() => {
-    fetchUsers();
-  }, [fetchUsers]);
-
+    if (shiftId) {
+      fetchUsers();
+      getShiftAssignees(shiftId);
+    }
+  }, [fetchUsers, getShiftAssignees, shiftId]);
 
   return (
     <div className="flex flex-col flex-1">
@@ -31,17 +49,34 @@ const ShiftAssignments = () => {
             <thead className="bg-ink-50 text-ink-500 text-[11.5px] uppercase tracking-wider border-b border-ink-200">
               <tr>
                 <th className="text-left font-medium px-4 py-2.5">Name</th>
-                <th className="text-left font-medium px-4 py-2.5"> Status</th>
-                <th className="text-left font-medium px-4 py-2.5">Hours this week</th>
+                <th className="text-center font-medium px-4 py-2.5"> Status</th>
+                <th className="text-center font-medium px-4 py-2.5">Hours this week</th>
                 <th className="text-left font-medium px-4 py-2.5">Contact</th>
                 <th className="text-center font-medium px-4 py-2.5">Assign employee</th>
               </tr>
             </thead>
-            {employees.map(user => <ShiftAssignmentBody key={user.id} user={user} selectedUsers={selectedUsers} setSelectedUsers={setSelectedUsers}></ShiftAssignmentBody>)}
+            {employees.map(user =>
+              <ShiftAssignmentBody
+                key={user.id}
+                user={user}
+                selectedUsers={selectedUsers}
+                setSelectedUsers={setSelectedUsers}
+                assignees={assignees}
+              />)}
           </table>
         </div>
+        {selectedUsers.length > 0 ? (
+          <div className="flex justify-end m-5">
+            <button
+              className="my-btn-primary"
+              onClick={handleAddToShift}
+            >Add to shift
+            </button>
+          </div>
+        ) : ""}
 
       </main>
+      <ConfirmationModal modal={modal} setModal={setModal} />
       <Footer />
     </div>
   );

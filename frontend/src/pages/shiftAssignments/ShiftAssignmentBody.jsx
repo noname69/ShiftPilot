@@ -29,7 +29,7 @@ const StatusBadge = ({ status }) => {
 };
 
 
-const ShiftAssignmentBody = ({ user, selectedUsers, setSelectedUsers }) => {
+const ShiftAssignmentBody = ({ user, selectedUsers, setSelectedUsers, assignees }) => {
 
   const toggleUser = (userId) => {
     setSelectedUsers((prev) =>
@@ -37,9 +37,9 @@ const ShiftAssignmentBody = ({ user, selectedUsers, setSelectedUsers }) => {
         ? prev.filter((id) => id !== userId)
         : [...prev, userId]
     );
-
-    console.log(selectedUsers);
   };
+
+  const isAssigned = assignees.some(assignee => assignee.id === user.id);
 
   return (
     <tbody className="divide-y divide-ink-100">
@@ -60,12 +60,12 @@ const ShiftAssignmentBody = ({ user, selectedUsers, setSelectedUsers }) => {
           </div>
         </td>
 
-        <td className="px-4 py-3">
-          <StatusBadge status={user.status} />
+        <td className="px-4 py-3 text-center">
+          <StatusBadge status={isAssigned ? "ASSIGNED" : "UNASSIGNED"} />
         </td>
 
-        <td className="px-4 py-3 font-mono text-[12px] text-ink-700">
-          {user.weeklyHours ?? 0}h
+        <td className="px-4 py-3 font-mono text-[12px] text-ink-700 text-center">
+          <p className="justify-center">{user.weeklyHours ?? 0}h</p>    
         </td>
 
         <td className="px-4 py-3 text-ink-500 text-[12px]">
@@ -76,6 +76,7 @@ const ShiftAssignmentBody = ({ user, selectedUsers, setSelectedUsers }) => {
           <MyCheckbox
             checked={selectedUsers.includes(user.id)}
             onChange={() => toggleUser(user.id)}
+            disabled={isAssigned}
           />
         </td>
       </tr>

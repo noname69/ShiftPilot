@@ -13,8 +13,9 @@ const useShiftAssignmentsStore = create(
       try {
         set({ isLoading: true });
         const { data } = await api.post(`/shifts/${shiftId}/shift-assignments`, formData);
-        set(() => ({ assignees: [...data.assignees] }));
-        // navigate("/login")
+        set((state) => ({
+          assignees: [...state.assignees, ...data.assignees]
+        }));
       } catch (error) {
         console.log(error);
       } finally {
@@ -25,9 +26,8 @@ const useShiftAssignmentsStore = create(
     getShiftAssignees: async (shiftId) => {
       try {
         set({ isLoading: true });
-        const { data } = await api.post(`/shifts/${shiftId}/shift-assignees`);
+        const { data } = await api.get(`/shifts/${shiftId}/shift-assignees`);
         set(() => ({ assignees: [...data.assignees] }));
-        // navigate("/login")
       } catch (error) {
         console.log(error);
       } finally {

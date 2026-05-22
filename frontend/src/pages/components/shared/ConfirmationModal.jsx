@@ -4,14 +4,14 @@ const ConfirmationModal = ({ modal, setModal }) => {
 
   if (!modal) return null;
 
-  const { title, message, rejectButton, confirmButton } = modal || {};
+  const { title, message, rejectButton, confirmButton, onConfirm } = modal || {};
 
   const handleClose = () => {
     setModal(null);
   };
 
   const handleConfirm = () => {
-     modal.onConfirm?.();
+    onConfirm?.()
     setModal(null);
   };
 
@@ -23,12 +23,12 @@ const ConfirmationModal = ({ modal, setModal }) => {
   return (
     <>
       <dialog open className="modal text-center">
-        <div className="modal-box p-0">
-          <div className="bg-slate-500">
+        <div className="modal-box p-0 font-sans">
+          <div className="bg-ink-50 rounded-xl2 border border-ink-200">
             <div className="flex justify-between items-center p-4">
               <h3 className="font-bold ">{title}</h3>
               <IoClose
-                className="text-2xl text-gray-200 cursor-pointer"
+                className="text-2xl text-ink-500 cursor-pointer"
                 onClick={handleClose}
               />
             </div>
@@ -61,7 +61,7 @@ const ConfirmationModal = ({ modal, setModal }) => {
               {confirmButton && (
                 <button
                   type="submit"
-                  className="my-btn-primary w-fit bg-cyan-600 text-white "
+                  className="my-btn-primary w-fit text-white "
                   onClick={handleConfirm}
                 >
                   {confirmButton}
