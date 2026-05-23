@@ -34,14 +34,18 @@ public class ShiftAssignment {
     private User assignedBy;
 
     @Enumerated(EnumType.STRING)
-    ShiftAssignmentStatus status;
+    private ShiftAssignmentStatus status;
 
-    LocalDateTime assignedAt;
-    LocalDateTime removedAt;
+    private LocalDateTime assignedAt;
+    private LocalDateTime updatedAt;
+    private LocalDateTime removedAt;
 
     @PrePersist
     public void onAssign() {
         this.assignedAt = LocalDateTime.now();
+        this.status = ShiftAssignmentStatus.ASSIGNED;
     }
+
+
 
 }

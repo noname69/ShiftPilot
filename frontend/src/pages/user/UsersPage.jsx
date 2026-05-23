@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { Link } from "react-router";
-import Header from "../components/shared/Header";
 import Footer from "../components/shared/Footer";
 import useUserStore from "../../store/userStore";
 import useAuthStore from "../../store/authStore";
@@ -68,7 +67,6 @@ const UsersPage = () => {
 
   return (
     <div className="flex flex-col flex-1">
-      <Header />
       <main className="flex-1 px-5 lg:px-8 py-7 max-w-350 mx-auto w-full">
         <div className="flex flex-wrap items-end justify-between gap-4 mb-6">
           <div>

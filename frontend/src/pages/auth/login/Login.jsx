@@ -23,7 +23,7 @@ const Login = () => {
 
   return (
     <div className="flex min-h-full overflow-y-auto">
-      <div className="flex flex-col flex-1 justify-between bg-[#F4F4F2]">
+      <div className="flex flex-col flex-1 justify-between bg-ink-100">
         <Header />
         <main className="flex flex-col items-center">
           <div className="flex flex-col items-start w-[80%] sm:w-[50%] self-center">

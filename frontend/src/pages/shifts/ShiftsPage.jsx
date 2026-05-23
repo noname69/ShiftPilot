@@ -1,10 +1,12 @@
 import { useEffect } from "react";
 import { Link } from "react-router";
-import Header from "../components/shared/Header";
 import Footer from "../components/shared/Footer";
 import useShiftStore from "../../store/shiftStore";
 import useAuthStore from "../../store/authStore";
-import { FiEdit2, FiTrash2} from "react-icons/fi";
+import { FiEdit2, FiTrash2 } from "react-icons/fi";
+import { RiAddLargeLine } from "react-icons/ri";
+import { HiEye } from "react-icons/hi";
+
 
 const STATUS_CONFIG = {
   OPEN: {
@@ -76,7 +78,6 @@ const ShiftsPage = () => {
 
   return (
     <div className="flex flex-col flex-1">
-      <Header />
       <main className="flex-1 px-5 lg:px-8 py-7 max-w-350 mx-auto w-full">
         <div className="flex flex-wrap items-end justify-between gap-4 mb-6">
           <div>
@@ -145,13 +146,13 @@ const ShiftsPage = () => {
                     <th className="text-left font-medium px-4 py-2.5 hidden lg:table-cell">
                       Min. Staff
                     </th>
-                    <th className="text-left font-medium px-4 py-2.5">
+                    <th className="text-center font-medium px-4 py-2.5">
                       Status
                     </th>
                     <th className="text-left font-medium px-4 py-2.5 hidden xl:table-cell">
                       Created by
                     </th>
-                    <th className="text-right font-medium px-4 py-2.5">
+                    <th className="text-center font-medium px-4 py-2.5">
                       Actions
                     </th>
                   </tr>
@@ -186,18 +187,35 @@ const ShiftsPage = () => {
                       </td>
                       <td className="px-4 py-3 text-right">
                         <div className="inline-flex gap-1.5">
-                          <Link to={`/${role}/shifts/${shift.id}/edit`}>
-                            <button className="inline-flex items-center gap-1 text-[12px] font-medium bg-white border border-ink-200 hover:bg-ink-50 px-2.5 py-1 rounded-md text-ink-700 transition-colors">
-                              <FiEdit2 size={13} />
+                          {role !== "user" ? (
+                            <>
+                              <Link to={`/${role}/shifts/${shift.id}/edit`}>
+                                <button className="inline-flex items-center gap-1 text-[12px] font-medium bg-white border border-ink-200 hover:bg-ink-50 px-2.5 py-1 rounded-md text-ink-700 transition-colors">
+                                  <FiEdit2 size={13} />
+                                </button>
+                              </Link>
+
+                              <button
+                                onClick={() => handleDelete(shift.id, shift.title)}
+                                className="inline-flex items-center gap-1 text-[12px] font-medium bg-rose-soft hover:bg-rose-soft/80 border border-rose-ink/20 px-2.5 py-1 rounded-md text-rose-ink transition-colors"
+                              >
+                                <FiTrash2 size={13} />
+                              </button>
+
+                              <Link to={`/${role}/shifts/${shift.id}/assign-shift`}>
+                                <button className="inline-flex items-center gap-1 text-[12px] font-medium bg-green-50 border border-green-300 px-2.5 py-1 rounded-md text-green-800 transition-colors">
+                                  <RiAddLargeLine size={13} />
+                                </button>
+                              </Link>
+                            </>
+                          ) : null}
+                          <Link to={`/${role}/shifts/${shift.id}/shift-requests`}>
+                            <button
+                              className="inline-flex items-center gap-1 text-[12px] font-medium bg-blue-50 border border-blue-300 px-2.5 py-1 rounded-md text-blue-800 transition-colors mr-2"
+                            >
+                              <HiEye size={13} />
                             </button>
                           </Link>
-
-                          <button
-                            onClick={() => handleDelete(shift.id, shift.title)}
-                            className="inline-flex items-center gap-1 text-[12px] font-medium bg-rose-soft hover:bg-rose-soft/80 border border-rose-ink/20 px-2.5 py-1 rounded-md text-rose-ink transition-colors"
-                          >
-                            <FiTrash2 size={13} />
-                          </button>
                         </div>
                       </td>
                     </tr>

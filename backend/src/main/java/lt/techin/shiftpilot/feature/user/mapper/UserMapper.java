@@ -1,5 +1,7 @@
 package lt.techin.shiftpilot.feature.user.mapper;
 
+import lt.techin.shiftpilot.feature.shiftassignment.dto.AssigneeResponse;
+import lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignmentStatus;
 import lt.techin.shiftpilot.feature.user.dto.CreateUserRequest;
 import lt.techin.shiftpilot.feature.user.dto.UserResponse;
 import lt.techin.shiftpilot.feature.user.model.User;
@@ -29,6 +31,17 @@ public class UserMapper {
                 user.getEmail(),
                 user.getRole(),
                 user.getStatus()
+        );
+    }
+
+    public AssigneeResponse toAssigneeResponse(User user, ShiftAssignmentStatus status) {
+        return new AssigneeResponse(
+                user.getId(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getEmail(),
+                user.getRole(),
+                status
         );
     }
 

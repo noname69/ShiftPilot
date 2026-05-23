@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
-import Header from "../components/shared/Header";
 import Footer from "../components/shared/Footer";
 import ShiftForm from "./ShiftForm";
 import useShiftStore from "../../store/shiftStore";
@@ -36,7 +35,6 @@ const ShiftEditPage = () => {
   };
   return (
     <div className="flex flex-col flex-1">
-      <Header />
       <main className="flex-1 flex justify-center px-5 py-7">
         <div className="w-full max-w-130">
           <div className="mb-6">

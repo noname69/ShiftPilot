@@ -19,8 +19,6 @@ const useUserStore = create(
 
       try {
         const res = await getUsers();
-        console.log("API RESPONSE:", res);
-
         const users = res?.data ?? res;
 
         set({
