@@ -7,6 +7,7 @@ import lt.techin.shiftpilot.feature.shiftassignment.dto.ShiftAssignRequest;
 import lt.techin.shiftpilot.feature.shiftassignment.dto.ShiftAssignResponse;
 import lt.techin.shiftpilot.feature.shiftassignment.service.ShiftAssignmentService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -36,14 +37,14 @@ public class ShiftAssignmentController {
     }
 
     @GetMapping("/shifts/{shiftId}/shift-assignees")
-    ResponseEntity<ShiftAssignResponse> getShiftAssignees(@PathVariable Long shiftId){
+    public ResponseEntity<ShiftAssignResponse> getShiftAssignees(@PathVariable Long shiftId){
 
         ShiftAssignResponse response = shiftAssignmentService.getShiftAssignees(shiftId);
 
         return ResponseEntity.ok().body(response);
 
     }
-
+    
     @GetMapping("/users/me/shifts")
     public ResponseEntity<List<ShiftResponse>> getUserShifts(@AuthenticationPrincipal Jwt jwt) {
 

@@ -24,3 +24,8 @@ export const getShiftById = async (id) => {
 export const deleteShift = async (id) => {
   await api.delete(`/shifts/${id}`);
 };
+
+export const getUserShifts = async () => {
+  const response = await api.get(`/users/me/shifts`);
+  return response.data;
+}
