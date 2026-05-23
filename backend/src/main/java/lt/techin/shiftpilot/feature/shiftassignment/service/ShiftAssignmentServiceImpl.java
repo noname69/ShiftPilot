@@ -3,6 +3,8 @@ package lt.techin.shiftpilot.feature.shiftassignment.service;
 import lombok.RequiredArgsConstructor;
 import lt.techin.shiftpilot.exception.ShiftNotFoundException;
 import lt.techin.shiftpilot.exception.user.UserNotFoundException;
+import lt.techin.shiftpilot.feature.shift.dto.ShiftResponse;
+import lt.techin.shiftpilot.feature.shift.mapper.ShiftMapper;
 import lt.techin.shiftpilot.feature.shift.model.Shift;
 import lt.techin.shiftpilot.feature.shift.repository.ShiftRepository;
 import lt.techin.shiftpilot.feature.shiftassignment.dto.AssigneeResponse;
@@ -27,6 +29,7 @@ public class ShiftAssignmentServiceImpl implements ShiftAssignmentService{
     private final UserRepository userRepository;
     private final ShiftRepository shiftRepository;
     private final UserMapper userMapper;
+    private final ShiftMapper shiftMapper;
 
     @Override
     public ShiftAssignResponse assignShift(String username, ShiftAssignRequest request, Long shiftId) {
@@ -71,5 +74,19 @@ public class ShiftAssignmentServiceImpl implements ShiftAssignmentService{
                 .toList();
 
         return new ShiftAssignResponse(responses);
+    }
+
+    @Override
+    public List<ShiftResponse> getUserShifts(String username) {
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException(username));
+
+        List<ShiftAssignment> shiftAssignments = shiftAssignmentRepository.findByUser(user);
+
+        return shiftAssignments.stream()
+                .map(shiftAssignment -> shiftAssignment.getShift())
+                .map(shiftMapper::toResponse)
+                .toList();
     }
 }
