@@ -13,6 +13,8 @@ import java.util.List;
 @Repository
 public interface ShiftAssignmentRepository extends JpaRepository<ShiftAssignment, Long> {
 
+    List<ShiftAssignment> findByUser(User user);
+
     @Query("""
         select sa.user
         from ShiftAssignment sa
@@ -26,7 +28,6 @@ public interface ShiftAssignmentRepository extends JpaRepository<ShiftAssignment
     where sa.user.id = :userId
     and sa.shift.id = :shiftId
     """)
-
     ShiftAssignmentStatus findStatusByUserIdAndShiftId(
             @Param("userId") Long userId,
             @Param("shiftId") Long shiftId
