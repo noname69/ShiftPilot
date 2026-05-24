@@ -37,6 +37,8 @@ function App() {
             <Route path="users" element={<UsersPage />} />
             <Route path="shifts" element={<ShiftsPage />} />
             <Route path="shifts/:shiftId/shift-requests" element={<ShiftAssignmentRequests />} />
+            <Route path="shifts/:assigneeId/reschedule-request" element={<MySchedule />} />
+            
           </Route>
         </Route>
 
