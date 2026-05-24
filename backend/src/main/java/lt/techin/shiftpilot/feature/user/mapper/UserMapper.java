@@ -34,14 +34,16 @@ public class UserMapper {
         );
     }
 
-    public AssigneeResponse toAssigneeResponse(User user, ShiftAssignmentStatus status) {
+    public AssigneeResponse toAssigneeResponse(User user, ShiftAssignmentStatus status, Long assigneeId) {
         return new AssigneeResponse(
                 user.getId(),
                 user.getFirstName(),
                 user.getLastName(),
                 user.getEmail(),
                 user.getRole(),
-                status
+                status,
+                assigneeId
+
         );
     }
 
