@@ -2,7 +2,7 @@ package lt.techin.shiftpilot.feature.reschedulerequest.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import lt.techin.shiftpilot.exception.assignment.AssignmentNotFoundException;
+import lt.techin.shiftpilot.exception.assignment.*;
 import lt.techin.shiftpilot.exception.user.UserNotFoundException;
 import lt.techin.shiftpilot.feature.reschedulerequest.dto.CreateRescheduleRequestDto;
 import lt.techin.shiftpilot.feature.reschedulerequest.dto.RescheduleRequestResponseDto;
@@ -56,7 +56,7 @@ public class RescheduleRequestServiceImpl implements RescheduleRequestService {
                 );
 
         if (exists) {
-            throw new IllegalStateException("There is already an active reschedule request for these shifts");
+            throw new RescheduleRequestConflictException();
         }
 
         RescheduleRequest req = RescheduleRequest.builder()
@@ -78,20 +78,18 @@ public class RescheduleRequestServiceImpl implements RescheduleRequestService {
                                        ShiftAssignment targetAssignment) {
         // 1. Ownership check
         if (!requesterAssignment.getUser().getId().equals(requester.getId())) {
-            throw new IllegalArgumentException("You can only reschedule your own shift");
+            throw new ShiftOwnershipException();
         }
 
         // 2. Cannot swap with yourself
         if (requesterAssignment.getUser().getId()
                 .equals(targetAssignment.getUser().getId())) {
-            throw new IllegalArgumentException("Cannot reschedule with yourself");
+            throw new SelfRescheduleException();
         }
 
         if (requesterAssignment.getId()
                 .equals(targetAssignment.getId())) {
-            throw new IllegalArgumentException(
-                    "Cannot reschedule same assignment"
-            );
+            throw new SameAssignmentException(            );
         }
 
         LocalDateTime requesterStart = getShiftStartDateTime(requesterAssignment);
@@ -101,25 +99,23 @@ public class RescheduleRequestServiceImpl implements RescheduleRequestService {
         // 3. Prevent past shifts
 
         if (requesterStart.isBefore(now)) {
-            throw new IllegalArgumentException("Cannot reschedule past shifts");
+            throw new PastShiftException();
         }
 
         if (targetStart.isBefore(now)) {
-            throw new IllegalArgumentException("Target shift already started");
+            throw new TargetShiftStartedException();
         }
 
         // 4. Same assignment check
         if (requesterAssignment.getId().equals(targetAssignment.getId())) {
-            throw new IllegalArgumentException("Cannot reschedule same assignment");
+            throw new SameAssignmentException();
         }
 
         if (requesterAssignment.getUser().getId()
                 .equals(targetAssignment.getUser().getId())
                 && requesterAssignment.getShift().getId()
                 .equals(targetAssignment.getShift().getId())) {
-            throw new IllegalArgumentException(
-                    "Cannot reschedule identical shifts"
-            );
+            throw new IdenticalShiftException();
         }
     }
 
