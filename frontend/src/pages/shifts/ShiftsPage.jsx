@@ -6,6 +6,7 @@ import useAuthStore from "../../store/authStore";
 import { FiEdit2, FiTrash2 } from "react-icons/fi";
 import { RiAddLargeLine } from "react-icons/ri";
 import { HiEye } from "react-icons/hi";
+import { formatDate, formatTime } from "../../utils/formatDateTime";
 
 
 const STATUS_CONFIG = {
@@ -45,18 +46,6 @@ const StatusBadge = ({ status }) => {
       {cfg.label}
     </span>
   );
-};
-
-const formatTime = (t) => t?.slice(0, 5) ?? "";
-
-const formatDate = (d) => {
-  if (!d) return "";
-  const date = new Date(d + "T00:00:00");
-  return date.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
 };
 
 const ShiftsPage = () => {
