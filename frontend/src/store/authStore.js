@@ -9,20 +9,24 @@ const initialState = {
 };
 
 const useAuthStore = create(
-
   devtools((set) => ({
-
     user: initialState,
     isLoading: false,
     authMeIsLoading: true,
+    authError: null,
 
     loginUser: async (formData, navigate) => {
       try {
+        set({ authError: null });
+
         const { data } = await api.post(`/auth/login`, formData);
-        set(() => ({ user: { ...data } }));
-        navigate("/login")
+        set(() => ({ user: { ...data }, authError: null }));
+
+        navigate("/");
       } catch (error) {
-        console.log(error);
+        const message =
+          error?.response?.data?.message || "Invalid credentials";
+        set({ authError: message });
       }
     },
 
@@ -38,7 +42,7 @@ const useAuthStore = create(
     logoutUser: async (navigate) => {
       try {
         await api.post(`/auth/logout`);
-        set(() => ({ user: initialState }))
+        set(() => ({ user: initialState }));
         navigate("/login");
       } catch (error) {
         console.log(error);
@@ -47,7 +51,7 @@ const useAuthStore = create(
 
     fetchCurrentUser: async () => {
       try {
-        set({ isLoading: true })
+        set({ isLoading: true });
         const { data } = await api.get("/auth/me");
         set(() => ({ user: data }));
         set({ authMeIsLoading: false });
@@ -55,10 +59,9 @@ const useAuthStore = create(
         set({ user: initialState });
         set({ authMeIsLoading: false });
       } finally {
-        set({ isLoading: false })
+        set({ isLoading: false });
       }
     },
-
   })),
 );
 

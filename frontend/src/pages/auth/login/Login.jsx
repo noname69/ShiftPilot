@@ -6,8 +6,9 @@ import LoginAside from "./LoginAside";
 import useAuthStore from "../../../store/authStore";
 import { useNavigate } from "react-router";
 
-const Login = () => {
+import Alert from "../../components/shared/Alert";
 
+const Login = () => {
   const {
     register,
     handleSubmit,
@@ -15,7 +16,7 @@ const Login = () => {
   } = useForm();
 
   const navigate = useNavigate();
-  const { loginUser } = useAuthStore((state) => state);
+  const { loginUser, authError } = useAuthStore((state) => state);
 
   const onSubmit = (formData) => {
     loginUser(formData, navigate);
@@ -32,12 +33,21 @@ const Login = () => {
               <h1 className="text-4xl font-serif">
                 Sign in to <span className="italic">ShiftPilot</span>
               </h1>
-              <p className="my-para mb-6">The simplest way to schedule your team.</p>
+              <p className="my-para mb-6">
+                The simplest way to schedule your team.
+              </p>
             </div>
-
-            <form className="w-full flex flex-col gap-2" onSubmit={handleSubmit(onSubmit)}>
+{authError && (
+              <Alert type="error" message={authError} />
+            )}
+            <form
+              className="w-full flex flex-col gap-2"
+              onSubmit={handleSubmit(onSubmit)}
+            >
               <div className="flex flex-col items-start ">
-                <label htmlFor="username" className="my-para">Username</label>
+                <label htmlFor="username" className="my-para">
+                  Username
+                </label>
                 <InputField
                   register={register}
                   id="username"
@@ -72,7 +82,9 @@ const Login = () => {
               </div>
               <button className="my-btn-primary">Sign in</button>
             </form>
+            
           </div>
+          
         </main>
         <Footer />
       </div>
