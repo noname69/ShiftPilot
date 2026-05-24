@@ -1,6 +1,8 @@
 import { formatDate, formatTime } from "../../utils/formatDateTime";
 import { useState } from "react";
 
+import useRescheduleStore from "../../store/rescheduleStore";
+
 const STATUS_CONFIG = {
   OPEN: {
     bg: "bg-mint-soft",
@@ -52,19 +54,32 @@ const MyScheduleBody = ({ shift, isRescheduleMode, selectedShiftId, }) => {
   const [openSwap, setOpenSwap] = useState(false);
   const [reason, setReason] = useState("");
 
+  const { sendRescheduleRequest, isLoading } = useRescheduleStore(
+    (state) => state,
+  );
+
   const handleSend = async () => {
     if (!selectedShiftId) return;
     if (!reason.trim()) return;
 
     const payload = {
-      requesterAssignmentId: Number(selectedShiftId),
-      targetAssignmentId: assigneeId,
+      requesterAssignmentId: assigneeId,
+      targetAssignmentId: Number(selectedShiftId),
       reason: reason.trim(),
     };
 
     console.log("reschedule request", payload);
 
-    // await api.post("/shifts/reschedule", payload);
+    const result = await sendRescheduleRequest(payload);
+
+    if (result.success) {
+      setOpenSwap(false);
+      setReason("");
+
+      console.log("Request sent");
+    } else {
+      console.error(result.message);
+    }
   };
 
   return (
