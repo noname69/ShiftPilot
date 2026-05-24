@@ -51,7 +51,6 @@ public class RescheduleRequestController {
     ) {
         String username = getUsername(authentication);
 
-        // optional: check role here if needed
         return ResponseEntity.ok(
                 rescheduleRequestService.getAllRequests()
         );

@@ -21,22 +21,18 @@ public class RescheduleRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // User who created request
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "requester_id", nullable = false)
     private User requester;
 
-    // User with whom requester wants to swap
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "target_user_id", nullable = false)
     private User targetUser;
 
-    // Requester's assignment
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "requester_assignment_id", nullable = false)
     private ShiftAssignment requesterAssignment;
 
-    // Target user's assignment
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "target_assignment_id", nullable = false)
     private ShiftAssignment targetAssignment;

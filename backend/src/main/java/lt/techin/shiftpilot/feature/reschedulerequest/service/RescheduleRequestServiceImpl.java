@@ -76,12 +76,12 @@ public class RescheduleRequestServiceImpl implements RescheduleRequestService {
     private void validateCreateRequest(User requester,
                                        ShiftAssignment requesterAssignment,
                                        ShiftAssignment targetAssignment) {
-        // 1. Ownership check
+        // Ownership check
         if (!requesterAssignment.getUser().getId().equals(requester.getId())) {
             throw new ShiftOwnershipException();
         }
 
-        // 2. Cannot swap with yourself
+        // Cannot swap with yourself
         if (requesterAssignment.getUser().getId()
                 .equals(targetAssignment.getUser().getId())) {
             throw new SelfRescheduleException();
@@ -96,8 +96,7 @@ public class RescheduleRequestServiceImpl implements RescheduleRequestService {
         LocalDateTime targetStart = getShiftStartDateTime(targetAssignment);
         LocalDateTime now = LocalDateTime.now();
 
-        // 3. Prevent past shifts
-
+        // Prevent past shifts
         if (requesterStart.isBefore(now)) {
             throw new PastShiftException();
         }
@@ -106,7 +105,7 @@ public class RescheduleRequestServiceImpl implements RescheduleRequestService {
             throw new TargetShiftStartedException();
         }
 
-        // 4. Same assignment check
+        // Same assignment check
         if (requesterAssignment.getId().equals(targetAssignment.getId())) {
             throw new SameAssignmentException();
         }
