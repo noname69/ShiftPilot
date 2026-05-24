@@ -2,22 +2,61 @@ package lt.techin.shiftpilot.feature.reschedulerequest.mapper;
 
 import lt.techin.shiftpilot.feature.reschedulerequest.dto.RescheduleRequestResponseDto;
 import lt.techin.shiftpilot.feature.reschedulerequest.model.RescheduleRequest;
+import lt.techin.shiftpilot.feature.shift.dto.ShiftSummary;
+import lt.techin.shiftpilot.feature.shift.model.Shift;
+import lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignment;
+import lt.techin.shiftpilot.feature.user.dto.UserSummary;
+import lt.techin.shiftpilot.feature.user.model.User;
 
 public class RescheduleRequestMapper {
 
-    public static RescheduleRequestResponseDto toResponse(RescheduleRequest request) {
+    public static RescheduleRequestResponseDto toResponse(
+            RescheduleRequest request
+    ) {
+
         return new RescheduleRequestResponseDto(
+
                 request.getId(),
-                request.getRequester().getId(),
-                request.getTargetUser().getId(),
-                request.getRequesterAssignment().getId(),
-                request.getTargetAssignment().getId(),
+
+                toUserSummary(request.getRequester()),
+                toUserSummary(request.getTargetUser()),
+
+                toShiftSummary(request.getRequesterAssignment()),
+                toShiftSummary(request.getTargetAssignment()),
+
                 request.getStatus(),
+
                 request.getReason(),
+
                 request.getCreatedAt(),
                 request.getTargetRespondedAt(),
                 request.getManagerRespondedAt(),
                 request.getCompletedAt()
+        );
+    }
+
+    private static UserSummary toUserSummary(User user) {
+        return new UserSummary(
+                user.getId(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getEmail()
+        );
+    }
+
+    private static ShiftSummary toShiftSummary(
+            ShiftAssignment assignment
+    ) {
+
+        Shift shift = assignment.getShift();
+
+        return new ShiftSummary(
+                assignment.getId(),
+                shift.getId(),
+                shift.getTitle(),
+                shift.getShiftDate(),
+                shift.getStartTime(),
+                shift.getEndTime()
         );
     }
 }

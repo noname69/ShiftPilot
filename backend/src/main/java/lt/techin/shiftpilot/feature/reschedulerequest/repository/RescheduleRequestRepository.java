@@ -12,4 +12,6 @@ public interface RescheduleRequestRepository extends JpaRepository<RescheduleReq
             Long targetAssignmentId,
             List<RescheduleRequestStatus> statuses
     );
+    List<RescheduleRequest> findAllByOrderByCreatedAtDesc();
+    List<RescheduleRequest> findByRequesterIdOrTargetUserIdOrderByCreatedAtDesc(Long requesterId, Long targetId);
 }

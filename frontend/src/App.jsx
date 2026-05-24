@@ -46,6 +46,7 @@ function App() {
           <Route path="manager" element={<ManagerPanel />} >
             <Route index element={<Dashboard />} />
             <Route path="schedule" element={<Schedule />} />
+            <Route path="requests" element={<Requests />} />
             <Route path="shifts" element={<ShiftsPage />} />
             <Route path="shifts/new" element={<ShiftCreatePage />} />
             <Route path="shifts/:id/edit" element={<ShiftEditPage />} />

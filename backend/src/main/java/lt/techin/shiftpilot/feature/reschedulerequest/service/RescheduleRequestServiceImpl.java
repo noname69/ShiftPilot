@@ -125,4 +125,33 @@ public class RescheduleRequestServiceImpl implements RescheduleRequestService {
                 assignment.getShift().getStartTime()
         );
     }
+
+    @Override
+    @Transactional()
+    public List<RescheduleRequestResponseDto> getAllRequests() {
+
+        return rescheduleRequestRepository
+                .findAllByOrderByCreatedAtDesc()
+                .stream()
+                .map(RescheduleRequestMapper::toResponse)
+                .toList();
+    }
+
+    @Override
+    @Transactional()
+
+    public List<RescheduleRequestResponseDto> getMyRequests(String username) {
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException(username));
+
+        return rescheduleRequestRepository
+                .findByRequesterIdOrTargetUserIdOrderByCreatedAtDesc(
+                        user.getId(),
+                        user.getId()
+                )
+                .stream()
+                .map(RescheduleRequestMapper::toResponse)
+                .toList();
+    }
 }

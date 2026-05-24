@@ -58,6 +58,11 @@ export const ManagerNavigation = [
     href: "/manager/users",
     icon: icons.employees
   },
+    {
+    name: "Requests",
+    href: "/manager/requests",
+    icon: icons.requests
+  },
 ]
 
 export const AdminNavigation = [

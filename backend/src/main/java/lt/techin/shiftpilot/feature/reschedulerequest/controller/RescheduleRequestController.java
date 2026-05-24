@@ -6,11 +6,11 @@ import lt.techin.shiftpilot.feature.reschedulerequest.dto.RescheduleRequestRespo
 import lt.techin.shiftpilot.feature.reschedulerequest.service.RescheduleRequestService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/reschedule-requests")
@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class RescheduleRequestController {
     private final RescheduleRequestService rescheduleRequestService;
 
-    // 1. Create request
     @PostMapping
     public ResponseEntity<RescheduleRequestResponseDto> create(
             Authentication authentication,
@@ -31,6 +30,31 @@ public class RescheduleRequestController {
                 .body(
                         rescheduleRequestService.createRequest(request, username)
                 );
+    }
+
+    @GetMapping("/my")
+    public ResponseEntity<List<RescheduleRequestResponseDto>> getAll(
+            Authentication authentication
+    ) {
+
+        String username = getUsername(authentication);
+
+        return ResponseEntity.ok(
+                rescheduleRequestService.getMyRequests(username)
+        );
+    }
+
+    @PreAuthorize("hasRole('MANAGER')")
+    @GetMapping("/all")
+    public ResponseEntity<List<RescheduleRequestResponseDto>> getAllRequests(
+            Authentication authentication
+    ) {
+        String username = getUsername(authentication);
+
+        // optional: check role here if needed
+        return ResponseEntity.ok(
+                rescheduleRequestService.getAllRequests()
+        );
     }
 
     private String getUsername(Authentication authentication) {
