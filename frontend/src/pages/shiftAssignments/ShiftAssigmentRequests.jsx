@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 import Footer from "../components/shared/Footer";
 import ShiftAssignmentRequestsBody from "./ShiftAssigmentRequestsBody";
 import useShiftAssignmentsStore from "../../store/shiftAssignmentsStore";
@@ -7,26 +8,30 @@ import ConfirmationModal from "../components/shared/ConfirmationModal"
 
 const ShiftAssignmentRequests = () => {
   const { shiftId } = useParams();
-  const { getShiftAssignees, assignees } = useShiftAssignmentsStore(state => state);
+  const { getShiftAssignees, assignees, removeAssignment } = useShiftAssignmentsStore(state => state);
   const [modal, setModal] = useState(null);
-
-  // Modala palieku del pvz:
-  // const handleAddToShift = () => {
-  //   setModal({
-  //     title: "Add employees to shift",
-  //     message: "Are you sure you want to add selected employees to shift?",
-  //     confirmButton: "Add",
-  //     onConfirm: () => {
-  //       // onConfirm function() i zustand store.
-  //     }
-  //   })
-  // }
 
   useEffect(() => {
     if (shiftId) {
       getShiftAssignees(shiftId);
     }
   }, [getShiftAssignees, shiftId]);
+
+  const handleRemove = (userId, firstName, lastName) => {
+    setModal({
+      title: "Remove employee from shift",
+      message: `Remove ${firstName} ${lastName} from this shift?`,
+      rejectButton: "Remove",
+      onReject: async () => {
+        try {
+          await removeAssignment(shiftId, userId);
+          toast.success(`${firstName} ${lastName} removed from shift`);
+        } catch (error) {
+          toast.error(error?.response?.data?.message ?? "Failed to remove employee");
+        }
+      },
+    });
+  };
 
   return (
     <div className="flex flex-col flex-1">
@@ -54,6 +59,7 @@ const ShiftAssignmentRequests = () => {
               <ShiftAssignmentRequestsBody
                 key={assignee.id}
                 assignee={assignee}
+                onRemove={handleRemove}
               />)}
           </table>
         </div>
