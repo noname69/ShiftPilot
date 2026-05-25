@@ -67,7 +67,6 @@ public class ShiftAssignmentServiceImpl implements ShiftAssignmentService{
             shiftAssignment.setAssignedBy(manager);
             shiftAssignment.setUser(user);
             shiftAssignment.setStatus(ShiftAssignmentStatus.ASSIGNED);
-<<<<<<< HEAD
 
             ShiftAssignment saved = shiftAssignmentRepository.save(shiftAssignment);
 
@@ -80,13 +79,11 @@ public class ShiftAssignmentServiceImpl implements ShiftAssignmentService{
                     saved.getStatus(),
                     saved.getId()
             );
-=======
             shiftAssignment.setRemovedAt(null);
             shiftAssignment.setUpdatedAt(LocalDateTime.now());
             if (isNew) {
                 shiftAssignment.setAssignedAt(LocalDateTime.now());
             }
->>>>>>> origin/main
 
             assignedUsers.add(response);
         }
@@ -169,6 +166,6 @@ public class ShiftAssignmentServiceImpl implements ShiftAssignmentService{
 
         shiftAssignmentRepository.save(assignment);
 
-        return userMapper.toAssigneeResponse(assignment.getUser(), ShiftAssignmentStatus.REMOVED);
+        return userMapper.toAssigneeResponse(assignment.getUser(), ShiftAssignmentStatus.REMOVED, assignment.getUser().getId());
     }
 }

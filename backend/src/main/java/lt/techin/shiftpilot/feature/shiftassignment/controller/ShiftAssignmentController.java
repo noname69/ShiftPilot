@@ -2,17 +2,12 @@ package lt.techin.shiftpilot.feature.shiftassignment.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lt.techin.shiftpilot.feature.shift.dto.ShiftResponse;
-<<<<<<< HEAD
 import lt.techin.shiftpilot.feature.shiftassignment.dto.MyAssigneeResponse;
-=======
 import lt.techin.shiftpilot.feature.shiftassignment.dto.AssigneeResponse;
->>>>>>> origin/main
 import lt.techin.shiftpilot.feature.shiftassignment.dto.ShiftAssignRequest;
 import lt.techin.shiftpilot.feature.shiftassignment.dto.ShiftAssignResponse;
 import lt.techin.shiftpilot.feature.shiftassignment.service.ShiftAssignmentService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;

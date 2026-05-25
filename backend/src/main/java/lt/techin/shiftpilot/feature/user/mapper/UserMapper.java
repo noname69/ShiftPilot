@@ -42,7 +42,6 @@ public class UserMapper {
                 user.getRole(),
                 status,
                 assigneeId
-
         );
     }
 

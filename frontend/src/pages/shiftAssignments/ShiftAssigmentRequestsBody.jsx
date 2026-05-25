@@ -1,11 +1,8 @@
-<<<<<<< HEAD
 import { IoIosSwap } from "react-icons/io";
 import { Link } from "react-router";
 import useAuthStore from "../../store/authStore";
 
-=======
 import { FiUserMinus } from "react-icons/fi";
->>>>>>> origin/main
 
 const STATUS_CONFIG = {
   ASSIGNED: {
@@ -41,8 +38,7 @@ const StatusBadge = ({ status }) => {
   );
 };
 
-<<<<<<< HEAD
-const ShiftAssignmentRequestsBody = ({ assignee }) => {
+const ShiftAssignmentRequestsBody = ({ assignee, onRemove }) => {
   const role = useAuthStore((state) => state.user.role);
   const { firstName, lastName, weeklyHours, email, status, assigneeId } = assignee || {};
 
@@ -55,11 +51,6 @@ const ShiftAssignmentRequestsBody = ({ assignee }) => {
               {firstName?.[0]}
               {lastName?.[0]}
             </div>
-=======
-const ShiftAssignmentRequestsBody = ({ assignee, onRemove }) => {
-
-	const { id, firstName, lastName, weeklyHours, email, status } = assignee || {};
->>>>>>> origin/main
 
             <div className="font-medium text-ink-900">
               {firstName} {lastName}
@@ -78,50 +69,30 @@ const ShiftAssignmentRequestsBody = ({ assignee, onRemove }) => {
         <td className="px-4 py-3 text-ink-500 text-[12px]">{email}</td>
 
         <td className="px-4 py-3 flex justify-center">
-          <Link to={`/${role}/shifts/${assigneeId}/reschedule-request`} state={{ assignee }}>
-			<button
-				className="inline-flex items-center gap-1 text-[12px] font-medium bg-mint-soft hover:bg-mint-soft/80 border border-mint-ink/20 px-2.5 py-1 rounded-md text-mint-ink transition-colors"
-			>
-				<IoIosSwap size={13} />
-			</button>
+          {status === "ASSIGNED" && (
+            <button
+              onClick={() => onRemove(assigneeId, firstName, lastName)}
+              className="inline-flex items-center gap-1 text-[12px] font-medium bg-rose-soft hover:bg-rose-soft/80 border border-rose-ink/20 px-2.5 py-1 rounded-md text-rose-ink transition-colors"
+            >
+              <FiUserMinus size={13} />
+              Remove
+            </button>
+          )}
+        </td>
 
-		  </Link>
+        <td className="px-4 py-3 flex justify-center">
+          <Link to={`/${role}/shifts/${assigneeId}/reschedule-request`} state={{ assignee }}>
+            <button
+              className="inline-flex items-center gap-1 text-[12px] font-medium bg-mint-soft hover:bg-mint-soft/80 border border-mint-ink/20 px-2.5 py-1 rounded-md text-mint-ink transition-colors"
+            >
+              <IoIosSwap size={13} />
+            </button>
+
+          </Link>
         </td>
       </tr>
     </tbody>
   );
 };
 
-<<<<<<< HEAD
-export default ShiftAssignmentRequestsBody;
-=======
-				<td className="px-4 py-3 text-center">
-					<StatusBadge status={status} />
-				</td>
-
-				<td className="px-4 py-3 font-mono text-[12px] text-ink-700 text-center">
-					<p className="justify-center">{weeklyHours ?? 0}h</p>
-				</td>
-
-				<td className="px-4 py-3 text-ink-500 text-[12px]">
-					{email}
-				</td>
-
-				<td className="px-4 py-3 flex justify-center">
-					{status === "ASSIGNED" && (
-						<button
-							onClick={() => onRemove(id, firstName, lastName)}
-							className="inline-flex items-center gap-1 text-[12px] font-medium bg-rose-soft hover:bg-rose-soft/80 border border-rose-ink/20 px-2.5 py-1 rounded-md text-rose-ink transition-colors"
-						>
-							<FiUserMinus size={13} />
-							Remove
-						</button>
-					)}
-				</td>
-			</tr>
-		</tbody>
-	)
-}
-
 export default ShiftAssignmentRequestsBody
->>>>>>> origin/main
