@@ -29,13 +29,11 @@ public class AuthController {
 
     private final AuthService authService;
 
-    // LOGIN
     @PostMapping("/login")
     public AuthResponse login(@Valid @RequestBody LoginRequest request, HttpServletResponse response) {
         return authService.login(request.username(), request.password(), response);
     }
 
-    // REFRESH TOKEN
     @PostMapping("/refresh")
     public AuthResponse refresh(@RequestBody RefreshTokenRequest request, HttpServletResponse response) {
         return authService.refreshToken(request.refreshToken(), response);

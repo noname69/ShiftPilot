@@ -5,7 +5,7 @@ import lt.techin.shiftpilot.feature.swaprequest.dto.SwapRequestResponse;
 
 import java.util.List;
 
-public interface RescheduleRequestService {
+public interface SwapRequestService {
     SwapRequestResponse createRequest(
             CreateSwapRequest request,
             String requesterUsername

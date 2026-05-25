@@ -6,7 +6,7 @@ import lt.techin.shiftpilot.feature.user.dto.UserSummary;
 
 import java.time.LocalDateTime;
 
-public record RescheduleRequestResponseDto(
+public record SwapRequestResponse(
         Long id,
 
         UserSummary requester,
@@ -17,11 +17,11 @@ public record RescheduleRequestResponseDto(
 
         SwapRequestStatus status,
 
-        String reason,
+        //String reason,
 
         LocalDateTime createdAt,
         LocalDateTime targetRespondedAt,
-        LocalDateTime managerRespondedAt,
+        //LocalDateTime managerRespondedAt,
         LocalDateTime completedAt
 ) {
 }

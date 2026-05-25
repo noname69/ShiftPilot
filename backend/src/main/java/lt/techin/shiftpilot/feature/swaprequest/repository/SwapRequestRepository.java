@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface RescheduleRequestRepository extends JpaRepository<SwapRequest, Long> {
+public interface SwapRequestRepository extends JpaRepository<SwapRequest, Long> {
     boolean existsByRequesterAssignmentIdAndTargetAssignmentIdAndStatusIn(
             Long requesterAssignmentId,
             Long targetAssignmentId,

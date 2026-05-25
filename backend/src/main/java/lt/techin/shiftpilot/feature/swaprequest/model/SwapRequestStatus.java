@@ -1,6 +1,6 @@
-package lt.techin.shiftpilot.feature.reschedulerequest.model;
+package lt.techin.shiftpilot.feature.swaprequest.model;
 
-public enum RescheduleRequestStatus {
+public enum SwapRequestStatus {
     PENDING_TARGET_APPROVAL,
     TARGET_REJECTED,
 

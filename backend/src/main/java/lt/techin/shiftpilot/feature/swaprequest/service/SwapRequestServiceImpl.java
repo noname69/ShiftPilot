@@ -22,7 +22,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class RescheduleRequestServiceImpl implements RescheduleRequestService {
+public class SwapRequestServiceImpl implements SwapRequestService {
 
     private final SwapRequestRepository swapRequestRepository;
     private final ShiftAssignmentRepository shiftAssignmentRepository;
@@ -56,15 +56,16 @@ public class RescheduleRequestServiceImpl implements RescheduleRequestService {
                 );
 
         if (exists) {
-            throw new RescheduleRequestConflictException();
+            throw new SwapRequestConflictException();
         }
 
         SwapRequest req = SwapRequest.builder()
+                .rescheduleId(1L)
                 .requester(requester)
                 .targetUser(targetAssignment.getUser())
                 .requesterAssignment(requesterAssignment)
                 .targetAssignment(targetAssignment)
-                .reason(request.reason())
+                //.reason(request.reason())
                 .status(SwapRequestStatus.PENDING_TARGET_APPROVAL)
                 .build();
 

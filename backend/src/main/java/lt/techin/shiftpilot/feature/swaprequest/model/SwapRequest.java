@@ -1,25 +1,30 @@
-package lt.techin.shiftpilot.feature.reschedulerequest.model;
+package lt.techin.shiftpilot.feature.swaprequest.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import lt.techin.shiftpilot.feature.shift.model.Shift;
 import lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignment;
 import lt.techin.shiftpilot.feature.user.model.User;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "reschedule_requests")
+@Table(name = "swap_requests")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RescheduleRequest {
+public class SwapRequest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "reschedule_id")
+//    private User reschedule;
+    @Column(name = "reschedule_id")
+    private Long rescheduleId;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "requester_id", nullable = false)
@@ -39,13 +44,13 @@ public class RescheduleRequest {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private RescheduleRequestStatus status;
+    private SwapRequestStatus status;
 
-    @Column(length = 500)
-    private String reason;
+//    @Column(length = 500)
+//    private String reason;
 
     private LocalDateTime targetRespondedAt;
-    private LocalDateTime managerRespondedAt;
+//    private LocalDateTime managerRespondedAt;
     private LocalDateTime createdAt;
     private LocalDateTime completedAt;
 
@@ -54,7 +59,7 @@ public class RescheduleRequest {
         createdAt = LocalDateTime.now();
 
         if (status == null) {
-            status = RescheduleRequestStatus.PENDING_TARGET_APPROVAL;
+            status = SwapRequestStatus.PENDING_TARGET_APPROVAL;
         }
     }
 }
