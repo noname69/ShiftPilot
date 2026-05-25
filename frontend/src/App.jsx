@@ -18,6 +18,7 @@ import Dashboard from "./pages/dashboard/Dashboard";
 import Requests from "./pages/Requests/Requests";
 import ShiftAssignments from "./pages/shiftAssignments/ShiftAssignments";
 import ShiftAssignmentRequests from "./pages/shiftAssignments/ShiftAssigmentRequests";
+import { Toaster } from "react-hot-toast";
 
 function App() {
   return (
@@ -74,6 +75,7 @@ function App() {
         <Route path="*" element={<Navigate to="/login" />} />
 
       </Routes>
+      <Toaster position="bottom-center"/>
     </AuthProvider>
   );
 }

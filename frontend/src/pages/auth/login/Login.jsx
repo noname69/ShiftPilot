@@ -11,6 +11,7 @@ const Login = () => {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm();
 
@@ -18,7 +19,7 @@ const Login = () => {
   const { loginUser } = useAuthStore((state) => state);
 
   const onSubmit = (formData) => {
-    loginUser(formData, navigate);
+    loginUser(formData, navigate, reset);
   };
 
   return (
