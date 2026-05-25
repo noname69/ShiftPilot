@@ -1,4 +1,7 @@
 import { formatDate, formatTime } from "../../utils/formatDateTime";
+import { useState } from "react";
+
+import useRescheduleStore from "../../store/rescheduleStore";
 
 const STATUS_CONFIG = {
   OPEN: {
@@ -39,9 +42,45 @@ const StatusBadge = ({ status }) => {
   );
 };
 
-const MyScheduleBody = ({ shift }) => {
+const MyScheduleBody = ({ shift, isRescheduleMode, selectedShiftId, }) => {
 
-  const { id, title, description, shiftDate, startTime, endTime, minEmployees, status, createdByUsername } = shift;
+  const { id, 
+    title, 
+    description, 
+    shiftDate, 
+    startTime, 
+    endTime, minEmployees, status, createdByUsername, assigneeId } = shift;
+
+  const [openSwap, setOpenSwap] = useState(false);
+  const [reason, setReason] = useState("");
+
+  const { sendRescheduleRequest, isLoading } = useRescheduleStore(
+    (state) => state,
+  );
+
+  const handleSend = async () => {
+    if (!selectedShiftId) return;
+    if (!reason.trim()) return;
+
+    const payload = {
+      requesterAssignmentId: assigneeId,
+      targetAssignmentId: Number(selectedShiftId),
+      reason: reason.trim(),
+    };
+
+    console.log("reschedule request", payload);
+
+    const result = await sendRescheduleRequest(payload);
+
+    if (result.success) {
+      setOpenSwap(false);
+      setReason("");
+
+      console.log("Request sent");
+    } else {
+      console.error(result.message);
+    }
+  };
 
   return (
       <tbody className="divide-y divide-ink-100">
@@ -72,9 +111,49 @@ const MyScheduleBody = ({ shift }) => {
             {createdByUsername}
           </td>
           <td className="px-4 py-3 text-right">
-            <div className="inline-flex gap-1.5">
-            </div>
-          </td>
+  <div className="inline-flex flex-col gap-2 items-end">
+
+    {!isRescheduleMode ? (
+      <span className="text-ink-400 text-[12px]"></span>
+    ) : !openSwap ? (
+      <button
+        onClick={() => setOpenSwap(true)}
+        className="inline-flex items-center text-[12px] font-medium bg-mint-soft hover:bg-mint-soft/80 border border-mint-ink/20 px-2.5 py-1 rounded-md text-mint-ink transition-colors"
+      >
+        Send
+      </button>
+    ) : (
+      <div className="flex flex-col gap-2 w-60">
+        <textarea
+          value={reason}
+          onChange={(e) => setReason(e.target.value)}
+          placeholder="Reason for swap..."
+          className="w-full text-[12px] border border-ink-200 rounded-md p-2 resize-none focus:outline-none focus:ring-1 focus:ring-mint-ink"
+          rows={2}
+        />
+
+        <div className="flex justify-end gap-2">
+          <button
+            onClick={() => {
+              setOpenSwap(false);
+              setReason("");
+            }}
+            className="text-[12px] px-2 py-1 text-ink-500"
+          >
+            Cancel
+          </button>
+
+          <button
+            onClick={handleSend}
+            className="text-[12px] px-2 py-1 rounded-md bg-mint-ink text-white hover:bg-mint-ink/90"
+          >
+            Confirm
+          </button>
+        </div>
+      </div>
+    )}
+  </div>
+</td>
         </tr>
       </tbody>
   )

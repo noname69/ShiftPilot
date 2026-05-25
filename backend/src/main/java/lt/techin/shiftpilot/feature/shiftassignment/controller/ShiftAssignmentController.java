@@ -3,6 +3,7 @@ package lt.techin.shiftpilot.feature.shiftassignment.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lt.techin.shiftpilot.feature.shift.dto.ShiftResponse;
+import lt.techin.shiftpilot.feature.shiftassignment.dto.MyAssigneeResponse;
 import lt.techin.shiftpilot.feature.shiftassignment.dto.ShiftAssignRequest;
 import lt.techin.shiftpilot.feature.shiftassignment.dto.ShiftAssignResponse;
 import lt.techin.shiftpilot.feature.shiftassignment.service.ShiftAssignmentService;
@@ -46,11 +47,11 @@ public class ShiftAssignmentController {
     }
     
     @GetMapping("/users/me/shifts")
-    public ResponseEntity<List<ShiftResponse>> getUserShifts(@AuthenticationPrincipal Jwt jwt) {
+    public ResponseEntity<List<MyAssigneeResponse>> getUserShifts(@AuthenticationPrincipal Jwt jwt) {
 
         String username = jwt.getSubject();
 
-        List<ShiftResponse> responses = shiftAssignmentService.getUserShifts(username);
+        List<MyAssigneeResponse> responses = shiftAssignmentService.getUserShifts(username);
 
         return ResponseEntity.ok().body(responses);
 

@@ -1,11 +1,9 @@
 package lt.techin.shiftpilot.feature.reschedulerequest.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lt.techin.shiftpilot.feature.shift.model.Shift;
+import lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignment;
 import lt.techin.shiftpilot.feature.user.model.User;
 
 import java.time.LocalDateTime;
@@ -14,6 +12,7 @@ import java.time.LocalDateTime;
 @Table(name = "reschedule_requests")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class RescheduleRequest {
@@ -22,28 +21,40 @@ public class RescheduleRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "employee_id", nullable = false)
-    private User user;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "requester_id", nullable = false)
+    private User requester;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "shift_id", nullable = false)
-    private Shift shift;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "target_user_id", nullable = false)
+    private User targetUser;
 
-    private String reason;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "requester_assignment_id", nullable = false)
+    private ShiftAssignment requesterAssignment;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "target_assignment_id", nullable = false)
+    private ShiftAssignment targetAssignment;
 
     @Enumerated(EnumType.STRING)
-    private RequestStatus status;
+    @Column(nullable = false)
+    private RescheduleRequestStatus status;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "revieved_bu_user_id")
-    private User reviewedBy;
+    @Column(length = 500)
+    private String reason;
 
-    LocalDateTime createdAt;
-    LocalDateTime reviewedAt;
+    private LocalDateTime targetRespondedAt;
+    private LocalDateTime managerRespondedAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime completedAt;
 
     @PrePersist
-    public void onCreate() {
-        this.createdAt = LocalDateTime.now();
+    public void prePersist() {
+        createdAt = LocalDateTime.now();
+
+        if (status == null) {
+            status = RescheduleRequestStatus.PENDING_TARGET_APPROVAL;
+        }
     }
 }

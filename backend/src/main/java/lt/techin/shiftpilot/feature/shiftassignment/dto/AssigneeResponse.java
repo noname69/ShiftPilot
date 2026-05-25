@@ -17,4 +17,5 @@ public class AssigneeResponse {
     private String email;
     private UserRole role;
     private ShiftAssignmentStatus status;
+    private Long assigneeId;
 }
