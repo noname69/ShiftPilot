@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import useRescheduleRequestStore from "../../store/rescheduleStore";
+import useSwapRequestStore from "../../store/swapStore";
 import RequestRow from "./RequestRow";
 import useAuthStore from "../../store/authStore";
 
@@ -10,7 +10,7 @@ const Requests = () => {
     fetchAllRequests,
     respondAsTarget,
     respondAsManager,
-  } = useRescheduleRequestStore((state) => state);
+  } = useSwapRequestStore((state) => state);
 
   const { user } = useAuthStore((state) => state);
 
@@ -21,13 +21,14 @@ const Requests = () => {
   const isAdmin = role === "ADMIN";
 
   const loadRequests = () => {
-    return role === "MANAGER" || "ADMIN" ? fetchAllRequests() : fetchMyRequests();
+    return role === "MANAGER" || role === "ADMIN"
+      ? fetchAllRequests()
+      : fetchMyRequests();
   };
 
   useEffect(() => {
     loadRequests();
   }, [role]);
-
 
   return (
     <div className="px-5 lg:px-8 py-7 max-w-[1300px] mx-auto">

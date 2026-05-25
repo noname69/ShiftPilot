@@ -38,7 +38,7 @@ function App() {
             <Route path="users" element={<UsersPage />} />
             <Route path="shifts" element={<ShiftsPage />} />
             <Route path="shifts/:shiftId/shift-requests" element={<ShiftAssignmentRequests />} />
-            <Route path="shifts/:assigneeId/reschedule-request" element={<MySchedule />} />
+            <Route path="shifts/:assigneeId/swap-request" element={<MySchedule />} />
             
           </Route>
         </Route>
@@ -56,7 +56,7 @@ function App() {
             <Route path="users/:id/edit" element={<UserEditPage />} />
             <Route path="shifts/:shiftId/assign-shift" element={<ShiftAssignments />} />
             <Route path="shifts/:shiftId/shift-requests" element={<ShiftAssignmentRequests />} />
-            <Route path="shifts/:assigneeId/reschedule-request" element={<MySchedule />} />
+            <Route path="shifts/:assigneeId/swap-request" element={<MySchedule />} />
 
           </Route>
         </Route>

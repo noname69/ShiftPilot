@@ -1,12 +1,12 @@
-package lt.techin.shiftpilot.feature.reschedulerequest.dto;
+package lt.techin.shiftpilot.feature.swaprequest.dto;
 
-import lt.techin.shiftpilot.feature.reschedulerequest.model.RescheduleRequestStatus;
+import lt.techin.shiftpilot.feature.swaprequest.model.SwapRequestStatus;
 import lt.techin.shiftpilot.feature.shift.dto.ShiftSummary;
 import lt.techin.shiftpilot.feature.user.dto.UserSummary;
 
 import java.time.LocalDateTime;
 
-public record RescheduleRequestResponseDto(
+public record SwapRequestResponse(
         Long id,
 
         UserSummary requester,
@@ -15,7 +15,7 @@ public record RescheduleRequestResponseDto(
         ShiftSummary requesterShift,
         ShiftSummary targetShift,
 
-        RescheduleRequestStatus status,
+        SwapRequestStatus status,
 
         String reason,
 

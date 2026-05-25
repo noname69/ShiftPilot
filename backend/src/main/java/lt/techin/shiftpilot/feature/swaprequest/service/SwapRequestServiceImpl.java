@@ -1,15 +1,15 @@
-package lt.techin.shiftpilot.feature.reschedulerequest.service;
+package lt.techin.shiftpilot.feature.swaprequest.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lt.techin.shiftpilot.exception.assignment.*;
 import lt.techin.shiftpilot.exception.user.UserNotFoundException;
-import lt.techin.shiftpilot.feature.reschedulerequest.dto.CreateRescheduleRequestDto;
-import lt.techin.shiftpilot.feature.reschedulerequest.dto.RescheduleRequestResponseDto;
-import lt.techin.shiftpilot.feature.reschedulerequest.mapper.RescheduleRequestMapper;
-import lt.techin.shiftpilot.feature.reschedulerequest.model.RescheduleRequest;
-import lt.techin.shiftpilot.feature.reschedulerequest.model.RescheduleRequestStatus;
-import lt.techin.shiftpilot.feature.reschedulerequest.repository.RescheduleRequestRepository;
+import lt.techin.shiftpilot.feature.swaprequest.dto.CreateSwapRequest;
+import lt.techin.shiftpilot.feature.swaprequest.dto.SwapRequestResponse;
+import lt.techin.shiftpilot.feature.swaprequest.mapper.SwapRequestMapper;
+import lt.techin.shiftpilot.feature.swaprequest.model.SwapRequest;
+import lt.techin.shiftpilot.feature.swaprequest.model.SwapRequestStatus;
+import lt.techin.shiftpilot.feature.swaprequest.repository.SwapRequestRepository;
 import lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignment;
 import lt.techin.shiftpilot.feature.shiftassignment.repository.ShiftAssignmentRepository;
 import lt.techin.shiftpilot.feature.user.model.User;
@@ -22,14 +22,14 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class RescheduleRequestServiceImpl implements RescheduleRequestService {
+public class SwapRequestServiceImpl implements SwapRequestService {
 
-    private final RescheduleRequestRepository rescheduleRequestRepository;
+    private final SwapRequestRepository swapRequestRepository;
     private final ShiftAssignmentRepository shiftAssignmentRepository;
     private final UserRepository userRepository;
 
     @Override
-    public RescheduleRequestResponseDto createRequest(CreateRescheduleRequestDto request, String requesterUsername) {
+    public SwapRequestResponse createRequest(CreateSwapRequest request, String requesterUsername) {
 
         System.out.println(request);
         System.out.println(requesterUsername);
@@ -45,13 +45,13 @@ public class RescheduleRequestServiceImpl implements RescheduleRequestService {
 
         validateCreateRequest(requester, requesterAssignment, targetAssignment);
 
-        boolean exists = rescheduleRequestRepository
+        boolean exists = swapRequestRepository
                 .existsByRequesterAssignmentIdAndTargetAssignmentIdAndStatusIn(
                         requesterAssignment.getId(),
                         targetAssignment.getId(),
                         List.of(
-                                RescheduleRequestStatus.PENDING_TARGET_APPROVAL,
-                                RescheduleRequestStatus.PENDING_MANAGER_APPROVAL
+                                SwapRequestStatus.PENDING_TARGET_APPROVAL,
+                                SwapRequestStatus.PENDING_MANAGER_APPROVAL
                         )
                 );
 
@@ -59,18 +59,18 @@ public class RescheduleRequestServiceImpl implements RescheduleRequestService {
             throw new RescheduleRequestConflictException();
         }
 
-        RescheduleRequest req = RescheduleRequest.builder()
+        SwapRequest req = SwapRequest.builder()
                 .requester(requester)
                 .targetUser(targetAssignment.getUser())
                 .requesterAssignment(requesterAssignment)
                 .targetAssignment(targetAssignment)
                 .reason(request.reason())
-                .status(RescheduleRequestStatus.PENDING_TARGET_APPROVAL)
+                .status(SwapRequestStatus.PENDING_TARGET_APPROVAL)
                 .build();
 
-        RescheduleRequest saved = rescheduleRequestRepository.save(req);
+        SwapRequest saved = swapRequestRepository.save(req);
 
-        return RescheduleRequestMapper.toResponse(saved);
+        return SwapRequestMapper.toResponse(saved);
     }
 
     private void validateCreateRequest(User requester,
@@ -127,30 +127,30 @@ public class RescheduleRequestServiceImpl implements RescheduleRequestService {
 
     @Override
     @Transactional()
-    public List<RescheduleRequestResponseDto> getAllRequests() {
+    public List<SwapRequestResponse> getAllRequests() {
 
-        return rescheduleRequestRepository
+        return swapRequestRepository
                 .findAllByOrderByCreatedAtDesc()
                 .stream()
-                .map(RescheduleRequestMapper::toResponse)
+                .map(SwapRequestMapper::toResponse)
                 .toList();
     }
 
     @Override
     @Transactional()
 
-    public List<RescheduleRequestResponseDto> getMyRequests(String username) {
+    public List<SwapRequestResponse> getMyRequests(String username) {
 
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException(username));
 
-        return rescheduleRequestRepository
+        return swapRequestRepository
                 .findByRequesterIdOrTargetUserIdOrderByCreatedAtDesc(
                         user.getId(),
                         user.getId()
                 )
                 .stream()
-                .map(RescheduleRequestMapper::toResponse)
+                .map(SwapRequestMapper::toResponse)
                 .toList();
     }
 }

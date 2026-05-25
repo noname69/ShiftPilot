@@ -11,7 +11,7 @@ const MySchedule = () => {
 
   const { assigneeId } = useParams();
 
-  const isRescheduleMode = !!assigneeId;
+  const isSwapMode = !!assigneeId;
 
 
   useEffect(() => {
@@ -47,7 +47,7 @@ const MySchedule = () => {
               <MyScheduleBody
                 key={shift.id}
                 shift={shift}
-                isRescheduleMode={isRescheduleMode}
+                isSwapMode={isSwapMode}
                 selectedShiftId={assigneeId}
               />)}
           </table>

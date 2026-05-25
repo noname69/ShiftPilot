@@ -81,7 +81,7 @@ const ShiftAssignmentRequestsBody = ({ assignee, onRemove }) => {
         </td>
 
         <td className="px-4 py-3 flex justify-center">
-          <Link to={`/${role}/shifts/${assigneeId}/reschedule-request`} state={{ assignee }}>
+          <Link to={`/${role}/shifts/${assigneeId}/swap-request`} state={{ assignee }}>
             <button
               className="inline-flex items-center gap-1 text-[12px] font-medium bg-mint-soft hover:bg-mint-soft/80 border border-mint-ink/20 px-2.5 py-1 rounded-md text-mint-ink transition-colors"
             >
