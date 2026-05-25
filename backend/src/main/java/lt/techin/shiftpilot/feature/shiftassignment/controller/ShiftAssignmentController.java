@@ -3,7 +3,11 @@ package lt.techin.shiftpilot.feature.shiftassignment.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lt.techin.shiftpilot.feature.shift.dto.ShiftResponse;
+<<<<<<< HEAD
 import lt.techin.shiftpilot.feature.shiftassignment.dto.MyAssigneeResponse;
+=======
+import lt.techin.shiftpilot.feature.shiftassignment.dto.AssigneeResponse;
+>>>>>>> origin/main
 import lt.techin.shiftpilot.feature.shiftassignment.dto.ShiftAssignRequest;
 import lt.techin.shiftpilot.feature.shiftassignment.dto.ShiftAssignResponse;
 import lt.techin.shiftpilot.feature.shiftassignment.service.ShiftAssignmentService;
@@ -55,6 +59,16 @@ public class ShiftAssignmentController {
 
         return ResponseEntity.ok().body(responses);
 
+    }
+
+    @PatchMapping("/shifts/{shiftId}/shift-assignments/{userId}/remove")
+    public ResponseEntity<AssigneeResponse> removeShiftAssignment(
+            @PathVariable Long shiftId,
+            @PathVariable Long userId) {
+
+        AssigneeResponse response = shiftAssignmentService.removeShiftAssignment(shiftId, userId);
+
+        return ResponseEntity.ok().body(response);
     }
 
 }

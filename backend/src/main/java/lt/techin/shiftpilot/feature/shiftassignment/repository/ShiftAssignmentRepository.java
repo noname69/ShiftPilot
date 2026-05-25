@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ShiftAssignmentRepository extends JpaRepository<ShiftAssignment, Long> {
@@ -19,8 +20,16 @@ public interface ShiftAssignmentRepository extends JpaRepository<ShiftAssignment
         select sa.user
         from ShiftAssignment sa
         where sa.shift.id = :shiftId
+        and sa.status = lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignmentStatus.ASSIGNED
     """)
     List<User> findUsersByShiftId(@Param("shiftId") Long shiftId);
+
+    @Query("""
+        select sa
+        from ShiftAssignment sa
+        where sa.shift.id = :shiftId
+    """)
+    List<ShiftAssignment> findAllByShiftId(@Param("shiftId") Long shiftId);
 
     @Query("""
     select sa.status
@@ -33,5 +42,30 @@ public interface ShiftAssignmentRepository extends JpaRepository<ShiftAssignment
             @Param("shiftId") Long shiftId
     );
 
+<<<<<<< HEAD
     List<ShiftAssignment> findByShiftId(Long shiftId);
+=======
+    @Query("""
+    select sa
+    from ShiftAssignment sa
+    where sa.shift.id = :shiftId
+    and sa.user.id = :userId
+    and sa.status = lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignmentStatus.ASSIGNED
+    """)
+    Optional<ShiftAssignment> findAssignedByShiftIdAndUserId(
+            @Param("shiftId") Long shiftId,
+            @Param("userId") Long userId
+    );
+
+    @Query("""
+    select sa
+    from ShiftAssignment sa
+    where sa.shift.id = :shiftId
+    and sa.user.id = :userId
+    """)
+    Optional<ShiftAssignment> findByShiftIdAndUserId(
+            @Param("shiftId") Long shiftId,
+            @Param("userId") Long userId
+    );
+>>>>>>> origin/main
 }

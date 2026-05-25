@@ -21,8 +21,8 @@ export const getShiftById = async (id) => {
   return response.data;
 };
 
-export const deleteShift = async (id) => {
-  await api.delete(`/shifts/${id}`);
+export const cancelShift = async (id) => {
+  await api.patch(`/shifts/${id}`);
 };
 
 export const getUserShifts = async () => {

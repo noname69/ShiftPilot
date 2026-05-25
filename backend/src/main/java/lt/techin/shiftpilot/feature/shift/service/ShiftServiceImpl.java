@@ -10,9 +10,11 @@ import lt.techin.shiftpilot.feature.shift.mapper.ShiftMapper;
 import lt.techin.shiftpilot.feature.shift.model.Shift;
 import lt.techin.shiftpilot.feature.shift.model.ShiftStatus;
 import lt.techin.shiftpilot.feature.shift.repository.ShiftRepository;
+import lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignment;
+import lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignmentStatus;
+import lt.techin.shiftpilot.feature.shiftassignment.repository.ShiftAssignmentRepository;
 import lt.techin.shiftpilot.feature.user.model.User;
 import lt.techin.shiftpilot.feature.user.repository.UserRepository;
-import lt.techin.shiftpilot.security.principal.UserPrincipal;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -28,6 +30,7 @@ public class ShiftServiceImpl implements ShiftService {
     private final ShiftRepository shiftRepository;
     private final ShiftMapper shiftMapper;
     private final UserRepository userRepository;
+    private final ShiftAssignmentRepository shiftAssignmentRepository;
 
     @Override
     public ShiftResponse createShift(ShiftCreateRequest request, String username) {
@@ -123,11 +126,13 @@ public class ShiftServiceImpl implements ShiftService {
         shift.setStartTime(request.startTime());
         shift.setEndTime(request.endTime());
         shift.setMinEmployees(request.minEmployees());
-        shift.setStatus(calculateStatus(
-                request.shiftDate(),
-                request.startTime(),
-                request.endTime()
-        ));
+        if (shift.getStatus() != ShiftStatus.CANCELLED) {
+            shift.setStatus(calculateStatus(
+                    request.shiftDate(),
+                    request.startTime(),
+                    request.endTime()
+            ));
+        }
 
         Shift savedShift = shiftRepository.save(shift);
 
@@ -148,22 +153,40 @@ public class ShiftServiceImpl implements ShiftService {
     }
 
     @Override
-    public void deleteShift(Long id) {
-        log.info("event=SHIFT_DELETE_REQUEST shiftId={}", id);
+    public void cancelShift(Long id, String username) {
+        log.info("event=SHIFT_CANCEL_REQUEST shiftId={} requestedByUsername={}", id, username);
 
         Shift shift = findShiftById(id);
 
-        Long createdByUserId = shift.getCreatedBy() != null
-                ? shift.getCreatedBy().getId()
-                : null;
+        if (shift.getStatus() == ShiftStatus.CANCELLED) {
+            throw new IllegalStateException("Shift is already cancelled.");
+        }
 
-        shiftRepository.delete(shift);
+        if (shift.getStatus() == ShiftStatus.ONGOING) {
+            throw new IllegalStateException("Cannot cancel an ongoing shift.");
+        }
 
-        log.info("event=SHIFT_DELETED shiftId={} title={} shiftDate={} createdByUserId={}",
+        if (shift.getStatus() == ShiftStatus.COMPLETED) {
+            throw new IllegalStateException("Cannot cancel a completed shift.");
+        }
+
+        shift.setStatus(ShiftStatus.CANCELLED);
+        shiftRepository.save(shift);
+
+        List<ShiftAssignment> assignments = shiftAssignmentRepository.findAllByShiftId(id);
+        assignments.stream()
+                .filter(a -> a.getStatus() == ShiftAssignmentStatus.ASSIGNED)
+                .forEach(a -> {
+                    a.setStatus(ShiftAssignmentStatus.REMOVED);
+                    a.setRemovedAt(java.time.LocalDateTime.now());
+                });
+        shiftAssignmentRepository.saveAll(assignments);
+
+        log.info("event=SHIFT_CANCELLED shiftId={} title={} shiftDate={} cancelledByUsername={}",
                 shift.getId(),
                 shift.getTitle(),
                 shift.getShiftDate(),
-                createdByUserId
+                username
         );
     }
 
@@ -210,6 +233,10 @@ public class ShiftServiceImpl implements ShiftService {
     }
 
     private Shift refreshStatusIfNeeded(Shift shift) {
+        if (shift.getStatus() == ShiftStatus.CANCELLED) {
+            return shift;
+        }
+
         ShiftStatus calculatedStatus = calculateStatus(
                 shift.getShiftDate(),
                 shift.getStartTime(),

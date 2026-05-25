@@ -1,7 +1,11 @@
+<<<<<<< HEAD
 import { IoIosSwap } from "react-icons/io";
 import { Link } from "react-router";
 import useAuthStore from "../../store/authStore";
 
+=======
+import { FiUserMinus } from "react-icons/fi";
+>>>>>>> origin/main
 
 const STATUS_CONFIG = {
   ASSIGNED: {
@@ -37,6 +41,7 @@ const StatusBadge = ({ status }) => {
   );
 };
 
+<<<<<<< HEAD
 const ShiftAssignmentRequestsBody = ({ assignee }) => {
   const role = useAuthStore((state) => state.user.role);
   const { firstName, lastName, weeklyHours, email, status, assigneeId } = assignee || {};
@@ -50,6 +55,11 @@ const ShiftAssignmentRequestsBody = ({ assignee }) => {
               {firstName?.[0]}
               {lastName?.[0]}
             </div>
+=======
+const ShiftAssignmentRequestsBody = ({ assignee, onRemove }) => {
+
+	const { id, firstName, lastName, weeklyHours, email, status } = assignee || {};
+>>>>>>> origin/main
 
             <div className="font-medium text-ink-900">
               {firstName} {lastName}
@@ -82,4 +92,36 @@ const ShiftAssignmentRequestsBody = ({ assignee }) => {
   );
 };
 
+<<<<<<< HEAD
 export default ShiftAssignmentRequestsBody;
+=======
+				<td className="px-4 py-3 text-center">
+					<StatusBadge status={status} />
+				</td>
+
+				<td className="px-4 py-3 font-mono text-[12px] text-ink-700 text-center">
+					<p className="justify-center">{weeklyHours ?? 0}h</p>
+				</td>
+
+				<td className="px-4 py-3 text-ink-500 text-[12px]">
+					{email}
+				</td>
+
+				<td className="px-4 py-3 flex justify-center">
+					{status === "ASSIGNED" && (
+						<button
+							onClick={() => onRemove(id, firstName, lastName)}
+							className="inline-flex items-center gap-1 text-[12px] font-medium bg-rose-soft hover:bg-rose-soft/80 border border-rose-ink/20 px-2.5 py-1 rounded-md text-rose-ink transition-colors"
+						>
+							<FiUserMinus size={13} />
+							Remove
+						</button>
+					)}
+				</td>
+			</tr>
+		</tbody>
+	)
+}
+
+export default ShiftAssignmentRequestsBody
+>>>>>>> origin/main

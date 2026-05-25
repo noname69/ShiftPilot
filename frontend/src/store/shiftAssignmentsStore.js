@@ -36,6 +36,23 @@ const useShiftAssignmentsStore = create(
       }
     },
 
+    removeAssignment: async (shiftId, userId) => {
+      try {
+        set({ isLoading: true });
+        await api.patch(`/shifts/${shiftId}/shift-assignments/${userId}/remove`);
+        set((state) => ({
+          assignees: state.assignees.map((a) =>
+            a.id === userId ? { ...a, status: "REMOVED" } : a
+          ),
+        }));
+      } catch (error) {
+        console.log(error);
+        throw error;
+      } finally {
+        set({ isLoading: false });
+      }
+    },
+
   })),
 );
 
