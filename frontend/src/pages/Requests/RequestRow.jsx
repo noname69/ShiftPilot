@@ -6,37 +6,32 @@ const STATUS_CONFIG = {
     bg: "bg-amber-soft",
     text: "text-amber-ink",
     dot: "bg-amber-ink",
-    label: "Waiting for target approval",
+    label: "Target approval",
   },
-
   TARGET_REJECTED: {
     bg: "bg-rose-soft",
     text: "text-rose-ink",
     dot: "bg-rose-ink",
-    label: "Rejected by target user",
+    label: "Target rejected",
   },
-
   PENDING_MANAGER_APPROVAL: {
     bg: "bg-violet-soft",
     text: "text-violet-ink",
     dot: "bg-violet-ink",
-    label: "Waiting for manager approval",
+    label: "Manager approval",
   },
-
   MANAGER_REJECTED: {
     bg: "bg-rose-soft",
     text: "text-rose-ink",
     dot: "bg-rose-ink",
-    label: "Rejected by manager",
+    label: "Manager rejected",
   },
-
   COMPLETED: {
     bg: "bg-mint-soft",
     text: "text-mint-ink",
     dot: "bg-mint-ink",
     label: "Completed",
   },
-
   CANCELLED: {
     bg: "bg-ink-100",
     text: "text-ink-700",
@@ -50,7 +45,7 @@ const StatusBadge = ({ status }) => {
 
   return (
     <span
-      className={`inline-flex items-center gap-1 text-[11px] px-1.5 py-0.5 rounded font-medium ${cfg.bg} ${cfg.text}`}
+      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium ${cfg.bg} ${cfg.text}`}
     >
       <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />
       {cfg.label}
@@ -58,12 +53,53 @@ const StatusBadge = ({ status }) => {
   );
 };
 
+const UserCard = ({ user, tone }) => {
+  const tones = {
+    requester: "bg-mint-soft text-mint-ink border-mint-ink/20",
+    target: "bg-violet-soft text-violet-ink border-violet-ink/20",
+  };
+
+  const initials =
+    (user?.firstName?.[0] ?? "") + (user?.lastName?.[0] ?? "");
+
+  return (
+    <div
+      className={`flex items-center gap-2 px-3 py-2 rounded-md border ${
+        tones[tone] ?? "bg-ink-50 text-ink-900 border-ink-200"
+      }`}
+    >
+      <div className="w-7 h-7 rounded-full bg-white/70 flex items-center justify-center text-[11px] font-semibold">
+        {initials}
+      </div>
+
+      <div className="min-w-0">
+        <div className="text-[12px] font-medium truncate">
+          {user?.firstName} {user?.lastName}
+        </div>
+        <div className="text-[10.5px] opacity-70 truncate">
+          {user?.email}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const ShiftCard = ({ title, date, start, end }) => (
+  <div className="rounded-md border border-ink-200 bg-white px-3 py-2">
+    <div className="text-[12px] font-medium text-ink-900">{title}</div>
+    <div className="text-[11px] text-ink-500 font-mono">
+      {date} · {start} → {end}
+    </div>
+  </div>
+);
+
 const RequestRow = ({
   request,
   onTargetRespond,
   onManagerRespond,
   currentUserId,
   isManager,
+  isAdmin
 }) => {
   const {
     id,
@@ -76,66 +112,56 @@ const RequestRow = ({
     createdAt,
   } = request;
 
-  console.log(createdAt);
-
   const isTargetUser = currentUserId === targetUser?.id;
 
-  console.log(currentUserId, targetUser?.id, isTargetUser);
+  const canTargetRespond =
+    isTargetUser && status === "PENDING_TARGET_APPROVAL";
 
-  const canTargetRespond = isTargetUser && status === "PENDING_TARGET_APPROVAL";
+  const canManagerRespond =
+    isManager && status === "PENDING_MANAGER_APPROVAL";
 
-  const canManagerRespond = isManager && status === "PENDING_MANAGER_APPROVAL";
+  const canAdminRespond =
+    isAdmin && status === "PENDING_MANAGER_APPROVAL";
+
+  const time = (t) => (t ? t.slice(0, 5) : "");
 
   return (
-    <tr className="hover:bg-ink-50/60 transition-colors">
-      {/* REQUESTER */}
-      <td className="px-4 py-3">
-        <div className="font-medium text-ink-900">
-          {requester?.firstName} {requester?.lastName}
+    <tr className="border-t border-ink-100 hover:bg-ink-50/40 transition">
+      {/* USERS SWAP */}
+      <td className="px-4 py-3 align-top min-w-[260px]">
+        <UserCard user={requester} tone="requester" />
+
+        <div className="flex items-center justify-center text-[11px] text-ink-400 my-2">
+          ⇄ swap request ⇄
         </div>
-        <div className="text-[11.5px] text-ink-500">{requester?.email}</div>
+
+        <UserCard user={targetUser} tone="target" />
       </td>
 
-      {/* TARGET */}
-      <td className="px-4 py-3">
-        <div className="font-medium text-ink-900">
-          {targetUser?.firstName} {targetUser?.lastName}
+      {/* SHIFTS */}
+      <td className="px-4 py-3 align-top min-w-[260px]">
+        <ShiftCard
+          title={requesterShift?.title}
+          date={requesterShift?.shiftDate}
+          start={time(requesterShift?.startTime)}
+          end={time(requesterShift?.endTime)}
+        />
+
+        <div className="flex items-center justify-center text-[11px] text-ink-400 my-2">
+          ↕ shift swap ↕
         </div>
-        <div className="text-[11.5px] text-ink-500">{targetUser?.email}</div>
-      </td>
 
-      {/* SHIFT SWAP */}
-      <td className="px-4 py-3 text-[12px] text-ink-700">
-        <div className="space-y-2">
-          {/* REQUESTER SHIFT */}
-          <div>
-            <div className="font-medium text-ink-900">
-              {requesterShift?.title}
-            </div>
-            <div className="text-[11px] text-ink-500 font-mono">
-              {requesterShift?.shiftDate} ·{" "}
-              {requesterShift?.startTime?.slice(0, 5)} -{" "}
-              {requesterShift?.endTime?.slice(0, 5)}
-            </div>
-          </div>
-
-          {/* ARROW */}
-          <div className="text-ink-400 text-[11px]">↕ swap ↕</div>
-
-          {/* TARGET SHIFT */}
-          <div>
-            <div className="font-medium text-ink-900">{targetShift?.title}</div>
-            <div className="text-[11px] text-ink-500 font-mono">
-              {targetShift?.shiftDate} · {targetShift?.startTime?.slice(0, 5)} -{" "}
-              {targetShift?.endTime?.slice(0, 5)}
-            </div>
-          </div>
-        </div>
+        <ShiftCard
+          title={targetShift?.title}
+          date={targetShift?.shiftDate}
+          start={time(targetShift?.startTime)}
+          end={time(targetShift?.endTime)}
+        />
       </td>
 
       {/* REASON */}
-      <td className="px-4 py-3 text-ink-600 max-w-[260px] truncate">
-        {reason || "—"}
+      <td className="px-4 py-3 text-[12px] text-ink-600 max-w-[220px]">
+        <div className="line-clamp-3">{reason || "—"}</div>
       </td>
 
       {/* STATUS */}
@@ -150,47 +176,50 @@ const RequestRow = ({
 
       {/* ACTIONS */}
       <td className="px-4 py-3 text-right">
-        <div className="inline-flex gap-1.5">
-          {/* TARGET USER ACTIONS */}
+        <div className="flex justify-end gap-2">
+          {/* TARGET */}
           {canTargetRespond && (
             <>
               <button
                 onClick={() => onTargetRespond(id, true)}
-                className="inline-flex items-center gap-1 text-[12px] font-medium bg-mint-ink text-white px-2.5 py-1 rounded-md hover:bg-mint-ink/90"
+                className="w-8 h-8 flex items-center justify-center rounded-md bg-mint-soft text-mint-ink hover:bg-mint-soft/80"
+                title="Accept"
               >
-                <FaCheck size={11} />
+                <FaCheck size={12} />
               </button>
 
               <button
                 onClick={() => onTargetRespond(id, false)}
-                className="inline-flex items-center gap-1 text-[12px] font-medium bg-rose-soft text-rose-ink border border-rose-ink/20 px-2.5 py-1 rounded-md hover:bg-rose-soft/80"
+                className="w-8 h-8 flex items-center justify-center rounded-md bg-rose-soft text-rose-ink hover:bg-rose-soft/80"
+                title="Decline"
               >
-                <FaTimes size={11} />
+                <FaTimes size={12} />
               </button>
             </>
           )}
 
-          {/* MANAGER ACTIONS */}
-          {canManagerRespond && (
+          {/* MANAGER */}
+          {(canManagerRespond || canAdminRespond) && (
             <>
               <button
                 onClick={() => onManagerRespond(id, true)}
-                className="inline-flex items-center gap-1 text-[12px] font-medium bg-mint-ink text-white px-2.5 py-1 rounded-md hover:bg-mint-ink/90"
+                className="w-8 h-8 flex items-center justify-center rounded-md bg-mint-ink text-white hover:bg-mint-ink/90"
+                title="Approve"
               >
-                <FaCheck size={11} />
+                <FaCheck size={12} />
               </button>
 
               <button
                 onClick={() => onManagerRespond(id, false)}
-                className="inline-flex items-center gap-1 text-[12px] font-medium bg-rose-soft text-rose-ink border border-rose-ink/20 px-2.5 py-1 rounded-md hover:bg-rose-soft/80"
+                className="w-8 h-8 flex items-center justify-center rounded-md bg-rose-soft text-rose-ink hover:bg-rose-soft/80"
+                title="Reject"
               >
-                <FaTimes size={11} />
+                <FaTimes size={12} />
               </button>
             </>
           )}
 
-          {/* NO ACTION */}
-          {!canTargetRespond && !canManagerRespond && (
+          {!canTargetRespond && !(canManagerRespond || canAdminRespond) && (
             <span className="text-[12px] text-ink-400">—</span>
           )}
         </div>
