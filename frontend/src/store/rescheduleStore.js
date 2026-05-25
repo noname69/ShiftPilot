@@ -72,7 +72,7 @@ const useRescheduleStore = create(
     },
 
     // =========================
-    // FETCH ALL (MANAGER)
+    // FETCH ALL (MANAGER, ADMIN)
     // =========================
     fetchAllRequests: async () => {
       set({ isLoading: true, error: null });
