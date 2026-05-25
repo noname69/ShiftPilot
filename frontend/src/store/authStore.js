@@ -19,6 +19,7 @@ const useAuthStore = create(
 
     loginUser: async (formData, navigate, reset) => {
       try {
+        set({ isLoading: true })
         const { data } = await api.post(`/auth/login`, formData);
         set(() => ({ user: { ...data } }));
         navigate("/login")
@@ -27,6 +28,8 @@ const useAuthStore = create(
         reset()
         console.error(error);
         toast.error(error.response.data.message);
+      } finally {
+        set({ isLoading: false })
       }
     },
 
@@ -43,6 +46,7 @@ const useAuthStore = create(
 
     logoutUser: async (navigate) => {
       try {
+        set({ isLoading: true })
         await api.post(`/auth/logout`);
         set(() => ({ user: initialState }))
         navigate("/login");
@@ -50,6 +54,8 @@ const useAuthStore = create(
       } catch (error) {
         console.log(error);
         toast.error(error.response.data.message);
+      } finally {
+        set({ isLoading: false })
       }
     },
 
