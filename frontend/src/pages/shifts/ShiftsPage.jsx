@@ -1,5 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router";
+import toast from "react-hot-toast";
 import Footer from "../components/shared/Footer";
 import useShiftStore from "../../store/shiftStore";
 import useAuthStore from "../../store/authStore";
@@ -7,6 +8,7 @@ import { FiEdit2, FiTrash2 } from "react-icons/fi";
 import { RiAddLargeLine } from "react-icons/ri";
 import { HiEye } from "react-icons/hi";
 import { formatDate, formatTime } from "../../utils/formatDateTime";
+import ConfirmationModal from "../components/shared/ConfirmationModal";
 
 
 const STATUS_CONFIG = {
@@ -23,11 +25,11 @@ const STATUS_CONFIG = {
     label: "Ongoing",
   },
   COMPLETED: {
-    bg: "bg-ink-100",
-    text: "text-ink-600",
-    dot: "bg-ink-400",
+    bg: "bg-slate-100",
+    text: "text-slate-700",
+    dot: "bg-slate-500",
     label: "Completed",
-  },
+},
   CANCELLED: {
     bg: "bg-rose-soft",
     text: "text-rose-ink",
@@ -35,6 +37,8 @@ const STATUS_CONFIG = {
     label: "Cancelled",
   },
 };
+
+
 
 const StatusBadge = ({ status }) => {
   const cfg = STATUS_CONFIG[status] ?? STATUS_CONFIG.OPEN;
@@ -54,15 +58,26 @@ const ShiftsPage = () => {
 
   const { user } = useAuthStore(state => state);
   const role = user?.role.toLowerCase();
+  const [modal, setModal] = useState(null);
 
   useEffect(() => {
     fetchShifts();
   }, [fetchShifts]);
 
-  const handleDelete = (id, title) => {
-    if (window.confirm(`Delete shift "${title}"?`)) {
-      removeShift(id);
-    }
+  const handleCancel = (id, title) => {
+    setModal({
+      title: "Cancel shift",
+      message: `Cancel shift "${title}"? All employee assignments will be removed.`,
+      rejectButton: "Cancel shift",
+      onReject: async () => {
+        try {
+          await removeShift(id);
+          toast.success("Shift cancelled successfully");
+        } catch (error) {
+          toast.error(error?.response?.data?.message ?? "Failed to cancel shift");
+        }
+      },
+    });
   };
 
   return (
@@ -176,7 +191,7 @@ const ShiftsPage = () => {
                       </td>
                       <td className="px-4 py-3 text-right">
                         <div className="inline-flex gap-1.5">
-                          {role !== "user" ? (
+                          {role !== "user" && shift.status !== "CANCELLED" ? (
                             <>
                               <Link to={`/${role}/shifts/${shift.id}/edit`}>
                                 <button className="inline-flex items-center gap-1 text-[12px] font-medium bg-white border border-ink-200 hover:bg-ink-50 px-2.5 py-1 rounded-md text-ink-700 transition-colors">
@@ -185,7 +200,7 @@ const ShiftsPage = () => {
                               </Link>
 
                               <button
-                                onClick={() => handleDelete(shift.id, shift.title)}
+                                onClick={() => handleCancel(shift.id, shift.title)}
                                 className="inline-flex items-center gap-1 text-[12px] font-medium bg-rose-soft hover:bg-rose-soft/80 border border-rose-ink/20 px-2.5 py-1 rounded-md text-rose-ink transition-colors"
                               >
                                 <FiTrash2 size={13} />
@@ -216,6 +231,7 @@ const ShiftsPage = () => {
         )}
       </main>
       <Footer />
+      <ConfirmationModal modal={modal} setModal={setModal} />
     </div>
   );
 };

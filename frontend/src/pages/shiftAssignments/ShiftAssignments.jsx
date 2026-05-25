@@ -5,6 +5,7 @@ import ShiftAssignmentsBody from "./ShiftAssignmentsBody";
 import useShiftAssignmentsStore from "../../store/shiftAssignmentsStore";
 import { useParams, useNavigate } from "react-router";
 import ConfirmationModal from "../components/shared/ConfirmationModal"
+import { getShiftById } from "../../api/shift";
 
 const ShiftAssignments = () => {
   const { users, fetchUsers } = useUserStore(state => state);
@@ -13,6 +14,7 @@ const ShiftAssignments = () => {
   const { shiftId } = useParams();
   const { getShiftAssignees, assignees, assignEmployees } = useShiftAssignmentsStore(state => state);
   const [modal, setModal] = useState(null);
+  const [shift, setShift] = useState(null);
   const navigate = useNavigate();
 
   const handleAddToShift = () => {
@@ -30,8 +32,11 @@ const ShiftAssignments = () => {
     if (shiftId) {
       fetchUsers();
       getShiftAssignees(shiftId);
+      getShiftById(shiftId).then(setShift).catch(console.error);
     }
   }, [fetchUsers, getShiftAssignees, shiftId]);
+
+  const isCancelled = shift?.status === "CANCELLED";
 
   return (
     <div className="flex flex-col flex-1">
@@ -44,36 +49,45 @@ const ShiftAssignments = () => {
             <p className="text-[13px] text-ink-500 mt-0.5">Employees</p>
           </div>
         </div>
-        <div className="bg-white rounded-xl2 border border-ink-200 shadow-soft overflow-hidden">
-          <table className="w-full text-[13px]">
-            <thead className="bg-ink-50 text-ink-500 text-[11.5px] uppercase tracking-wider border-b border-ink-200">
-              <tr>
-                <th className="text-left font-medium px-4 py-2.5">Name</th>
-                <th className="text-center font-medium px-4 py-2.5"> Status</th>
-                <th className="text-center font-medium px-4 py-2.5">Hours this week</th>
-                <th className="text-left font-medium px-4 py-2.5">Contact</th>
-                <th className="text-center font-medium px-4 py-2.5">Assign employee</th>
-              </tr>
-            </thead>
-            {employees.map(user =>
-              <ShiftAssignmentsBody
-                key={user.id}
-                user={user}
-                selectedUsers={selectedUsers}
-                setSelectedUsers={setSelectedUsers}
-                assignees={assignees}
-              />)}
-          </table>
-        </div>
-        {selectedUsers.length > 0 ? (
-          <div className="flex justify-end m-5">
-            <button
-              className="my-btn-primary"
-              onClick={handleAddToShift}
-            >Add to shift
-            </button>
+        {isCancelled ? (
+          <div className="bg-rose-soft border border-rose-ink/20 rounded-xl2 px-6 py-10 text-center">
+            <p className="text-[14px] font-medium text-rose-ink">This shift has been cancelled.</p>
+            <p className="text-[13px] text-rose-ink/70 mt-1">Employee assignments are not available for cancelled shifts.</p>
           </div>
-        ) : ""}
+        ) : (
+          <>
+            <div className="bg-white rounded-xl2 border border-ink-200 shadow-soft overflow-hidden">
+              <table className="w-full text-[13px]">
+                <thead className="bg-ink-50 text-ink-500 text-[11.5px] uppercase tracking-wider border-b border-ink-200">
+                  <tr>
+                    <th className="text-left font-medium px-4 py-2.5">Name</th>
+                    <th className="text-center font-medium px-4 py-2.5"> Status</th>
+                    <th className="text-center font-medium px-4 py-2.5">Hours this week</th>
+                    <th className="text-left font-medium px-4 py-2.5">Contact</th>
+                    <th className="text-center font-medium px-4 py-2.5">Assign employee</th>
+                  </tr>
+                </thead>
+                {employees.map(user =>
+                  <ShiftAssignmentsBody
+                    key={user.id}
+                    user={user}
+                    selectedUsers={selectedUsers}
+                    setSelectedUsers={setSelectedUsers}
+                    assignees={assignees}
+                  />)}
+              </table>
+            </div>
+            {selectedUsers.length > 0 ? (
+              <div className="flex justify-end m-5">
+                <button
+                  className="my-btn-primary"
+                  onClick={handleAddToShift}
+                >Add to shift
+                </button>
+              </div>
+            ) : ""}
+          </>
+        )}
 
       </main>
       <ConfirmationModal modal={modal} setModal={setModal} />

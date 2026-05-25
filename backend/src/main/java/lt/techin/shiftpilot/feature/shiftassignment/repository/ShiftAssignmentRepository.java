@@ -23,6 +23,13 @@ public interface ShiftAssignmentRepository extends JpaRepository<ShiftAssignment
     List<User> findUsersByShiftId(@Param("shiftId") Long shiftId);
 
     @Query("""
+        select sa
+        from ShiftAssignment sa
+        where sa.shift.id = :shiftId
+    """)
+    List<ShiftAssignment> findAllByShiftId(@Param("shiftId") Long shiftId);
+
+    @Query("""
     select sa.status
     from ShiftAssignment sa
     where sa.user.id = :userId

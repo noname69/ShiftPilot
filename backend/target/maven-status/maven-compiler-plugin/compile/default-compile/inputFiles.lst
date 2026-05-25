@@ -1,59 +1,67 @@
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\exception\ApiError.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\exception\ApiFieldError.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\exception\auth\AuthenticationException.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\exception\auth\ExpiredRefreshTokenException.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\exception\auth\InvalidRefreshTokenException.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\exception\auth\InvalidTokenException.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\exception\core\DuplicateException.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\exception\core\NotFoundException.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\exception\core\TokenException.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\exception\GlobalExceptionHandler.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\exception\user\DuplicateEmailException.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\exception\user\DuplicateUsernameException.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\exception\user\UserNotFoundException.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\exception\ValidationError.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\feature\auth\controller\AuthController.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\feature\auth\dto\AuthResponse.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\feature\auth\dto\LoginRequest.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\feature\auth\dto\RefreshTokenRequest.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\feature\auth\model\RefreshToken.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\feature\auth\repository\RefreshTokenRepository.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\feature\auth\service\AuthService.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\feature\auth\service\RefreshTokenService.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\feature\notification\model\Notification.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\feature\notification\model\NotificationType.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\feature\reschedulerequest\model\RequestStatus.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\feature\reschedulerequest\model\RescheduleRequest.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\feature\shift\controller\ShiftController.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\feature\shift\dto\ShiftCreateRequest.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\feature\shift\dto\ShiftResponse.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\feature\shift\dto\ShiftUpdateRequest.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\feature\shift\mapper\ShiftMapper.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\feature\shift\model\Shift.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\feature\shift\model\ShiftStatus.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\feature\shift\repository\ShiftRepository.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\feature\shift\service\ShiftService.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\feature\shift\service\ShiftServiceImpl.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\feature\shiftassignment\model\ShiftAssignment.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\feature\shiftassignment\model\ShiftAssignmentStatus.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\feature\user\controller\UserController.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\feature\user\dto\CreateUserRequest.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\feature\user\dto\UpdateUserRequest.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\feature\user\dto\UserFilter.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\feature\user\dto\UserResponse.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\feature\user\mapper\UserMapper.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\feature\user\model\User.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\feature\user\model\UserRole.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\feature\user\model\UserStatus.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\feature\user\model\WorkStatus.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\feature\user\repository\UserRepository.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\feature\user\service\UserService.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\feature\user\service\UserServiceImpl.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\feature\user\specification\UserSpecification.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\security\config\SecurityConfig.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\security\exception\JwtAccessDeniedHandler.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\security\exception\JwtAuthenticationEntryPoint.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\security\jwt\JwtService.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\security\principal\UserPrincipal.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\security\service\CustomUserDetailsService.java
-C:\Users\pavel\Techin projektas\ShiftPilot\backend\src\main\java\lt\techin\shiftpilot\ShiftpilotApplication.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/ShiftpilotApplication.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/exception/ApiError.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/exception/ApiFieldError.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/exception/GlobalExceptionHandler.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/exception/ShiftNotFoundException.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/exception/ValidationError.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/exception/auth/AuthenticationException.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/exception/auth/ExpiredRefreshTokenException.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/exception/auth/InvalidRefreshTokenException.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/exception/auth/InvalidTokenException.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/exception/core/DuplicateException.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/exception/core/NotFoundException.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/exception/core/TokenException.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/exception/user/DuplicateEmailException.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/exception/user/DuplicateUsernameException.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/exception/user/UserNotFoundException.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/feature/auth/controller/AuthController.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/feature/auth/dto/AuthResponse.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/feature/auth/dto/LoginRequest.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/feature/auth/dto/RefreshTokenRequest.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/feature/auth/model/RefreshToken.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/feature/auth/repository/RefreshTokenRepository.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/feature/auth/service/AuthService.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/feature/auth/service/RefreshTokenService.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/feature/notification/model/Notification.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/feature/notification/model/NotificationType.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/feature/reschedulerequest/model/RequestStatus.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/feature/reschedulerequest/model/RescheduleRequest.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/feature/shift/controller/ShiftController.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/feature/shift/dto/ShiftCreateRequest.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/feature/shift/dto/ShiftResponse.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/feature/shift/dto/ShiftUpdateRequest.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/feature/shift/mapper/ShiftMapper.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/feature/shift/model/Shift.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/feature/shift/model/ShiftStatus.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/feature/shift/repository/ShiftRepository.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/feature/shift/service/ShiftService.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/feature/shift/service/ShiftServiceImpl.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/feature/shiftassignment/controller/ShiftAssignmentController.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/feature/shiftassignment/dto/AssigneeResponse.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/feature/shiftassignment/dto/ShiftAssignRequest.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/feature/shiftassignment/dto/ShiftAssignResponse.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/feature/shiftassignment/model/ShiftAssignment.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/feature/shiftassignment/model/ShiftAssignmentStatus.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/feature/shiftassignment/repository/ShiftAssignmentRepository.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/feature/shiftassignment/service/ShiftAssignmentService.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/feature/shiftassignment/service/ShiftAssignmentServiceImpl.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/feature/user/controller/UserController.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/feature/user/dto/CreateUserRequest.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/feature/user/dto/UpdateUserRequest.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/feature/user/dto/UserFilter.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/feature/user/dto/UserResponse.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/feature/user/mapper/UserMapper.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/feature/user/model/User.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/feature/user/model/UserRole.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/feature/user/model/UserStatus.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/feature/user/model/WorkStatus.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/feature/user/repository/UserRepository.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/feature/user/service/UserService.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/feature/user/service/UserServiceImpl.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/feature/user/specification/UserSpecification.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/security/config/SecurityConfig.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/security/exception/JwtAccessDeniedHandler.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/security/exception/JwtAuthenticationEntryPoint.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/security/jwt/JwtService.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/security/principal/UserPrincipal.java
+/Users/matasalisauskas/Documents/ShiftPilot/backend/src/main/java/lt/techin/shiftpilot/security/service/CustomUserDetailsService.java

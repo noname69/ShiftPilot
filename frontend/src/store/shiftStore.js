@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-import { createShift, updateShift, getShifts, deleteShift, getUserShifts } from "../api/shift";
+import { createShift, updateShift, getShifts, cancelShift, getUserShifts } from "../api/shift";
 
 const useShiftStore = create(
   devtools((set) => ({
@@ -47,14 +47,12 @@ const useShiftStore = create(
     },
 
     removeShift: async (id) => {
-      try {
-        await deleteShift(id);
-        set((state) => ({
-          shifts: state.shifts.filter((s) => s.id !== id),
-        }));
-      } catch (error) {
-        console.error(error);
-      }
+      await cancelShift(id);
+      set((state) => ({
+        shifts: state.shifts.map((s) =>
+          s.id === id ? { ...s, status: "CANCELLED" } : s
+        ),
+      }));
     },
 
     fetchUserShifts: async () => {

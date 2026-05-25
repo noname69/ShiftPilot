@@ -6,6 +6,7 @@ import lt.techin.shiftpilot.exception.user.UserNotFoundException;
 import lt.techin.shiftpilot.feature.shift.dto.ShiftResponse;
 import lt.techin.shiftpilot.feature.shift.mapper.ShiftMapper;
 import lt.techin.shiftpilot.feature.shift.model.Shift;
+import lt.techin.shiftpilot.feature.shift.model.ShiftStatus;
 import lt.techin.shiftpilot.feature.shift.repository.ShiftRepository;
 import lt.techin.shiftpilot.feature.shiftassignment.dto.AssigneeResponse;
 import lt.techin.shiftpilot.feature.shiftassignment.dto.ShiftAssignRequest;
@@ -38,7 +39,11 @@ public class ShiftAssignmentServiceImpl implements ShiftAssignmentService{
                 .orElseThrow(() -> new UserNotFoundException(username));
 
         Shift shift = shiftRepository.findById(shiftId)
-                .orElseThrow(() -> new ShiftNotFoundException(shiftId));;
+                .orElseThrow(() -> new ShiftNotFoundException(shiftId));
+
+        if (shift.getStatus() == ShiftStatus.CANCELLED) {
+            throw new IllegalStateException("Cannot assign employees to a cancelled shift.");
+        }
 
         List<Long> assigneeIds = request.getUserIds();
         List<AssigneeResponse> assignedUsers = new ArrayList<>();
