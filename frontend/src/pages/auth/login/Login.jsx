@@ -5,21 +5,25 @@ import Footer from "../../components/shared/Footer";
 import LoginAside from "./LoginAside";
 import useAuthStore from "../../../store/authStore";
 import { useNavigate } from "react-router";
+import { ButtonSpinner } from "../../components/shared/ButtonSpinner";
 
 const Login = () => {
 
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm();
 
   const navigate = useNavigate();
-  const { loginUser } = useAuthStore((state) => state);
+  const { loginUser, isLoading } = useAuthStore((state) => state);
 
   const onSubmit = (formData) => {
-    loginUser(formData, navigate);
+    loginUser(formData, navigate, reset);
   };
+
+  console.log(isLoading)
 
   return (
     <div className="flex min-h-full overflow-y-auto">
@@ -70,7 +74,7 @@ const Login = () => {
                 <input type="checkbox" className="accent-black w-4 h-4" />
                 <p className="my-para">Keep me signed in</p>
               </div>
-              <button className="my-btn-primary">Sign in</button>
+              <button className={`my-btn-primary disabled:bg-gray-300 disabled:cursor-not-allowed`} disabled={isLoading}>{isLoading ? <ButtonSpinner /> : "Sign In"}</button>
             </form>
           </div>
         </main>
