@@ -32,7 +32,7 @@ public class LeaveRequestController {
         String username = jwt.getSubject();
 
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException("asdfasdf"));
+                .orElseThrow(() -> new UserNotFoundException("User with username: " + username + " not found."));
 
         LeaveRequestResponse response = leaveRequestService.createLeaveRequest(user.getId(), assignmentId, request);
 

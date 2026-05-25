@@ -23,9 +23,10 @@ public class LeaveRequest {
     private Long id;
 
     @ManyToOne
-    private User requesterId;
+    private User requester;
 
-    @ManyToOne
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "manager_approval_id", unique = true)
     private ManagerApproval approval;
 
     @OneToOne

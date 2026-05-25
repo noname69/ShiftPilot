@@ -14,7 +14,6 @@ import lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignment;
 import lt.techin.shiftpilot.feature.shiftassignment.repository.ShiftAssignmentRepository;
 import lt.techin.shiftpilot.feature.user.model.User;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 @RequiredArgsConstructor
 @Service
@@ -33,25 +32,23 @@ public class LeaveRequestServiceImpl implements LeaveRequestService{
 
         User manager = assignment.getAssignedBy();
 
+        LeaveRequest leaveRequest = new LeaveRequest();
+        leaveRequest.setAssignment(assignment);
+        leaveRequest.setReason(request.getReason());
+
         ManagerApproval approval = new ManagerApproval();
         approval.setManager(manager);
         approval.setType(request.getType());
         approval.setStatus(ApprovalStatus.PENDING_MANAGER_APPROVAL);
 
-        ManagerApproval savedApproval = managerApprovalRepository.save(approval);
-
-        LeaveRequest leaveRequest = new LeaveRequest();
-        leaveRequest.setApproval(savedApproval);
-        leaveRequest.setAssignment(assignment);
-        if(StringUtils.hasText(request.getReason())){
-            leaveRequest.setReason(request.getReason());
-        }
+        leaveRequest.setApproval(approval);
+        approval.setLeaveRequest(leaveRequest);
 
         LeaveRequest savedRequest = leaveRequestRepository.save(leaveRequest);
 
         return new LeaveRequestResponse(
                 savedRequest.getId(),
-                savedApproval.getId(),
+                savedRequest.getApproval().getId(),
                 requesterId,
                 assignmentId,
                 savedRequest.getStatus()
