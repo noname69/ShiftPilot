@@ -1,6 +1,7 @@
 package lt.techin.shiftpilot.feature.shiftassignment.service;
 
 import lombok.RequiredArgsConstructor;
+import lt.techin.shiftpilot.exception.ShiftAssignmentNotFoundException;
 import lt.techin.shiftpilot.exception.ShiftNotFoundException;
 import lt.techin.shiftpilot.exception.user.UserNotFoundException;
 import lt.techin.shiftpilot.feature.shift.dto.ShiftResponse;
@@ -19,8 +20,10 @@ import lt.techin.shiftpilot.feature.user.model.User;
 import lt.techin.shiftpilot.feature.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -53,10 +56,21 @@ public class ShiftAssignmentServiceImpl implements ShiftAssignmentService{
             User user = userRepository.findById(id)
                     .orElseThrow(() -> new UserNotFoundException(id));
 
-            ShiftAssignment shiftAssignment = new ShiftAssignment();
+            Optional<ShiftAssignment> existing = shiftAssignmentRepository
+                    .findByShiftIdAndUserId(shift.getId(), user.getId());
+
+            ShiftAssignment shiftAssignment = existing.orElse(new ShiftAssignment());
+            boolean isNew = existing.isEmpty();
+
             shiftAssignment.setShift(shift);
             shiftAssignment.setAssignedBy(manager);
             shiftAssignment.setUser(user);
+            shiftAssignment.setStatus(ShiftAssignmentStatus.ASSIGNED);
+            shiftAssignment.setRemovedAt(null);
+            shiftAssignment.setUpdatedAt(LocalDateTime.now());
+            if (isNew) {
+                shiftAssignment.setAssignedAt(LocalDateTime.now());
+            }
 
             shiftAssignmentRepository.save(shiftAssignment);
             AssigneeResponse response = userMapper.toAssigneeResponse(user, ShiftAssignmentStatus.ASSIGNED);
@@ -93,5 +107,27 @@ public class ShiftAssignmentServiceImpl implements ShiftAssignmentService{
                 .map(shiftAssignment -> shiftAssignment.getShift())
                 .map(shiftMapper::toResponse)
                 .toList();
+    }
+
+    @Override
+    public AssigneeResponse removeShiftAssignment(Long shiftId, Long userId) {
+
+        Shift shift = shiftRepository.findById(shiftId)
+                .orElseThrow(() -> new ShiftNotFoundException(shiftId));
+
+        if (shift.getStatus() == ShiftStatus.CANCELLED) {
+            throw new IllegalStateException("Cannot modify assignments of a cancelled shift.");
+        }
+
+        ShiftAssignment assignment = shiftAssignmentRepository.findAssignedByShiftIdAndUserId(shiftId, userId)
+                .orElseThrow(() -> new ShiftAssignmentNotFoundException(shiftId, userId));
+
+        assignment.setStatus(ShiftAssignmentStatus.REMOVED);
+        assignment.setRemovedAt(LocalDateTime.now());
+        assignment.setUpdatedAt(LocalDateTime.now());
+
+        shiftAssignmentRepository.save(assignment);
+
+        return userMapper.toAssigneeResponse(assignment.getUser(), ShiftAssignmentStatus.REMOVED);
     }
 }

@@ -1,3 +1,5 @@
+import { FiUserMinus } from "react-icons/fi";
+
 const STATUS_CONFIG = {
 	ASSIGNED: {
 		bg: "bg-amber-soft",
@@ -32,9 +34,9 @@ const StatusBadge = ({ status }) => {
 	);
 };
 
-const ShiftAssignmentRequestsBody = ({ assignee }) => {
+const ShiftAssignmentRequestsBody = ({ assignee, onRemove }) => {
 
-	const { firstName, lastName, weeklyHours, email, status } = assignee || {};
+	const { id, firstName, lastName, weeklyHours, email, status } = assignee || {};
 
 	return (
 		<tbody className="divide-y divide-ink-100">
@@ -67,6 +69,15 @@ const ShiftAssignmentRequestsBody = ({ assignee }) => {
 				</td>
 
 				<td className="px-4 py-3 flex justify-center">
+					{status === "ASSIGNED" && (
+						<button
+							onClick={() => onRemove(id, firstName, lastName)}
+							className="inline-flex items-center gap-1 text-[12px] font-medium bg-rose-soft hover:bg-rose-soft/80 border border-rose-ink/20 px-2.5 py-1 rounded-md text-rose-ink transition-colors"
+						>
+							<FiUserMinus size={13} />
+							Remove
+						</button>
+					)}
 				</td>
 			</tr>
 		</tbody>
