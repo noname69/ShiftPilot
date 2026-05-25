@@ -10,6 +10,7 @@ import lt.techin.shiftpilot.feature.shift.model.Shift;
 import lt.techin.shiftpilot.feature.shift.model.ShiftStatus;
 import lt.techin.shiftpilot.feature.shift.repository.ShiftRepository;
 import lt.techin.shiftpilot.feature.shiftassignment.dto.AssigneeResponse;
+import lt.techin.shiftpilot.feature.shiftassignment.dto.MyAssigneeResponse;
 import lt.techin.shiftpilot.feature.shiftassignment.dto.ShiftAssignRequest;
 import lt.techin.shiftpilot.feature.shiftassignment.dto.ShiftAssignResponse;
 import lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignment;
@@ -51,10 +52,10 @@ public class ShiftAssignmentServiceImpl implements ShiftAssignmentService{
         List<Long> assigneeIds = request.getUserIds();
         List<AssigneeResponse> assignedUsers = new ArrayList<>();
 
-        assigneeIds.stream().forEach(id -> {
+        for (Long userId : request.getUserIds()) {
 
-            User user = userRepository.findById(id)
-                    .orElseThrow(() -> new UserNotFoundException(id));
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new UserNotFoundException(userId));
 
             Optional<ShiftAssignment> existing = shiftAssignmentRepository
                     .findByShiftIdAndUserId(shift.getId(), user.getId());
@@ -66,37 +67,55 @@ public class ShiftAssignmentServiceImpl implements ShiftAssignmentService{
             shiftAssignment.setAssignedBy(manager);
             shiftAssignment.setUser(user);
             shiftAssignment.setStatus(ShiftAssignmentStatus.ASSIGNED);
+
+            ShiftAssignment saved = shiftAssignmentRepository.save(shiftAssignment);
+
+            AssigneeResponse response = new AssigneeResponse(
+                    saved.getUser().getId(),
+                    saved.getUser().getFirstName(),
+                    saved.getUser().getLastName(),
+                    saved.getUser().getEmail(),
+                    saved.getUser().getRole(),
+                    saved.getStatus(),
+                    saved.getId()
+            );
             shiftAssignment.setRemovedAt(null);
             shiftAssignment.setUpdatedAt(LocalDateTime.now());
             if (isNew) {
                 shiftAssignment.setAssignedAt(LocalDateTime.now());
             }
 
-            shiftAssignmentRepository.save(shiftAssignment);
-            AssigneeResponse response = userMapper.toAssigneeResponse(user, ShiftAssignmentStatus.ASSIGNED);
             assignedUsers.add(response);
-        });
+        }
 
         return new ShiftAssignResponse(assignedUsers);
+
     }
 
     @Override
     public ShiftAssignResponse getShiftAssignees(Long shiftId) {
 
-        List<User> assignees = shiftAssignmentRepository.findUsersByShiftId(shiftId);
+        List<ShiftAssignment> assignments =
+                shiftAssignmentRepository.findByShiftId(shiftId);
 
-        List<AssigneeResponse> responses = assignees.stream()
-                .map(user -> {
-                    ShiftAssignmentStatus status = shiftAssignmentRepository.findStatusByUserIdAndShiftId(user.getId(), shiftId);
-                    return userMapper.toAssigneeResponse(user, status);
-                })
+        List<AssigneeResponse> responses = assignments.stream()
+                .map(a -> new AssigneeResponse(
+                        a.getUser().getId(),
+                        a.getUser().getFirstName(),
+                        a.getUser().getLastName(),
+                        a.getUser().getEmail(),
+                        a.getUser().getRole(),
+                        a.getStatus(),
+                        a.getId()
+                ))
                 .toList();
 
         return new ShiftAssignResponse(responses);
+
     }
 
     @Override
-    public List<ShiftResponse> getUserShifts(String username) {
+    public List<MyAssigneeResponse> getUserShifts(String username) {
 
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException(username));
@@ -104,8 +123,27 @@ public class ShiftAssignmentServiceImpl implements ShiftAssignmentService{
         List<ShiftAssignment> shiftAssignments = shiftAssignmentRepository.findByUser(user);
 
         return shiftAssignments.stream()
-                .map(shiftAssignment -> shiftAssignment.getShift())
-                .map(shiftMapper::toResponse)
+                .map(ShiftAssignment::getShift)
+                .map(shift -> {
+                    ShiftAssignment assignment = shiftAssignments.stream()
+                            .filter(a -> a.getShift().getId().equals(shift.getId()))
+                            .findFirst()
+                            .orElseThrow();
+
+                    return new MyAssigneeResponse(
+                            shift.getId(),
+                            shift.getTitle(),
+                            shift.getDescription(),
+                            shift.getShiftDate(),
+                            shift.getStartTime(),
+                            shift.getEndTime(),
+                            shift.getMinEmployees(),
+                            shift.getStatus(),
+                            shift.getCreatedBy().getId(),
+                            shift.getCreatedBy().getUsername(),
+                            assignment.getId()
+                    );
+                })
                 .toList();
     }
 
@@ -128,6 +166,6 @@ public class ShiftAssignmentServiceImpl implements ShiftAssignmentService{
 
         shiftAssignmentRepository.save(assignment);
 
-        return userMapper.toAssigneeResponse(assignment.getUser(), ShiftAssignmentStatus.REMOVED);
+        return userMapper.toAssigneeResponse(assignment.getUser(), ShiftAssignmentStatus.REMOVED, assignment.getUser().getId());
     }
 }

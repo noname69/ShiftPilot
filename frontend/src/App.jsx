@@ -38,6 +38,8 @@ function App() {
             <Route path="users" element={<UsersPage />} />
             <Route path="shifts" element={<ShiftsPage />} />
             <Route path="shifts/:shiftId/shift-requests" element={<ShiftAssignmentRequests />} />
+            <Route path="shifts/:assigneeId/reschedule-request" element={<MySchedule />} />
+            
           </Route>
         </Route>
 
@@ -45,6 +47,7 @@ function App() {
           <Route path="manager" element={<ManagerPanel />} >
             <Route index element={<Dashboard />} />
             <Route path="schedule" element={<Schedule />} />
+            <Route path="requests" element={<Requests />} />
             <Route path="shifts" element={<ShiftsPage />} />
             <Route path="shifts/new" element={<ShiftCreatePage />} />
             <Route path="shifts/:id/edit" element={<ShiftEditPage />} />
@@ -53,6 +56,8 @@ function App() {
             <Route path="users/:id/edit" element={<UserEditPage />} />
             <Route path="shifts/:shiftId/assign-shift" element={<ShiftAssignments />} />
             <Route path="shifts/:shiftId/shift-requests" element={<ShiftAssignmentRequests />} />
+            <Route path="shifts/:assigneeId/reschedule-request" element={<MySchedule />} />
+
           </Route>
         </Route>
 

@@ -1,6 +1,7 @@
 package lt.techin.shiftpilot.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lt.techin.shiftpilot.exception.core.BusinessException;
 import lt.techin.shiftpilot.exception.core.DuplicateException;
 import lt.techin.shiftpilot.exception.core.NotFoundException;
 import lt.techin.shiftpilot.exception.core.TokenException;
@@ -162,6 +163,22 @@ public class GlobalExceptionHandler {
         );
 
         return ResponseEntity.badRequest().body(apiError);
+    }
+
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ApiError> handleBusinessException(
+            BusinessException ex,
+            HttpServletRequest request
+    ) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ApiError(
+                        HttpStatus.BAD_REQUEST.value(),
+                        HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                        ex.getMessage(),
+                        request.getRequestURI(),
+                        LocalDateTime.now()
+                ));
     }
 
     @ExceptionHandler(IllegalStateException.class)

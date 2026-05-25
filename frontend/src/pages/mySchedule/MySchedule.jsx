@@ -3,9 +3,16 @@ import { useEffect } from "react";
 import Footer from "../components/shared/Footer";
 import MyScheduleBody from "./MyScheduleBody";
 
+import { useParams } from "react-router";
+
 const MySchedule = () => {
 
   const { userShifts, fetchUserShifts } = useShiftStore(state => state);
+
+  const { assigneeId } = useParams();
+
+  const isRescheduleMode = !!assigneeId;
+
 
   useEffect(() => {
     fetchUserShifts();
@@ -40,6 +47,8 @@ const MySchedule = () => {
               <MyScheduleBody
                 key={shift.id}
                 shift={shift}
+                isRescheduleMode={isRescheduleMode}
+                selectedShiftId={assigneeId}
               />)}
           </table>
         </div>

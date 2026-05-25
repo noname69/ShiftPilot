@@ -42,6 +42,7 @@ public interface ShiftAssignmentRepository extends JpaRepository<ShiftAssignment
             @Param("shiftId") Long shiftId
     );
 
+    List<ShiftAssignment> findByShiftId(Long shiftId);
     @Query("""
     select sa
     from ShiftAssignment sa

@@ -1,6 +1,7 @@
 package lt.techin.shiftpilot.feature.shiftassignment.service;
 
 import lt.techin.shiftpilot.feature.shift.dto.ShiftResponse;
+import lt.techin.shiftpilot.feature.shiftassignment.dto.MyAssigneeResponse;
 import lt.techin.shiftpilot.feature.shiftassignment.dto.AssigneeResponse;
 import lt.techin.shiftpilot.feature.shiftassignment.dto.ShiftAssignRequest;
 import lt.techin.shiftpilot.feature.shiftassignment.dto.ShiftAssignResponse;
@@ -12,7 +13,10 @@ public interface ShiftAssignmentService {
 
     ShiftAssignResponse getShiftAssignees(Long shiftId);
 
-    List<ShiftResponse> getUserShifts(String username);
+    List<MyAssigneeResponse> getUserShifts(String username);
+//
+//    List<ShiftResponse> getUserShifts(String username);
 
     AssigneeResponse removeShiftAssignment(Long shiftId, Long userId);
+
 }
