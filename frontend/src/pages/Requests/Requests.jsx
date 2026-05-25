@@ -21,11 +21,12 @@ const Requests = () => {
   const isAdmin = role === "ADMIN";
 
   const loadRequests = () => {
-    return role === "MANAGER" || "ADMIN" ? fetchAllRequests() : fetchMyRequests();
+    return role === ("MANAGER" || "ADMIN") ? fetchAllRequests() : fetchMyRequests();
   };
 
   useEffect(() => {
     loadRequests();
+    console.log(requests)
   }, [role]);
 
 

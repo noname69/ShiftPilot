@@ -1,7 +1,7 @@
-package lt.techin.shiftpilot.feature.reschedulerequest.mapper;
+package lt.techin.shiftpilot.feature.swaprequest.mapper;
 
-import lt.techin.shiftpilot.feature.reschedulerequest.dto.RescheduleRequestResponseDto;
-import lt.techin.shiftpilot.feature.reschedulerequest.model.RescheduleRequest;
+import lt.techin.shiftpilot.feature.swaprequest.dto.RescheduleRequestResponseDto;
+import lt.techin.shiftpilot.feature.swaprequest.model.SwapRequest;
 import lt.techin.shiftpilot.feature.shift.dto.ShiftSummary;
 import lt.techin.shiftpilot.feature.shift.model.Shift;
 import lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignment;
@@ -11,7 +11,7 @@ import lt.techin.shiftpilot.feature.user.model.User;
 public class RescheduleRequestMapper {
 
     public static RescheduleRequestResponseDto toResponse(
-            RescheduleRequest request
+            SwapRequest request
     ) {
 
         return new RescheduleRequestResponseDto(

@@ -1,4 +1,4 @@
-package lt.techin.shiftpilot.feature.reschedulerequest.dto;
+package lt.techin.shiftpilot.feature.swaprequest.dto;
 
 public record DecisionRequestDto(
         Boolean approved

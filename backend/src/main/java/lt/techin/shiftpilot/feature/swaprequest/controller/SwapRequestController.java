@@ -1,9 +1,9 @@
-package lt.techin.shiftpilot.feature.reschedulerequest.controller;
+package lt.techin.shiftpilot.feature.swaprequest.controller;
 
 import lombok.RequiredArgsConstructor;
-import lt.techin.shiftpilot.feature.reschedulerequest.dto.CreateRescheduleRequestDto;
-import lt.techin.shiftpilot.feature.reschedulerequest.dto.RescheduleRequestResponseDto;
-import lt.techin.shiftpilot.feature.reschedulerequest.service.RescheduleRequestService;
+import lt.techin.shiftpilot.feature.swaprequest.dto.CreateRescheduleRequestDto;
+import lt.techin.shiftpilot.feature.swaprequest.dto.RescheduleRequestResponseDto;
+import lt.techin.shiftpilot.feature.swaprequest.service.RescheduleRequestService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -44,7 +44,7 @@ public class RescheduleRequestController {
         );
     }
 
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @GetMapping("/all")
     public ResponseEntity<List<RescheduleRequestResponseDto>> getAllRequests(
             Authentication authentication
