@@ -19,11 +19,8 @@ public class LeaveRequestMapper {
 
     public LeaveRequestResponse leaveRequestToResponse(LeaveRequest request){
         return LeaveRequestResponse.builder()
-                .requestId(request.getId())
-//                .approvalId(request.getApproval().getId())
                 .requester(toUserSummary(request.getRequester()))
                 .requesterShift(toShiftSummary(request.getAssignment()))
-//                .status(request.getStatus())
                 .build();
     }
 

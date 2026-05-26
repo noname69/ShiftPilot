@@ -33,9 +33,6 @@ public class LeaveRequest {
     @JoinColumn(name = "assignment_id")
     private ShiftAssignment assignment;
 
-//    @Enumerated(EnumType.STRING)
-//    private LeaveRequestStatus status;
-
     private String reason;
 
     private LocalDateTime createdAt;
@@ -45,7 +42,6 @@ public class LeaveRequest {
     @PrePersist
     public void prePersist() {
         createdAt = LocalDateTime.now();
-//        status = LeaveRequestStatus.PENDING;
     }
 
 }

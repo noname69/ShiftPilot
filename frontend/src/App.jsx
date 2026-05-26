@@ -36,7 +36,7 @@ function App() {
             <Route index element={<Dashboard />} />
             <Route path="schedule" element={<Schedule />} />
             <Route path="myschedule" element={<MySchedule />} />
-            <Route path="requests" element={<MyRequests />} />
+            <Route path="my-requests" element={<MyRequests />} />
             <Route path="users" element={<UsersPage />} />
             <Route path="shifts" element={<ShiftsPage />} />
             <Route path="shifts/:shiftId/shift-requests" element={<ShiftAssignmentRequests />} />

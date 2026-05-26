@@ -4,7 +4,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lt.techin.shiftpilot.exception.assignment.*;
 import lt.techin.shiftpilot.exception.user.UserNotFoundException;
-import lt.techin.shiftpilot.feature.leaverequest.model.LeaveRequest;
 import lt.techin.shiftpilot.feature.managerapproval.model.ApprovalStatus;
 import lt.techin.shiftpilot.feature.managerapproval.model.ManagerApproval;
 import lt.techin.shiftpilot.feature.managerapproval.model.RequestType;
@@ -12,7 +11,6 @@ import lt.techin.shiftpilot.feature.swaprequest.dto.CreateSwapRequest;
 import lt.techin.shiftpilot.feature.swaprequest.dto.SwapRequestResponse;
 import lt.techin.shiftpilot.feature.swaprequest.mapper.SwapRequestMapper;
 import lt.techin.shiftpilot.feature.swaprequest.model.SwapRequest;
-//import lt.techin.shiftpilot.feature.swaprequest.model.SwapRequestStatus;
 import lt.techin.shiftpilot.feature.swaprequest.repository.SwapRequestRepository;
 import lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignment;
 import lt.techin.shiftpilot.feature.shiftassignment.repository.ShiftAssignmentRepository;
@@ -47,46 +45,12 @@ public class SwapRequestServiceImpl implements SwapRequestService {
 
         validateCreateRequest(requester, requesterAssignment, targetAssignment);
 
-        // **************************************
-//        ShiftAssignment assignment = shiftAssignmentRepository.findById(assignmentId)
-//                .orElseThrow(() -> new AssignmentNotFoundException(assignmentId));
-//
-//        User requester = userRepository.findById(requesterId)
-//                .orElseThrow(() -> new UserNotFoundException(requesterId));
-//
-//        User manager = assignment.getAssignedBy();
-//
-//        LeaveRequest leaveRequest = new LeaveRequest();
-//        leaveRequest.setAssignment(assignment);
-//        leaveRequest.setReason(request.getReason());
-//        leaveRequest.setRequester(requester);
-
         User manager = requesterAssignment.getAssignedBy();
 
         ManagerApproval approval = new ManagerApproval();
         approval.setManager(manager);
         approval.setType(RequestType.SWAP);
         approval.setStatus(ApprovalStatus.PENDING_TARGET_APPROVAL);
-
-//        leaveRequest.setApproval(approval);
-//        LeaveRequest savedRequest = leaveRequestRepository.save(leaveRequest);
-
-
-        // **************************************
-
-//        boolean exists = swapRequestRepository
-//                .existsByRequesterAssignmentIdAndTargetAssignmentIdAndStatusIn(
-//                        requesterAssignment.getId(),
-//                        targetAssignment.getId(),
-//                        List.of(
-//                                SwapRequestStatus.PENDING_TARGET_APPROVAL,
-//                                SwapRequestStatus.PENDING_MANAGER_APPROVAL
-//                        )
-//                );
-
-//        if (exists) {
-//            throw new RescheduleRequestConflictException();
-//        }
 
         SwapRequest req = SwapRequest.builder()
                 .requester(requester)
@@ -155,32 +119,32 @@ public class SwapRequestServiceImpl implements SwapRequestService {
         );
     }
 
-    @Override
-    @Transactional()
-    public List<SwapRequestResponse> getAllRequests() {
-
-        return swapRequestRepository
-                .findAllByOrderByCreatedAtDesc()
-                .stream()
-                .map(swapRequest -> swapRequestMapper.toResponse(swapRequest))
-                .toList();
-    }
-
-    @Override
-    @Transactional()
-
-    public List<SwapRequestResponse> getMyRequests(String username) {
-
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException(username));
-
-        return swapRequestRepository
-                .findByRequesterIdOrTargetUserIdOrderByCreatedAtDesc(
-                        user.getId(),
-                        user.getId()
-                )
-                .stream()
-                .map(swapRequest -> swapRequestMapper.toResponse(swapRequest))
-                .toList();
-    }
+//    @Override
+//    @Transactional()
+//    public List<SwapRequestResponse> getAllRequests() {
+//
+//        return swapRequestRepository
+//                .findAllByOrderByCreatedAtDesc()
+//                .stream()
+//                .map(swapRequest -> swapRequestMapper.toResponse(swapRequest))
+//                .toList();
+//    }
+//
+//    @Override
+//    @Transactional()
+//
+//    public List<SwapRequestResponse> getMyRequests(String username) {
+//
+//        User user = userRepository.findByUsername(username)
+//                .orElseThrow(() -> new UserNotFoundException(username));
+//
+//        return swapRequestRepository
+//                .findByRequesterIdOrTargetUserIdOrderByCreatedAtDesc(
+//                        user.getId(),
+//                        user.getId()
+//                )
+//                .stream()
+//                .map(swapRequest -> swapRequestMapper.toResponse(swapRequest))
+//                .toList();
+//    }
 }

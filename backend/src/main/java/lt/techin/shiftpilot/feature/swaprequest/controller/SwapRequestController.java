@@ -32,34 +32,34 @@ public class SwapRequestController {
                 );
     }
 
-    @GetMapping("/my")
-    public ResponseEntity<List<SwapRequestResponse>> getAll(
-            Authentication authentication
-    ) {
-
-        String username = getUsername(authentication);
-
-        return ResponseEntity.ok(
-                swapRequestService.getMyRequests(username)
-        );
-    }
+//    @GetMapping("/my")
+//    public ResponseEntity<List<SwapRequestResponse>> getAll(
+//            Authentication authentication
+//    ) {
+//
+//        String username = getUsername(authentication);
+//
+//        return ResponseEntity.ok(
+//                swapRequestService.getMyRequests(username)
+//        );
+//    }
 
     @GetMapping("/debug")
     public Object debug(Authentication authentication) {
         return authentication.getAuthorities();
     }
 
-    @PreAuthorize("hasRole('MANAGER')")
-    @GetMapping("/all")
-    public ResponseEntity<List<SwapRequestResponse>> getAllRequests(
-            Authentication authentication
-    ) {
-        String username = getUsername(authentication);
-
-        return ResponseEntity.ok(
-                swapRequestService.getAllRequests()
-        );
-    }
+//    @PreAuthorize("hasRole('MANAGER')")
+//    @GetMapping("/all")
+//    public ResponseEntity<List<SwapRequestResponse>> getAllRequests(
+//            Authentication authentication
+//    ) {
+//        String username = getUsername(authentication);
+//
+//        return ResponseEntity.ok(
+//                swapRequestService.getAllRequests()
+//        );
+//    }
 
     private String getUsername(Authentication authentication) {
         return authentication.getName();

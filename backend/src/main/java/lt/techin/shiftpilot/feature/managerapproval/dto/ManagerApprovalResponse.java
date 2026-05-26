@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 public class ManagerApprovalResponse {
 
     private Long approvalId;
+    private Long requestId;
 
     private SwapRequestResponse swapResponse;
     private LeaveRequestResponse leaveResponse;

@@ -41,10 +41,6 @@ public class SwapRequest {
     @JoinColumn(name = "manager_approval_id")
     private ManagerApproval approval;
 
-//    @Enumerated(EnumType.STRING)
-//    @Column(nullable = false)
-//    private SwapRequestStatus status;
-
     @Column(length = 500)
     private String reason;
 
@@ -57,8 +53,5 @@ public class SwapRequest {
     public void prePersist() {
         createdAt = LocalDateTime.now();
 
-//        if (status == null) {
-//            status = SwapRequestStatus.PENDING_TARGET_APPROVAL;
-//        }
     }
 }

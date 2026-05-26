@@ -32,4 +32,18 @@ public class ManagerApprovalController {
 
         return ResponseEntity.ok().body(response);
     }
+
+    @GetMapping("/users/me/my-requests")
+    public ResponseEntity<ManagerApprovalsList> getUserRequests(Authentication authentication) {
+
+        Jwt jwt = (Jwt) authentication.getPrincipal();
+        String username = jwt.getSubject();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException("User with username: " + username + " not found."));
+
+        ManagerApprovalsList response = managerApprovalService.getAllUserRequests(user.getId());
+
+        return ResponseEntity.ok().body(response);
+    }
 }

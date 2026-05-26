@@ -36,6 +36,18 @@ const useManagerApprovalsStore = create(
       }
     },
 
+    fetchUserRequests: async () => {
+      try {
+        set({ isLoading: true });
+        const { data } = await api.get(`/users/me/my-requests`);
+        set(() => ({ requests: [...data.content] }));
+      } catch (error) {
+        console.log(error);
+      } finally {
+        set({ isLoading: false });
+      }
+    },
+
     removeAssignment: async (shiftId, userId) => {
 
       console.log(userId)

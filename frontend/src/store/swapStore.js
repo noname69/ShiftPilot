@@ -3,8 +3,8 @@ import { devtools } from "zustand/middleware";
 
 import {
   createSwapRequest,
-  getMySwapRequests,
-  getAllSwapRequests,
+  // getMySwapRequests,
+  // getAllSwapRequests,
 } from "../api/swap";
 
 const useSwapStore = create(
@@ -46,51 +46,51 @@ const useSwapStore = create(
       }
     },
 
-    fetchMyRequests: async () => {
-      set({ isLoading: true, error: null });
+    // fetchMyRequests: async () => {
+    //   set({ isLoading: true, error: null });
 
-      try {
-        const data = await getMySwapRequests();
+    //   try {
+    //     const data = await getMySwapRequests();
 
-        set({
-          requests: Array.isArray(data) ? data : [],
-          isLoading: false,
-        });
+    //     set({
+    //       requests: Array.isArray(data) ? data : [],
+    //       isLoading: false,
+    //     });
 
-        return data;
-      } catch (error) {
-        const message =
-          error?.response?.data?.message || "Failed to load requests";
+    //     return data;
+    //   } catch (error) {
+    //     const message =
+    //       error?.response?.data?.message || "Failed to load requests";
 
-        set({
-          error: message,
-          isLoading: false,
-        });
+    //     set({
+    //       error: message,
+    //       isLoading: false,
+    //     });
 
-        return [];
-      }
-    },
+    //     return [];
+    //   }
+    // },
 
     // =========================
     // FETCH ALL (MANAGER, ADMIN)
     // =========================
-    fetchAllRequests: async () => {
-      set({ isLoading: true, error: null });
+    // fetchAllRequests: async () => {
+    //   set({ isLoading: true, error: null });
 
-      try {
-        const data = await getAllSwapRequests();
+    //   try {
+    //     const data = await getAllSwapRequests();
 
-        set({
-          requests: data,
-          isLoading: false,
-        });
-      } catch (error) {
-        set({
-          error: error?.message || "Failed to load requests",
-          isLoading: false,
-        });
-      }
-    },
+    //     set({
+    //       requests: data,
+    //       isLoading: false,
+    //     });
+    //   } catch (error) {
+    //     set({
+    //       error: error?.message || "Failed to load requests",
+    //       isLoading: false,
+    //     });
+    //   }
+    // },
   })),
 );
 

@@ -94,24 +94,21 @@ const ShiftCard = ({ title, date, start, end }) => (
 
 const RequestRow = ({
   request,
-  // onTargetRespond,
-  // onManagerRespond,
+  onTargetRespond,
+  onManagerRespond,
   currentUserId,
   isManager,
-  isAdmin
+  isUser
 }) => {
 
 
   const {
     requestId,
-    // requester,
-    // targetUser,
-    // requesterShift,
-    // targetShift,
     approvalStatus,
     reason,
     createdAt,
   } = request;
+
 
   let requester = {};
   let targetUser = {};
@@ -125,30 +122,10 @@ const RequestRow = ({
     requesterShift = request.swapResponse.requesterShift;
     targetUser = request.swapResponse.targetUser;
     targetShift = request.swapResponse.targetShift;
-  } else {
+  } else if(!isSwapRequest) {
     requester = request.leaveResponse.requester;
     requesterShift = request.leaveResponse.requesterShift;
   }
-
-  console.log(requester)
-
-
-  // targetUser,
-  // requesterShift,
-  // targetShift,
-
-
-  // request.swapResponse ? 
-
-  // const { 
-  //   requester,
-  //   targetUser,
-  //   requesterShift,
-  //   targetShift } = request.swa
-
-
-
-  console.log(request)
 
   // const isTargetUser = currentUserId === targetUser?.id;
 
@@ -166,7 +143,7 @@ const RequestRow = ({
   return (
     <tr className="border-t border-ink-100 hover:bg-ink-50/40 transition">
       {/* USERS SWAP */}
-      <td className="px-4 py-3 align-top min-w-[260px]">
+      <td className="px-4 py-3 align-top min-w-65">
         <UserCard user={requester} tone="requester" />
 
         {isSwapRequest && <>
@@ -180,7 +157,7 @@ const RequestRow = ({
       </td>
 
       {/* SHIFTS */}
-      <td className="px-4 py-3 align-top min-w-[260px]">
+      <td className="px-4 py-3 align-top min-w-65">
         <ShiftCard
           title={requesterShift?.title}
           date={requesterShift?.shiftDate}
@@ -205,7 +182,7 @@ const RequestRow = ({
       </td>
 
       {/* REASON */}
-      <td className="px-4 py-3 text-[12px] text-ink-600 max-w-[220px]">
+      <td className="px-4 py-3 text-[12px] text-ink-600 max-w-55">
         <div className="line-clamp-3">{reason || "—"}</div>
       </td>
 
@@ -223,10 +200,10 @@ const RequestRow = ({
       <td className="px-4 py-3 text-right">
         <div className="flex justify-end gap-2">
           {/* TARGET */}
-          {/* {canTargetRespond && (
+            {isUser && targetUser.id === currentUserId && (
             <>
               <button
-                onClick={() => onTargetRespond(id, true)}
+                onClick={() => onTargetRespond(requestId, true)}
                 className="w-8 h-8 flex items-center justify-center rounded-md bg-mint-soft text-mint-ink hover:bg-mint-soft/80"
                 title="Accept"
               >
@@ -234,20 +211,20 @@ const RequestRow = ({
               </button>
 
               <button
-                onClick={() => onTargetRespond(id, false)}
+                onClick={() => onTargetRespond(requestId, false)}
                 className="w-8 h-8 flex items-center justify-center rounded-md bg-rose-soft text-rose-ink hover:bg-rose-soft/80"
                 title="Decline"
               >
                 <FaTimes size={12} />
               </button>
             </>
-          )} */}
+          )}
 
           {/* MANAGER */}
-          {/* {(canManagerRespond || canAdminRespond) && (
+          {isManager && (approvalStatus === "PENDING_MANAGER_APPROVAL") && (
             <>
               <button
-                onClick={() => onManagerRespond(id, true)}
+                onClick={() => onManagerRespond(requestId, true)}
                 className="w-8 h-8 flex items-center justify-center rounded-md bg-mint-ink text-white hover:bg-mint-ink/90"
                 title="Approve"
               >
@@ -255,18 +232,18 @@ const RequestRow = ({
               </button>
 
               <button
-                onClick={() => onManagerRespond(id, false)}
+                onClick={() => onManagerRespond(requestId, false)}
                 className="w-8 h-8 flex items-center justify-center rounded-md bg-rose-soft text-rose-ink hover:bg-rose-soft/80"
                 title="Reject"
               >
                 <FaTimes size={12} />
               </button>
             </>
-          )} */}
+          )}
 
-          {/* {!canTargetRespond && !(canManagerRespond || canAdminRespond) && (
+          {!isUser && !isManager && (
             <span className="text-[12px] text-ink-400">—</span>
-          )} */}
+          )}
         </div>
       </td>
     </tr>

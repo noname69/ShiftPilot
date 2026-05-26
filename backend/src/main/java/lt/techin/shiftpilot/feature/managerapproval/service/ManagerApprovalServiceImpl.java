@@ -33,10 +33,50 @@ public class ManagerApprovalServiceImpl implements ManagerApprovalService{
                     if(approval.getLeaveRequest() != null) {
                         response.setLeaveResponse(leaveRequestMapper.leaveRequestToResponse(approval.getLeaveRequest()));
                         response.setReason(approval.getLeaveRequest().getReason());
+                        response.setRequestId(approval.getLeaveRequest().getId());
                     }
                     else {
                         response.setSwapResponse(swapRequestMapper.toResponse(approval.getSwapRequest()));
                         response.setReason(approval.getSwapRequest().getReason());
+                        response.setRequestId(approval.getSwapRequest().getId());
+                    }
+                    response.setApprovalStatus(approval.getStatus());
+                    response.setType(approval.getType());
+                    response.setCreatedAt(approval.getCreatedAt());
+
+                    if(approval.getClosedAt() != null) {
+                        response.setCompletedAt(approval.getClosedAt());
+                    }
+
+                    if(StringUtils.hasText(approval.getManagerComment())){
+                        response.setManagerComment(approval.getManagerComment());
+                    };
+
+                    return response;
+
+                }).toList();
+
+        return new ManagerApprovalsList(responseList);
+    }
+
+    @Override
+    public ManagerApprovalsList getAllUserRequests(Long userId) {
+        List<ManagerApproval> userRequests =  managerApprovalRepository.findAllByUserInvolved(userId);
+
+        List<ManagerApprovalResponse> responseList = userRequests.stream()
+                .map(approval -> {
+                    ManagerApprovalResponse response = new ManagerApprovalResponse();
+                    response.setApprovalId(approval.getId());
+
+                    if(approval.getLeaveRequest() != null) {
+                        response.setLeaveResponse(leaveRequestMapper.leaveRequestToResponse(approval.getLeaveRequest()));
+                        response.setReason(approval.getLeaveRequest().getReason());
+                        response.setRequestId(approval.getLeaveRequest().getId());
+                    }
+                    else {
+                        response.setSwapResponse(swapRequestMapper.toResponse(approval.getSwapRequest()));
+                        response.setReason(approval.getSwapRequest().getReason());
+                        response.setRequestId(approval.getSwapRequest().getId());
                     }
                     response.setApprovalStatus(approval.getStatus());
                     response.setType(approval.getType());

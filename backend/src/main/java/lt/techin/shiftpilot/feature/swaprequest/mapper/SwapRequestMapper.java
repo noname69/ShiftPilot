@@ -18,23 +18,11 @@ public class SwapRequestMapper {
 
         return new SwapRequestResponse(
 
-                request.getId(),
-//                request.getApproval().getId(),
-
                 toUserSummary(request.getRequester()),
                 toUserSummary(request.getTargetUser()),
 
                 toShiftSummary(request.getRequesterAssignment()),
                 toShiftSummary(request.getTargetAssignment())
-
-//                request.getStatus(),
-
-//                request.getReason(),
-//
-//                request.getCreatedAt(),
-//                request.getTargetRespondedAt(),
-//                request.getManagerRespondedAt(),
-//                request.getCompletedAt()
         );
     }
 
