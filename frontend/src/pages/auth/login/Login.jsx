@@ -23,8 +23,6 @@ const Login = () => {
     loginUser(formData, navigate, reset);
   };
 
-  console.log(isLoading)
-
   return (
     <div className="flex min-h-full overflow-y-auto">
       <div className="flex flex-col flex-1 justify-between bg-ink-100">

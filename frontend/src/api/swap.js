@@ -6,15 +6,15 @@ export const createSwapRequest = async (data) => {
   return response.data;
 };
 
-export const getMySwapRequests = async () => {
-  const response = await api.get("/swap-requests/my");
-  return response.data;
-};
+// export const getMySwapRequests = async () => {
+//   const response = await api.get("/swap-requests/my");
+//   return response.data;
+// };
 
-export const getAllSwapRequests = async () => {
-  const response = await api.get("/swap-requests/all");
-  return response.data;
-};
+// export const getAllSwapRequests = async () => {
+//   const response = await api.get("/swap-requests/all");
+//   return response.data;
+// };
 
 // Target user response
 export const respondAsTarget = async (id, accepted) => {

@@ -6,6 +6,6 @@ public enum ApprovalStatus {
     TARGET_REJECTED,
     PENDING_MANAGER_APPROVAL,
     MANAGER_REJECTED,
-    APPROVED
-//    CANCELLED nzn ar sito reikia, nes CANCEL isivaizduoju TARGET_REJECTED, arba MANAGER_REJECTED
+    APPROVED,
+    CANCELLED
 }

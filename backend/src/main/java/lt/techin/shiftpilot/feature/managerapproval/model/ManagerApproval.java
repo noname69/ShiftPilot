@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lt.techin.shiftpilot.feature.leaverequest.model.LeaveRequest;
+import lt.techin.shiftpilot.feature.swaprequest.model.SwapRequest;
 import lt.techin.shiftpilot.feature.user.model.User;
 
 import java.time.LocalDateTime;
@@ -23,9 +24,8 @@ public class ManagerApproval {
     @ManyToOne
     private User manager;
 
-//    @OneToOne
-//    @JoinColumn(name = "swap_request_id")
-//    private SwapRequest swapRequest;
+    @OneToOne(mappedBy = "approval")
+    private SwapRequest swapRequest;
 
     @OneToOne(mappedBy = "approval")
     private LeaveRequest leaveRequest;

@@ -31,8 +31,8 @@ export const UserNavigation = [
     icon: icons.shifts
   },
   {
-    name: "Requests",
-    href: "/user/requests",
+    name: "My Requests",
+    href: "/user/my-requests",
     icon: icons.requests
   },
 ]

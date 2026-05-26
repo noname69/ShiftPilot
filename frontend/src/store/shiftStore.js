@@ -56,10 +56,10 @@ const useShiftStore = create(
     },
 
     fetchUserShifts: async () => {
-      set({ isLoading: true, error: null });
       try {
+        set({ isLoading: true, error: null });
         const data = await getUserShifts();
-        console.log(data);
+        console.log(data)
         set({ userShifts: data });
       } catch (error) {
         set({ error: error.message });

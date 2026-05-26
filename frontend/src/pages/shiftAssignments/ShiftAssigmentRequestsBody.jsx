@@ -1,7 +1,6 @@
 import { IoIosSwap } from "react-icons/io";
 import { Link } from "react-router";
 import useAuthStore from "../../store/authStore";
-
 import { FiUserMinus } from "react-icons/fi";
 
 const STATUS_CONFIG = {
@@ -36,6 +35,7 @@ const StatusBadge = ({ status }) => {
       {cfg.label}
     </span>
   );
+
 };
 
 const ShiftAssignmentRequestsBody = ({ assignee, onRemove }) => {

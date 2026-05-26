@@ -1,29 +1,27 @@
-package lt.techin.shiftpilot.feature.swaprequest.mapper;
+package lt.techin.shiftpilot.feature.leaverequest.mapper;
 
-import lt.techin.shiftpilot.feature.swaprequest.dto.SwapRequestResponse;
-import lt.techin.shiftpilot.feature.swaprequest.model.SwapRequest;
+import lombok.RequiredArgsConstructor;
+import lt.techin.shiftpilot.feature.leaverequest.dto.LeaveRequestResponse;
+import lt.techin.shiftpilot.feature.leaverequest.model.LeaveRequest;
 import lt.techin.shiftpilot.feature.shift.dto.ShiftSummary;
 import lt.techin.shiftpilot.feature.shift.model.Shift;
 import lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignment;
 import lt.techin.shiftpilot.feature.user.dto.UserSummary;
+import lt.techin.shiftpilot.feature.user.mapper.UserMapper;
 import lt.techin.shiftpilot.feature.user.model.User;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SwapRequestMapper {
+@RequiredArgsConstructor
+public class LeaveRequestMapper {
 
-    public SwapRequestResponse toResponse(
-            SwapRequest request
-    ) {
+    private final UserMapper userMapper;
 
-        return new SwapRequestResponse(
-
-                toUserSummary(request.getRequester()),
-                toUserSummary(request.getTargetUser()),
-
-                toShiftSummary(request.getRequesterAssignment()),
-                toShiftSummary(request.getTargetAssignment())
-        );
+    public LeaveRequestResponse leaveRequestToResponse(LeaveRequest request){
+        return LeaveRequestResponse.builder()
+                .requester(toUserSummary(request.getRequester()))
+                .requesterShift(toShiftSummary(request.getAssignment()))
+                .build();
     }
 
     private static UserSummary toUserSummary(User user) {

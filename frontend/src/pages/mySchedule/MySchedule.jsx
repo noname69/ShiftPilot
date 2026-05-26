@@ -8,11 +8,9 @@ import { useParams } from "react-router";
 const MySchedule = () => {
 
   const { userShifts, fetchUserShifts } = useShiftStore(state => state);
-
   const { assigneeId } = useParams();
 
   const isSwapMode = !!assigneeId;
-
 
   useEffect(() => {
     fetchUserShifts();
