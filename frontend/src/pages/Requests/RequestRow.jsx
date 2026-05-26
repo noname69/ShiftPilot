@@ -64,9 +64,8 @@ const UserCard = ({ user, tone }) => {
 
   return (
     <div
-      className={`flex items-center gap-2 px-3 py-2 rounded-md border ${
-        tones[tone] ?? "bg-ink-50 text-ink-900 border-ink-200"
-      }`}
+      className={`flex items-center gap-2 px-3 py-2 rounded-md border ${tones[tone] ?? "bg-ink-50 text-ink-900 border-ink-200"
+        }`}
     >
       <div className="w-7 h-7 rounded-full bg-white/70 flex items-center justify-center text-[11px] font-semibold">
         {initials}
@@ -95,33 +94,72 @@ const ShiftCard = ({ title, date, start, end }) => (
 
 const RequestRow = ({
   request,
-  onTargetRespond,
-  onManagerRespond,
+  // onTargetRespond,
+  // onManagerRespond,
   currentUserId,
   isManager,
   isAdmin
 }) => {
+
+
   const {
-    id,
-    requester,
-    targetUser,
-    requesterShift,
-    targetShift,
-    status,
+    requestId,
+    // requester,
+    // targetUser,
+    // requesterShift,
+    // targetShift,
+    approvalStatus,
     reason,
     createdAt,
   } = request;
 
-  const isTargetUser = currentUserId === targetUser?.id;
+  let requester = {};
+  let targetUser = {};
+  let requesterShift = {};
+  let targetShift = {};
 
-  const canTargetRespond =
-    isTargetUser && status === "PENDING_TARGET_APPROVAL";
+  const isSwapRequest = request.swapResponse !== null;
 
-  const canManagerRespond =
-    isManager && status === "PENDING_MANAGER_APPROVAL";
+  if (isSwapRequest) {
+    requester = request.swapResponse.requester;
+    requesterShift = request.swapResponse.requesterShift;
+    targetUser = request.swapResponse.targetUser;
+    targetShift = request.swapResponse.targetShift;
+  } else {
+    requester = request.leaveResponse.requester;
+    requesterShift = request.leaveResponse.requesterShift;
+  }
 
-  const canAdminRespond =
-    isAdmin && status === "PENDING_MANAGER_APPROVAL";
+  console.log(requester)
+
+
+  // targetUser,
+  // requesterShift,
+  // targetShift,
+
+
+  // request.swapResponse ? 
+
+  // const { 
+  //   requester,
+  //   targetUser,
+  //   requesterShift,
+  //   targetShift } = request.swa
+
+
+
+  console.log(request)
+
+  // const isTargetUser = currentUserId === targetUser?.id;
+
+  // const canTargetRespond =
+  //   isTargetUser && status === "PENDING_TARGET_APPROVAL";
+
+  // const canManagerRespond =
+  //   isManager && status === "PENDING_MANAGER_APPROVAL";
+
+  // const canAdminRespond =
+  //   isAdmin && status === "PENDING_MANAGER_APPROVAL";
 
   const time = (t) => (t ? t.slice(0, 5) : "");
 
@@ -131,11 +169,14 @@ const RequestRow = ({
       <td className="px-4 py-3 align-top min-w-[260px]">
         <UserCard user={requester} tone="requester" />
 
-        <div className="flex items-center justify-center text-[11px] text-ink-400 my-2">
-          ⇄ swap request ⇄
-        </div>
+        {isSwapRequest && <>
+          <div className="flex items-center justify-center text-[11px] text-ink-400 my-2">
+            ⇄ swap request ⇄
+          </div>
 
-        <UserCard user={targetUser} tone="target" />
+          <UserCard user={targetUser} tone="target" />
+        </>}
+
       </td>
 
       {/* SHIFTS */}
@@ -147,16 +188,20 @@ const RequestRow = ({
           end={time(requesterShift?.endTime)}
         />
 
-        <div className="flex items-center justify-center text-[11px] text-ink-400 my-2">
-          ↕ shift swap ↕
-        </div>
+        {isSwapRequest && <>
+          <div className="flex items-center justify-center text-[11px] text-ink-400 my-2">
+            ↕ shift swap ↕
+          </div>
 
-        <ShiftCard
-          title={targetShift?.title}
-          date={targetShift?.shiftDate}
-          start={time(targetShift?.startTime)}
-          end={time(targetShift?.endTime)}
-        />
+          <ShiftCard
+            title={targetShift?.title}
+            date={targetShift?.shiftDate}
+            start={time(targetShift?.startTime)}
+            end={time(targetShift?.endTime)}
+          />
+        </>}
+
+
       </td>
 
       {/* REASON */}
@@ -166,7 +211,7 @@ const RequestRow = ({
 
       {/* STATUS */}
       <td className="px-4 py-3">
-        <StatusBadge status={status} />
+        <StatusBadge status={approvalStatus} />
       </td>
 
       {/* CREATED */}
@@ -178,7 +223,7 @@ const RequestRow = ({
       <td className="px-4 py-3 text-right">
         <div className="flex justify-end gap-2">
           {/* TARGET */}
-          {canTargetRespond && (
+          {/* {canTargetRespond && (
             <>
               <button
                 onClick={() => onTargetRespond(id, true)}
@@ -196,10 +241,10 @@ const RequestRow = ({
                 <FaTimes size={12} />
               </button>
             </>
-          )}
+          )} */}
 
           {/* MANAGER */}
-          {(canManagerRespond || canAdminRespond) && (
+          {/* {(canManagerRespond || canAdminRespond) && (
             <>
               <button
                 onClick={() => onManagerRespond(id, true)}
@@ -217,11 +262,11 @@ const RequestRow = ({
                 <FaTimes size={12} />
               </button>
             </>
-          )}
+          )} */}
 
-          {!canTargetRespond && !(canManagerRespond || canAdminRespond) && (
+          {/* {!canTargetRespond && !(canManagerRespond || canAdminRespond) && (
             <span className="text-[12px] text-ink-400">—</span>
-          )}
+          )} */}
         </div>
       </td>
     </tr>

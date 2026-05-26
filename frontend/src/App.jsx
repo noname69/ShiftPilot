@@ -15,7 +15,9 @@ import PrivateRoute from "./pages/components/shared/PrivateRoute";
 import Schedule from "./pages/schedule/Schedule";
 import MySchedule from "./pages/mySchedule/MySchedule";
 import Dashboard from "./pages/dashboard/Dashboard";
-import Requests from "./pages/Requests/Requests";
+// import Requests from "./pages/Requests/Requests";
+import ManagerRequests from "./pages/Requests/ManagerRequests";
+import MyRequests from "./pages/Requests/MyRequests";
 import ShiftAssignments from "./pages/shiftAssignments/ShiftAssignments";
 import ShiftAssignmentRequests from "./pages/shiftAssignments/ShiftAssigmentRequests";
 import { Toaster } from "react-hot-toast";
@@ -34,7 +36,7 @@ function App() {
             <Route index element={<Dashboard />} />
             <Route path="schedule" element={<Schedule />} />
             <Route path="myschedule" element={<MySchedule />} />
-            <Route path="requests" element={<Requests />} />
+            <Route path="requests" element={<MyRequests />} />
             <Route path="users" element={<UsersPage />} />
             <Route path="shifts" element={<ShiftsPage />} />
             <Route path="shifts/:shiftId/shift-requests" element={<ShiftAssignmentRequests />} />
@@ -47,7 +49,7 @@ function App() {
           <Route path="manager" element={<ManagerPanel />} >
             <Route index element={<Dashboard />} />
             <Route path="schedule" element={<Schedule />} />
-            <Route path="requests" element={<Requests />} />
+            <Route path="requests" element={<ManagerRequests />} />
             <Route path="shifts" element={<ShiftsPage />} />
             <Route path="shifts/new" element={<ShiftCreatePage />} />
             <Route path="shifts/:id/edit" element={<ShiftEditPage />} />
@@ -69,7 +71,7 @@ function App() {
             <Route path="shifts" element={<ShiftsPage />} />
             <Route path="shifts/new" element={<ShiftCreatePage />} />
             <Route path="shifts/:id/edit" element={<ShiftEditPage />} />
-            <Route path="requests" element={<Requests />} />
+            <Route path="requests" element={<ManagerRequests />} />
             <Route path="users" element={<UsersPage />} />
             <Route path="users/new" element={<UserCreatePage />} />
             <Route path="shifts/:shiftId/assign-shift" element={<ShiftAssignments />} />

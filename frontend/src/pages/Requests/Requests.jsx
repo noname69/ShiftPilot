@@ -1,16 +1,24 @@
 import { useEffect } from "react";
-import useSwapRequestStore from "../../store/swapStore";
+// import useSwapRequestStore from "../../store/swapStore";
 import RequestRow from "./RequestRow";
 import useAuthStore from "../../store/authStore";
+import useManagerApprovalsStore from "../../store/managerApprovalsStore";
 
 const Requests = () => {
-  const {
-    requests,
-    fetchMyRequests,
-    fetchAllRequests,
-    respondAsTarget,
-    respondAsManager,
-  } = useSwapRequestStore((state) => state);
+
+  // 
+
+  const { fetchManagerApprovals, requests } = useManagerApprovalsStore(state => state);
+
+  // 
+
+  // const {
+  //   requests,
+  //   fetchMyRequests,
+  //   fetchAllRequests,
+  //   respondAsTarget,
+  //   respondAsManager,
+  // } = useSwapRequestStore((state) => state);
 
   const { user } = useAuthStore((state) => state);
 
@@ -21,15 +29,18 @@ const Requests = () => {
   const isAdmin = role === "ADMIN";
 
   const loadRequests = () => {
-    return role === "MANAGER" || role === "ADMIN"
-      ? fetchAllRequests()
-      : fetchMyRequests();
+    fetchManagerApprovals();
+    // return role === "MANAGER" || role === "ADMIN"
+    //   ? fetchAllRequests()
+    //   : fetchMyRequests();
   };
 
   useEffect(() => {
     loadRequests();
   }, [role]);
 
+
+  console.log(requests)
   return (
     <div className="px-5 lg:px-8 py-7 max-w-[1300px] mx-auto">
       <h1 className="text-[32px] font-serif text-ink-900 mb-6">Requests</h1>
@@ -51,13 +62,13 @@ const Requests = () => {
           <tbody className="divide-y divide-ink-100">
             {(requests ?? []).map((r) => (
               <RequestRow
-                key={r.id}
+                key={r.requestId}
                 request={r}
                 currentUserId={userId}
                 isManager={isManager}
                 isAdmin={isAdmin}
-                onTargetRespond={respondAsTarget}
-                onManagerRespond={respondAsManager}
+                // onTargetRespond={respondAsTarget}
+                // onManagerRespond={respondAsManager}
               />
             ))}
           </tbody>
