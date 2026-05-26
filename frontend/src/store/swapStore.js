@@ -5,14 +5,13 @@ import {
   createSwapRequest,
   respondAsTarget,
   respondAsManager,
-  // getMySwapRequests,
-  // getAllSwapRequests,
 } from "../api/swap";
 
 const useSwapStore = create(
   devtools((set) => ({
     isLoading: false,
     error: null,
+    requests: [],
 
     sendSwapRequest: async (payload) => {
       set({
@@ -49,111 +48,68 @@ const useSwapStore = create(
     },
 
     sendTargetResponse: async (payload) => {
-      set({
-        isLoading: true,
-        error: null,
-      });
+      set({ isLoading: true, error: null });
 
       try {
-        const response = await respondAsTarget(payload);
-        set({
-          isLoading: false,
-        });
-        return {
-          success: true,
-          // data: response,
-        };
-      } catch (error) {
-        console.error("Failed to send target response", error);
-        const message =
-          error?.response?.data?.message || "Failed to send target response";
+        await respondAsTarget(payload);
 
-        set({
+        set((state) => ({
           isLoading: false,
-        });
+          requests: state.requests.map((r) =>
+            r.requestId === payload.swapRequestId
+              ? {
+                  ...r,
+                  approvalStatus: payload.accepted
+                    ? "PENDING_MANAGER_APPROVAL"
+                    : "TARGET_REJECTED",
+                }
+              : r,
+          ),
+        }));
+
+        return { success: true };
+      } catch (error) {
+        set({ isLoading: false });
+
         return {
           success: false,
-          message,
-          status: error?.response?.status,
+          message:
+            error?.response?.data?.message || "Failed to send target response",
         };
       }
     },
 
     sendManagerResponse: async (payload) => {
-      set({
-        isLoading: true,
-        error: null,
-      });
+      set({ isLoading: true, error: null });
 
       try {
-        const response = await respondAsManager(payload);
-        set({
+        await respondAsManager(payload);
+
+        set((state) => ({
           isLoading: false,
-        });
-        return {
-          success: true,
-          // data: response,
-        };
+          requests: state.requests.map((r) =>
+            r.requestId === payload.swapRequestId
+              ? {
+                  ...r,
+                  approvalStatus: payload.accepted
+                    ? "APPROVED"
+                    : "MANAGER_REJECTED",
+                }
+              : r,
+          ),
+        }));
+
+        return { success: true };
       } catch (error) {
-        console.error("Failed to send manager response", error);
-        const message =
-          error?.response?.data?.message || "Failed to send manager response";
-        set({
-          isLoading: false,
-        });
+        set({ isLoading: false });
+
         return {
           success: false,
-          message,
-          status: error?.response?.status,
+          message:
+            error?.response?.data?.message || "Failed to send manager response",
         };
       }
     },
-
-    // fetchMyRequests: async () => {
-    //   set({ isLoading: true, error: null });
-
-    //   try {
-    //     const data = await getMySwapRequests();
-
-    //     set({
-    //       requests: Array.isArray(data) ? data : [],
-    //       isLoading: false,
-    //     });
-
-    //     return data;
-    //   } catch (error) {
-    //     const message =
-    //       error?.response?.data?.message || "Failed to load requests";
-
-    //     set({
-    //       error: message,
-    //       isLoading: false,
-    //     });
-
-    //     return [];
-    //   }
-    // },
-
-    // =========================
-    // FETCH ALL (MANAGER, ADMIN)
-    // =========================
-    // fetchAllRequests: async () => {
-    //   set({ isLoading: true, error: null });
-
-    //   try {
-    //     const data = await getAllSwapRequests();
-
-    //     set({
-    //       requests: data,
-    //       isLoading: false,
-    //     });
-    //   } catch (error) {
-    //     set({
-    //       error: error?.message || "Failed to load requests",
-    //       isLoading: false,
-    //     });
-    //   }
-    // },
   })),
 );
 

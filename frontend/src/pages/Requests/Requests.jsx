@@ -32,7 +32,15 @@ const Requests = ({ isManager = false, isUser = false }) => {
         accepted: decision,
         comment: "",
       });
+
       console.log("TARGET RESPOND RESULT:", res);
+
+      if (isUser) {
+        await fetchUserRequests();
+      } else if (isManager) {
+        await fetchManagerApprovals();
+      }
+
       return res;
     } catch (err) {
       console.error("TARGET RESPOND ERROR:", err);
@@ -53,7 +61,13 @@ const Requests = ({ isManager = false, isUser = false }) => {
         approved: decision,
         comment: "",
       });
+
       console.log("MANAGER RESPOND RESULT:", res);
+
+      if (isManager) {
+        await fetchManagerApprovals();
+      }
+
       return res;
     } catch (err) {
       console.error("MANAGER RESPOND ERROR:", err);

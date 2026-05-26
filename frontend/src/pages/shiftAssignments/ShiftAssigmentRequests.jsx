@@ -126,6 +126,7 @@ const ShiftAssignmentRequests = () => {
             // setReason={setReason}
             onSubmit={handleSwapRequestSubmit}
             // loading={swapRequestLoading}
+            assignedUsers={assignees}
           />
         </div>
       </main>
