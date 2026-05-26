@@ -1,7 +1,7 @@
 import { formatDate, formatTime } from "../../utils/formatDateTime";
 import { useState } from "react";
 
-import useRescheduleStore from "../../store/rescheduleStore";
+import useSwapStore from "../../store/swapStore";
 
 const STATUS_CONFIG = {
   OPEN: {
@@ -42,7 +42,7 @@ const StatusBadge = ({ status }) => {
   );
 };
 
-const MyScheduleBody = ({ shift, isRescheduleMode, selectedShiftId, }) => {
+const MyScheduleBody = ({ shift, isSwapMode, selectedShiftId, }) => {
 
   const { id, 
     title, 
@@ -54,7 +54,7 @@ const MyScheduleBody = ({ shift, isRescheduleMode, selectedShiftId, }) => {
   const [openSwap, setOpenSwap] = useState(false);
   const [reason, setReason] = useState("");
 
-  const { sendRescheduleRequest, isLoading } = useRescheduleStore(
+  const { sendSwapRequest, isLoading } = useSwapStore(
     (state) => state,
   );
 
@@ -68,9 +68,9 @@ const MyScheduleBody = ({ shift, isRescheduleMode, selectedShiftId, }) => {
       reason: reason.trim(),
     };
 
-    console.log("reschedule request", payload);
+    console.log("swap request", payload);
 
-    const result = await sendRescheduleRequest(payload);
+    const result = await sendSwapRequest(payload);
 
     if (result.success) {
       setOpenSwap(false);
@@ -113,7 +113,7 @@ const MyScheduleBody = ({ shift, isRescheduleMode, selectedShiftId, }) => {
           <td className="px-4 py-3 text-right">
   <div className="inline-flex flex-col gap-2 items-end">
 
-    {!isRescheduleMode ? (
+    {!isSwapMode ? (
       <span className="text-ink-400 text-[12px]"></span>
     ) : !openSwap ? (
       <button

@@ -2,24 +2,24 @@ import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 
 import {
-  createRescheduleRequest,
-  getMyRescheduleRequests,
-  getAllRescheduleRequests,
-} from "../api/reschedule";
+  createSwapRequest,
+  getMySwapRequests,
+  getAllSwapRequests,
+} from "../api/swap";
 
-const useRescheduleStore = create(
+const useSwapStore = create(
   devtools((set) => ({
     isLoading: false,
     error: null,
 
-    sendRescheduleRequest: async (payload) => {
+    sendSwapRequest: async (payload) => {
       set({
         isLoading: true,
         error: null,
       });
 
       try {
-        const response = await createRescheduleRequest(payload);
+        const response = await createSwapRequest(payload);
 
         set({
           isLoading: false,
@@ -31,7 +31,7 @@ const useRescheduleStore = create(
         };
       } catch (error) {
         const message =
-          error?.response?.data?.message || "Failed to send reschedule request";
+          error?.response?.data?.message || "Failed to send swap request";
 
         set({
           isLoading: false,
@@ -50,7 +50,7 @@ const useRescheduleStore = create(
       set({ isLoading: true, error: null });
 
       try {
-        const data = await getMyRescheduleRequests();
+        const data = await getMySwapRequests();
 
         set({
           requests: Array.isArray(data) ? data : [],
@@ -78,7 +78,7 @@ const useRescheduleStore = create(
       set({ isLoading: true, error: null });
 
       try {
-        const data = await getAllRescheduleRequests();
+        const data = await getAllSwapRequests();
 
         set({
           requests: data,
@@ -94,4 +94,4 @@ const useRescheduleStore = create(
   })),
 );
 
-export default useRescheduleStore;
+export default useSwapStore;
