@@ -12,7 +12,7 @@ const UserForm = ({
   defaultValues,
   submitLabel = "Save",
   isLoading = false,
-  isEdit = false
+  isEdit = false,
 }) => {
   const {
     register,
@@ -73,17 +73,27 @@ const UserForm = ({
       />
 
       {!isEdit && (
+        <InputField
+          id="username"
+          label="Username"
+          type="text"
+          min={2}
+          required
+          register={register}
+          errors={errors}
+          theme="my-input"
+        />
+      )}
+
       <InputField
-        id="username"
-        label="Username"
+        id="password"
+        label="Password"
         type="text"
-        min={2}
         required
         register={register}
         errors={errors}
         theme="my-input"
       />
-      )}
 
       <SelectField
         id="role"
@@ -120,9 +130,7 @@ const UserForm = ({
         {isLoading ? "Loading..." : submitLabel}
       </button>
     </form>
-    
   );
-
 };
 
 export default UserForm;

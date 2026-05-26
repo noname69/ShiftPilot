@@ -2,20 +2,34 @@ import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import Footer from "../components/shared/Footer";
 import ShiftAssignmentRequestsBody from "./ShiftAssigmentRequestsBody";
+
 import useShiftAssignmentsStore from "../../store/shiftAssignmentsStore";
+import useShiftStore from "../../store/shiftStore";
+import useSwapStore from "../../store/swapStore";
+
 import { useParams } from "react-router";
-import ConfirmationModal from "../components/shared/ConfirmationModal"
+
+import ConfirmationModal from "../components/shared/ConfirmationModal";
+import SwapRequestModal from "../components/swap/SwapRequestModal";
 
 const ShiftAssignmentRequests = () => {
   const { shiftId } = useParams();
-  const { getShiftAssignees, assignees, removeAssignment } = useShiftAssignmentsStore(state => state);
+
+  const { getShiftAssignees, assignees, removeAssignment } =
+    useShiftAssignmentsStore((state) => state);
+  const { userShifts, fetchUserShifts } = useShiftStore((state) => state);
+
+  const { sendSwapRequest } = useSwapStore((state) => state);
+
   const [modal, setModal] = useState(null);
+  const [targetAssignment, setTargetAssignment] = useState(null);
 
   useEffect(() => {
     if (shiftId) {
       getShiftAssignees(shiftId);
+      fetchUserShifts();
     }
-  }, [getShiftAssignees, shiftId]);
+  }, [getShiftAssignees, shiftId, fetchUserShifts]);
 
   const handleRemove = (userId, firstName, lastName) => {
     setModal({
@@ -27,10 +41,45 @@ const ShiftAssignmentRequests = () => {
           await removeAssignment(shiftId, userId);
           toast.success(`${firstName} ${lastName} removed from shift`);
         } catch (error) {
-          toast.error(error?.response?.data?.message ?? "Failed to remove employee");
+          toast.error(
+            error?.response?.data?.message ?? "Failed to remove employee",
+          );
         }
       },
     });
+  };
+
+  const [isSwapModalOpen, setIsSwapModalOpen] = useState(false);
+
+  const handleOpenSwapModal = (assigneeId) => {
+    setTargetAssignment(assigneeId);
+    setIsSwapModalOpen(true);
+  };
+
+  const handleSwapRequestSubmit = async ({ requesterAssignmentId, reason }) => {
+    console.log("Submit swap request with", {
+      requesterAssignmentId,
+      targetAssignmentId: targetAssignment,
+      reason,
+    });
+
+    try {
+      await sendSwapRequest({
+        requesterAssignmentId,
+        targetAssignmentId: targetAssignment,
+        reason,
+      });
+      toast.success("Swap request sent");
+      setIsSwapModalOpen(false);
+    } catch (error) {
+      toast.error(
+        error?.response?.data?.message ?? "Failed to send swap request",
+      );
+    }
+  };
+
+  const handleCloseSwapModal = () => {
+    setIsSwapModalOpen(false);
   };
 
   return (
@@ -50,18 +99,34 @@ const ShiftAssignmentRequests = () => {
               <tr>
                 <th className="text-left font-medium px-4 py-2.5">Name</th>
                 <th className="text-center font-medium px-4 py-2.5"> Status</th>
-                <th className="text-center font-medium px-4 py-2.5">Hours this week</th>
+                <th className="text-center font-medium px-4 py-2.5">
+                  Hours this week
+                </th>
                 <th className="text-left font-medium px-4 py-2.5">Contact</th>
                 <th className="text-center font-medium px-4 py-2.5">Actions</th>
               </tr>
             </thead>
-            {assignees.map(assignee =>
+            {assignees.map((assignee) => (
               <ShiftAssignmentRequestsBody
                 key={assignee.id}
                 assignee={assignee}
                 onRemove={handleRemove}
-              />)}
+                onOpenSwap={handleOpenSwapModal}
+              />
+            ))}
           </table>
+          <SwapRequestModal
+            isOpen={isSwapModalOpen}
+            onClose={handleCloseSwapModal}
+            myAssignments={userShifts}
+            shiftId={shiftId}
+            // selectedAssignmentId={selectedAssignmentId}
+            // setSelectedAssignmentId={setSelectedAssignmentId}
+            // reason={reason}
+            // setReason={setReason}
+            onSubmit={handleSwapRequestSubmit}
+            // loading={swapRequestLoading}
+          />
         </div>
       </main>
       <ConfirmationModal modal={modal} setModal={setModal} />

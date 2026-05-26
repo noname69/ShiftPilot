@@ -1,7 +1,7 @@
 import { IoIosSwap } from "react-icons/io";
-import { Link } from "react-router";
-import useAuthStore from "../../store/authStore";
 import { FiUserMinus } from "react-icons/fi";
+
+import useAuthStore from "../../store/authStore";
 
 const STATUS_CONFIG = {
   ASSIGNED: {
@@ -35,10 +35,9 @@ const StatusBadge = ({ status }) => {
       {cfg.label}
     </span>
   );
-
 };
 
-const ShiftAssignmentRequestsBody = ({ assignee, onRemove }) => {
+const ShiftAssignmentRequestsBody = ({ assignee, onRemove, onOpenSwap }) => {
   const role = useAuthStore((state) => state.user.role);
   const { id, firstName, lastName, weeklyHours, email, status, assigneeId } =
     assignee || {};
@@ -79,8 +78,7 @@ const ShiftAssignmentRequestsBody = ({ assignee, onRemove }) => {
                   disabled={isCurrentUser}
                   onClick={() => {
                     if (!isCurrentUser) {
-                      // handleOpenSwapModal(assignment);
-                      console.log("Open swap modal for", assignee);
+                      onOpenSwap(assigneeId);
                     }
                   }}
                   className={`w-8 h-8 flex items-center justify-center rounded-md transition-colors
@@ -97,24 +95,18 @@ const ShiftAssignmentRequestsBody = ({ assignee, onRemove }) => {
                 >
                   <IoIosSwap size={12} />
                 </button>
-
-                <button
-                  onClick={() => onRemove(assigneeId, firstName, lastName)}
-                  className="inline-flex items-center gap-1 text-[12px] font-medium bg-rose-soft hover:bg-rose-soft/80 border border-rose-ink/20 px-2.5 py-1 rounded-md text-rose-ink transition-colors"
-                >
-                  <FiUserMinus size={13} />
-                </button>
+                {(role === "MANAGER" || role === "ADMIN") && (
+                  <button
+                    onClick={() => onRemove(assigneeId, firstName, lastName)}
+                    className="inline-flex items-center gap-1 text-[12px] font-medium bg-rose-soft hover:bg-rose-soft/80 border border-rose-ink/20 px-2.5 py-1 rounded-md text-rose-ink transition-colors"
+                  >
+                    <FiUserMinus size={13} />
+                  </button>
+                )}
               </>
             )}
           </div>
         </td>
-        {/* 
-        <td className="px-4 py-3 flex justify-center">
-          <Link to={`/${role}/shifts/${assigneeId}/swap-request`} state={{ assignee }}>
-           
-
-          </Link>
-        </td> */}
       </tr>
     </tbody>
   );
