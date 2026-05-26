@@ -30,12 +30,12 @@ const useSwapStore = create(
           data: response,
         };
       } catch (error) {
+        console.error("Failed to send swap request", error);
         const message =
           error?.response?.data?.message || "Failed to send swap request";
 
         set({
           isLoading: false,
-          error: message,
         });
 
         return {

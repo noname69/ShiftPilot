@@ -31,6 +31,11 @@ public class SwapRequestServiceImpl implements SwapRequestService {
     private final UserRepository userRepository;
     private final SwapRequestMapper swapRequestMapper;
 
+    private static final List<ApprovalStatus> ACTIVE_STATUSES = List.of(
+            ApprovalStatus.PENDING_TARGET_APPROVAL,
+            ApprovalStatus.PENDING_MANAGER_APPROVAL
+    );
+
     @Override
     public SwapRequestResponse createRequest(CreateSwapRequest request, String requesterUsername) {
 
@@ -44,6 +49,17 @@ public class SwapRequestServiceImpl implements SwapRequestService {
                 .orElseThrow(() -> new AssignmentNotFoundException(request.targetAssignmentId()));
 
         validateCreateRequest(requester, requesterAssignment, targetAssignment);
+
+        boolean exists = swapRequestRepository
+                .existsByRequesterAssignmentIdAndTargetAssignmentIdAndApproval_StatusIn(
+                        request.requesterAssignmentId(),
+                        request.targetAssignmentId(),
+                        ACTIVE_STATUSES
+                );
+
+        if (exists) {
+            throw new SameAssignmentException();
+        }
 
         User manager = requesterAssignment.getAssignedBy();
 

@@ -1,5 +1,6 @@
 package lt.techin.shiftpilot.feature.swaprequest.repository;
 
+import lt.techin.shiftpilot.feature.managerapproval.model.ApprovalStatus;
 import lt.techin.shiftpilot.feature.swaprequest.model.SwapRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -9,4 +10,9 @@ public interface SwapRequestRepository extends JpaRepository<SwapRequest, Long> 
 
     List<SwapRequest> findAllByOrderByCreatedAtDesc();
     List<SwapRequest> findByRequesterIdOrTargetUserIdOrderByCreatedAtDesc(Long requesterId, Long targetId);
+    boolean existsByRequesterAssignmentIdAndTargetAssignmentIdAndApproval_StatusIn(
+            Long requesterAssignmentId,
+            Long targetAssignmentId,
+            List<ApprovalStatus> statuses
+    );
 }

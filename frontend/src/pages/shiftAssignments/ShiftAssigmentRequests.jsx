@@ -19,7 +19,7 @@ const ShiftAssignmentRequests = () => {
     useShiftAssignmentsStore((state) => state);
   const { userShifts, fetchUserShifts } = useShiftStore((state) => state);
 
-  const { sendSwapRequest } = useSwapStore((state) => state);
+  const { sendSwapRequest, isLoading, error } = useSwapStore((state) => state);
 
   const [modal, setModal] = useState(null);
   const [targetAssignment, setTargetAssignment] = useState(null);
@@ -63,19 +63,19 @@ const ShiftAssignmentRequests = () => {
       reason,
     });
 
-    try {
-      await sendSwapRequest({
-        requesterAssignmentId,
-        targetAssignmentId: targetAssignment,
-        reason,
-      });
-      toast.success("Swap request sent");
-      setIsSwapModalOpen(false);
-    } catch (error) {
-      toast.error(
-        error?.response?.data?.message ?? "Failed to send swap request",
-      );
+    const result = await sendSwapRequest({
+      requesterAssignmentId,
+      targetAssignmentId: targetAssignment,
+      reason,
+    });
+
+    if (!result.success) {
+      toast.error(result.message);
+      return;
     }
+
+    toast.success("Swap request sent");
+    setIsSwapModalOpen(false);
   };
 
   const handleCloseSwapModal = () => {
