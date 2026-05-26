@@ -1,7 +1,6 @@
 import { IoIosSwap } from "react-icons/io";
 import { Link } from "react-router";
 import useAuthStore from "../../store/authStore";
-
 import { FiUserMinus } from "react-icons/fi";
 
 const STATUS_CONFIG = {
@@ -36,11 +35,13 @@ const StatusBadge = ({ status }) => {
       {cfg.label}
     </span>
   );
+
 };
 
 const ShiftAssignmentRequestsBody = ({ assignee, onRemove }) => {
   const role = useAuthStore((state) => state.user.role);
-  const { firstName, lastName, weeklyHours, email, status, assigneeId } = assignee || {};
+  const { id, firstName, lastName, weeklyHours, email, status, assigneeId } = assignee || {};
+
 
   return (
     <tbody className="divide-y divide-ink-100">
@@ -71,7 +72,7 @@ const ShiftAssignmentRequestsBody = ({ assignee, onRemove }) => {
         <td className="px-4 py-3 flex justify-center">
           {status === "ASSIGNED" && (
             <button
-              onClick={() => onRemove(assigneeId, firstName, lastName)}
+              onClick={() => onRemove(id, firstName, lastName)}
               className="inline-flex items-center gap-1 text-[12px] font-medium bg-rose-soft hover:bg-rose-soft/80 border border-rose-ink/20 px-2.5 py-1 rounded-md text-rose-ink transition-colors"
             >
               <FiUserMinus size={13} />
@@ -81,7 +82,8 @@ const ShiftAssignmentRequestsBody = ({ assignee, onRemove }) => {
         </td>
 
         <td className="px-4 py-3 flex justify-center">
-          <Link to={`/${role}/shifts/${assigneeId}/swap-request`} state={{ assignee }}>
+          <Link to={`/${role}/shifts/${assigneeId}/swap-request`} state={{ assignee }} />
+          <Link to={`/${role}/shifts/${assigneeId}/reschedule-request`}>
             <button
               className="inline-flex items-center gap-1 text-[12px] font-medium bg-mint-soft hover:bg-mint-soft/80 border border-mint-ink/20 px-2.5 py-1 rounded-md text-mint-ink transition-colors"
             >

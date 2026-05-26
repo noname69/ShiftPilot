@@ -26,15 +26,15 @@ public class LeaveRequest {
     private User requester;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "manager_approval_id", unique = true)
+    @JoinColumn(name = "manager_approval_id")
     private ManagerApproval approval;
 
     @OneToOne
     @JoinColumn(name = "assignment_id")
     private ShiftAssignment assignment;
 
-    @Enumerated(EnumType.STRING)
-    private LeaveRequestStatus status;
+//    @Enumerated(EnumType.STRING)
+//    private LeaveRequestStatus status;
 
     private String reason;
 
@@ -45,7 +45,7 @@ public class LeaveRequest {
     @PrePersist
     public void prePersist() {
         createdAt = LocalDateTime.now();
-        status = LeaveRequestStatus.PENDING;
+//        status = LeaveRequestStatus.PENDING;
     }
 
 }

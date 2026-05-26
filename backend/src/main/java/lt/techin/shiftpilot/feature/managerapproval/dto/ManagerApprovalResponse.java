@@ -4,9 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lt.techin.shiftpilot.feature.leaverequest.dto.LeaveRequestResponse;
 import lt.techin.shiftpilot.feature.leaverequest.model.LeaveRequest;
 import lt.techin.shiftpilot.feature.managerapproval.model.ApprovalStatus;
 import lt.techin.shiftpilot.feature.managerapproval.model.RequestType;
+import lt.techin.shiftpilot.feature.swaprequest.dto.SwapRequestResponse;
+import lt.techin.shiftpilot.feature.swaprequest.model.SwapRequest;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -16,17 +21,16 @@ public class ManagerApprovalResponse {
 
     private Long approvalId;
 
-//    private SwapRequest swapRequestId; // arba vienas arba kitas null;
-    private Long leaveRequestId;
+    private SwapRequestResponse swapResponse;
+    private LeaveRequestResponse leaveResponse;
 
     private RequestType type;
-
     private ApprovalStatus approvalStatus;
-
     private String reason;
+    private LocalDateTime createdAt;
+    private LocalDateTime completedAt;
 
     private String managerComment;
 
-    // sunku dabar isivaizduot ar dar reikia kazkokiu fieldsu, jei ka prisidek
 
 }

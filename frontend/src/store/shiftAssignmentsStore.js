@@ -37,6 +37,8 @@ const useShiftAssignmentsStore = create(
     },
 
     removeAssignment: async (shiftId, userId) => {
+
+      console.log(userId)
       try {
         set({ isLoading: true });
         await api.patch(`/shifts/${shiftId}/shift-assignments/${userId}/remove`);
