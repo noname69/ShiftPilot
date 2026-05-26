@@ -5,53 +5,93 @@ import useAuthStore from "../../store/authStore";
 import useManagerApprovalsStore from "../../store/managerApprovalsStore";
 
 const Requests = ({ isManager = false, isUser = false }) => {
-
-  const { fetchManagerApprovals, fetchUserRequests, requests } = useManagerApprovalsStore((state) => state);
-  const { respondAsTarget, respondAsManager } = useSwapRequestStore((state) => state);
+  const { fetchManagerApprovals, fetchUserRequests, requests } =
+    useManagerApprovalsStore((state) => state);
+  const { sendTargetResponse, sendManagerResponse } = useSwapRequestStore(
+    (state) => state,
+  );
 
   const { user } = useAuthStore((state) => state);
 
   const userId = user?.userId;
 
   useEffect(() => {
-    if(isManager) {
+    if (isManager) {
       fetchManagerApprovals();
-    } else if(isUser) {
+    } else if (isUser) {
       fetchUserRequests();
     }
   }, [isManager, isUser, fetchManagerApprovals, fetchUserRequests]);
 
+  const handleTargetRespond = async (requestId, decision) => {
+    console.log("TARGET RESPOND PAYLOAD:", requestId, decision);
+
+    try {
+      const res = await sendTargetResponse({
+        swapRequestId: requestId,
+        accepted: decision,
+        comment: "",
+      });
+      console.log("TARGET RESPOND RESULT:", res);
+      return res;
+    } catch (err) {
+      console.error("TARGET RESPOND ERROR:", err);
+      throw err;
+    }
+  };
+
+  const handleManagerRespond = async (requestId, decision) => {
+    console.log("MANAGER RESPOND PAYLOAD:", {
+      swapRequestId: requestId,
+      approved: decision,
+      comment: "",
+    });
+
+    try {
+      const res = await sendManagerResponse({
+        swapRequestId: requestId,
+        approved: decision,
+        comment: "",
+      });
+      console.log("MANAGER RESPOND RESULT:", res);
+      return res;
+    } catch (err) {
+      console.error("MANAGER RESPOND ERROR:", err);
+      throw err;
+    }
+  };
+
   return (
-      <div className="bg-white border border-ink-200 rounded-xl2 overflow-hidden">
-        <table className="w-full text-[13px]">
-          <thead className="bg-ink-50 text-[11px] uppercase text-ink-500">
-            <tr>
-              <th className="px-4 py-2 text-left">Requester / Target</th>
+    <div className="bg-white border border-ink-200 rounded-xl2 overflow-hidden">
+      <table className="w-full text-[13px]">
+        <thead className="bg-ink-50 text-[11px] uppercase text-ink-500">
+          <tr>
+            <th className="px-4 py-2 text-left">Requester / Target</th>
 
-              <th className="px-4 py-2 text-left">Swap</th>
-              <th className="px-4 py-2 text-left">Reason</th>
-              <th className="px-4 py-2 text-left">Status</th>
-              <th className="px-4 py-2 text-left">Created</th>
-              <th className="px-4 py-2 text-right">Actions</th>
-            </tr>
-          </thead>
+            <th className="px-4 py-2 text-left">Swap</th>
+            <th className="px-4 py-2 text-left">Reason</th>
+            <th className="px-4 py-2 text-left">Status</th>
+            <th className="px-4 py-2 text-left">Created</th>
+            <th className="px-4 py-2 text-right">Actions</th>
+          </tr>
+        </thead>
 
-          <tbody className="divide-y divide-ink-100">
-            {(requests ?? []).map((r) => (
-              <RequestRow
-                key={r.requestId}
-                request={r}
-                currentUserId={userId}
-                isManager={isManager}
-                isUser={isUser}
-                // isAdmin={isAdmin}
-                onTargetRespond={respondAsTarget}
-                onManagerRespond={respondAsManager}
-              />
-            ))}
-          </tbody>
-        </table>
-      </div>
+        <tbody className="divide-y divide-ink-100">
+          {(requests ?? []).map((r) => (
+            <RequestRow
+              key={r.requestId}
+              request={r}
+              currentUserId={userId}
+              isManager={isManager}
+              isUser={isUser}
+              // isAdmin={isAdmin}
+              onTargetRespond={handleTargetRespond}
+              onManagerRespond={handleManagerRespond}
+            />
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 };
 

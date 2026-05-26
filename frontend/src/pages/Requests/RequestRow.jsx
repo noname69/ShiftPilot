@@ -26,11 +26,11 @@ const STATUS_CONFIG = {
     dot: "bg-rose-ink",
     label: "Manager rejected",
   },
-  COMPLETED: {
+  APPROVED: {
     bg: "bg-mint-soft",
     text: "text-mint-ink",
     dot: "bg-mint-ink",
-    label: "Completed",
+    label: "Approved",
   },
   CANCELLED: {
     bg: "bg-ink-100",

@@ -3,6 +3,8 @@ import { devtools } from "zustand/middleware";
 
 import {
   createSwapRequest,
+  respondAsTarget,
+  respondAsManager,
   // getMySwapRequests,
   // getAllSwapRequests,
 } from "../api/swap";
@@ -38,6 +40,67 @@ const useSwapStore = create(
           isLoading: false,
         });
 
+        return {
+          success: false,
+          message,
+          status: error?.response?.status,
+        };
+      }
+    },
+
+    sendTargetResponse: async (payload) => {
+      set({
+        isLoading: true,
+        error: null,
+      });
+
+      try {
+        const response = await respondAsTarget(payload);
+        set({
+          isLoading: false,
+        });
+        return {
+          success: true,
+          // data: response,
+        };
+      } catch (error) {
+        console.error("Failed to send target response", error);
+        const message =
+          error?.response?.data?.message || "Failed to send target response";
+
+        set({
+          isLoading: false,
+        });
+        return {
+          success: false,
+          message,
+          status: error?.response?.status,
+        };
+      }
+    },
+
+    sendManagerResponse: async (payload) => {
+      set({
+        isLoading: true,
+        error: null,
+      });
+
+      try {
+        const response = await respondAsManager(payload);
+        set({
+          isLoading: false,
+        });
+        return {
+          success: true,
+          // data: response,
+        };
+      } catch (error) {
+        console.error("Failed to send manager response", error);
+        const message =
+          error?.response?.data?.message || "Failed to send manager response";
+        set({
+          isLoading: false,
+        });
         return {
           success: false,
           message,
