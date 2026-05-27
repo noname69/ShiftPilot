@@ -11,8 +11,8 @@ export const updateShift = async (id, data) => {
   return response.data;
 };
 
-export const getShifts = async () => {
-  const response = await api.get("/shifts");
+export const getShifts = async (filters) => {
+  const response = await api.get("/shifts", {params: filters});
   return response.data;
 };
 

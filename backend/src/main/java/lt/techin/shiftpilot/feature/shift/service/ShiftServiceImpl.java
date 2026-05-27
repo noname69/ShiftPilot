@@ -10,11 +10,15 @@ import lt.techin.shiftpilot.feature.shift.mapper.ShiftMapper;
 import lt.techin.shiftpilot.feature.shift.model.Shift;
 import lt.techin.shiftpilot.feature.shift.model.ShiftStatus;
 import lt.techin.shiftpilot.feature.shift.repository.ShiftRepository;
+import lt.techin.shiftpilot.feature.shift.repository.ShiftSpecifications;
 import lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignment;
 import lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignmentStatus;
 import lt.techin.shiftpilot.feature.shiftassignment.repository.ShiftAssignmentRepository;
 import lt.techin.shiftpilot.feature.user.model.User;
 import lt.techin.shiftpilot.feature.user.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -71,18 +75,12 @@ public class ShiftServiceImpl implements ShiftService {
     }
 
     @Override
-    public List<ShiftResponse> getAllShifts() {
-        log.info("event=SHIFT_LIST_REQUEST");
+    public Page<ShiftResponse> getAllShifts(ShiftStatus status, LocalDate dateFrom, LocalDate dateTo, String createdBy, Pageable pageable) {
 
-        List<ShiftResponse> shifts = shiftRepository.findAll()
-                .stream()
-                .map(this::refreshStatusIfNeeded)
-                .map(shiftMapper::toResponse)
-                .toList();
+        Specification<Shift> specification = ShiftSpecifications.withFilters(status, dateFrom, dateTo, createdBy);
 
-        log.info("event=SHIFT_LIST_RETURNED count={}", shifts.size());
-
-        return shifts;
+        Page<Shift> shifts = shiftRepository.findAll(specification, pageable);
+        return shifts.map(shift -> shiftMapper.toResponse(refreshStatusIfNeeded(shift)));
     }
 
     @Override
