@@ -1,13 +1,10 @@
 package lt.techin.shiftpilot.feature.leaverequest.controller;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lt.techin.shiftpilot.exception.user.UserNotFoundException;
 import lt.techin.shiftpilot.feature.leaverequest.dto.CreateLeaveRequest;
 import lt.techin.shiftpilot.feature.leaverequest.dto.LeaveRequestResponse;
 import lt.techin.shiftpilot.feature.leaverequest.service.LeaveRequestService;
-import lt.techin.shiftpilot.feature.leaverequest.service.LeaveRequestServiceImpl;
-import lt.techin.shiftpilot.feature.shiftassignment.dto.ShiftAssignResponse;
 import lt.techin.shiftpilot.feature.user.model.User;
 import lt.techin.shiftpilot.feature.user.repository.UserRepository;
 import org.springframework.http.ResponseEntity;

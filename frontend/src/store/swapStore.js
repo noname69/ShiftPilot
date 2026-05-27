@@ -3,14 +3,15 @@ import { devtools } from "zustand/middleware";
 
 import {
   createSwapRequest,
-  getMySwapRequests,
-  getAllSwapRequests,
+  respondAsTarget,
+  respondAsManager,
 } from "../api/swap";
 
 const useSwapStore = create(
   devtools((set) => ({
     isLoading: false,
     error: null,
+    requests: [],
 
     sendSwapRequest: async (payload) => {
       set({
@@ -30,12 +31,12 @@ const useSwapStore = create(
           data: response,
         };
       } catch (error) {
+        console.error("Failed to send swap request", error);
         const message =
           error?.response?.data?.message || "Failed to send swap request";
 
         set({
           isLoading: false,
-          error: message,
         });
 
         return {
@@ -46,49 +47,67 @@ const useSwapStore = create(
       }
     },
 
-    fetchMyRequests: async () => {
+    sendTargetResponse: async (payload) => {
       set({ isLoading: true, error: null });
 
       try {
-        const data = await getMySwapRequests();
+        await respondAsTarget(payload);
 
-        set({
-          requests: Array.isArray(data) ? data : [],
+        set((state) => ({
           isLoading: false,
-        });
+          requests: state.requests.map((r) =>
+            r.requestId === payload.swapRequestId
+              ? {
+                  ...r,
+                  approvalStatus: payload.accepted
+                    ? "PENDING_MANAGER_APPROVAL"
+                    : "TARGET_REJECTED",
+                }
+              : r,
+          ),
+        }));
 
-        return data;
+        return { success: true };
       } catch (error) {
-        const message =
-          error?.response?.data?.message || "Failed to load requests";
+        set({ isLoading: false });
 
-        set({
-          error: message,
-          isLoading: false,
-        });
-
-        return [];
+        return {
+          success: false,
+          message:
+            error?.response?.data?.message || "Failed to send target response",
+        };
       }
     },
 
-    // =========================
-    // FETCH ALL (MANAGER, ADMIN)
-    // =========================
-    fetchAllRequests: async () => {
+    sendManagerResponse: async (payload) => {
       set({ isLoading: true, error: null });
 
       try {
-        const data = await getAllSwapRequests();
+        await respondAsManager(payload);
 
-        set({
-          requests: data,
+        set((state) => ({
           isLoading: false,
-        });
+          requests: state.requests.map((r) =>
+            r.requestId === payload.swapRequestId
+              ? {
+                  ...r,
+                  approvalStatus: payload.accepted
+                    ? "APPROVED"
+                    : "MANAGER_REJECTED",
+                }
+              : r,
+          ),
+        }));
+
+        return { success: true };
       } catch (error) {
-        set({
-          error: error?.message || "Failed to load requests",
-          isLoading: false,
-        });
+        set({ isLoading: false });
+
+        return {
+          success: false,
+          message:
+            error?.response?.data?.message || "Failed to send manager response",
+        };
       }
     },
   })),

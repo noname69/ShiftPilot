@@ -54,9 +54,7 @@ const MyScheduleBody = ({ shift, isSwapMode, selectedShiftId, }) => {
   const [openSwap, setOpenSwap] = useState(false);
   const [reason, setReason] = useState("");
 
-  const { sendSwapRequest, isLoading } = useSwapStore(
-    (state) => state,
-  );
+  const { sendSwapRequest } = useSwapStore((state) => state);
 
   const handleSend = async () => {
     if (!selectedShiftId) return;

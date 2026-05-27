@@ -11,6 +11,6 @@ public interface SwapRequestService {
             String requesterUsername
     );
 
-    List<SwapRequestResponse> getAllRequests();
-    List<SwapRequestResponse> getMyRequests(String username);
+//    List<SwapRequestResponse> getAllRequests();
+//    List<SwapRequestResponse> getMyRequests(String username);
 }

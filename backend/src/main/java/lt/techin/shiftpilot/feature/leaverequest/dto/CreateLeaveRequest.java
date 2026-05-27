@@ -10,6 +10,6 @@ public class CreateLeaveRequest {
     private String reason;
 
     @NotNull
-    private RequestType type; // tavo atveju is kart SWAP by default is fronto.
+    private RequestType type;
 
 }

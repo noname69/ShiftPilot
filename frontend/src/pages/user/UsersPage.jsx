@@ -186,21 +186,21 @@ const UsersPage = () => {
                       <td className="px-4 py-3 text-right">
                         <div className="inline-flex gap-1.5">
                           <Link to={`/${role}/users/${user.id}/edit`}>
-                            <button className="inline-flex items-center gap-1 text-[12px] font-medium bg-white border border-ink-200 hover:bg-ink-50 px-2.5 py-1 rounded-md text-ink-700 transition-colors">
+                            <button className="w-8 h-8 flex items-center justify-center rounded-md transition-colors bg-white border border-ink-200 hover:bg-ink-50 px-2.5 py-1 text-ink-700 ">
                               <FiEdit2 size={13} />
                             </button>
                           </Link>
 
                           <button
                             onClick={() => handleDelete(user.id)}
-                            className="inline-flex items-center gap-1 text-[12px] font-medium bg-rose-soft hover:bg-rose-soft/80 border border-rose-ink/20 px-2.5 py-1 rounded-md text-rose-ink transition-colors"
+                            className="w-8 h-8 flex items-center justify-center rounded-md transition-colors bg-rose-soft hover:bg-rose-soft/80 border border-rose-ink/20 px-2.5 py-1 text-rose-ink "
                           >
                             <FiTrash2 size={13} />
                           </button>
 
                           <button
                             onClick={() => handleRestore(user.id)}
-                            className="inline-flex items-center gap-1 text-[12px] font-medium bg-mint-soft hover:bg-mint-soft/80 border border-mint-ink/20 px-2.5 py-1 rounded-md text-mint-ink transition-colors"
+                            className="w-8 h-8 flex items-center justify-center rounded-md transition-colors bg-mint-soft hover:bg-mint-soft/80 border border-mint-ink/20 px-2.5 py-1 text-mint-ink "
                           >
                             <FiRotateCcw size={13} />
                           </button>

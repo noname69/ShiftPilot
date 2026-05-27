@@ -2,6 +2,7 @@ package lt.techin.shiftpilot.feature.swaprequest.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lt.techin.shiftpilot.feature.managerapproval.model.ManagerApproval;
 import lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignment;
 import lt.techin.shiftpilot.feature.user.model.User;
 
@@ -36,9 +37,9 @@ public class SwapRequest {
     @JoinColumn(name = "target_assignment_id", nullable = false)
     private ShiftAssignment targetAssignment;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private SwapRequestStatus status;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "manager_approval_id")
+    private ManagerApproval approval;
 
     @Column(length = 500)
     private String reason;
@@ -52,8 +53,5 @@ public class SwapRequest {
     public void prePersist() {
         createdAt = LocalDateTime.now();
 
-        if (status == null) {
-            status = SwapRequestStatus.PENDING_TARGET_APPROVAL;
-        }
     }
 }

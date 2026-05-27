@@ -1,8 +1,7 @@
 import { IoIosSwap } from "react-icons/io";
-import { Link } from "react-router";
-import useAuthStore from "../../store/authStore";
-
 import { FiUserMinus } from "react-icons/fi";
+
+import useAuthStore from "../../store/authStore";
 
 const STATUS_CONFIG = {
   ASSIGNED: {
@@ -38,9 +37,12 @@ const StatusBadge = ({ status }) => {
   );
 };
 
-const ShiftAssignmentRequestsBody = ({ assignee, onRemove }) => {
+const ShiftAssignmentRequestsBody = ({ assignee, onRemove, onOpenSwap }) => {
   const role = useAuthStore((state) => state.user.role);
-  const { firstName, lastName, weeklyHours, email, status, assigneeId } = assignee || {};
+  const { id, firstName, lastName, weeklyHours, email, status, assigneeId } =
+    assignee || {};
+  const userId = useAuthStore((state) => state.user.userId);
+  const isCurrentUser = userId === id;
 
   return (
     <tbody className="divide-y divide-ink-100">
@@ -69,30 +71,45 @@ const ShiftAssignmentRequestsBody = ({ assignee, onRemove }) => {
         <td className="px-4 py-3 text-ink-500 text-[12px]">{email}</td>
 
         <td className="px-4 py-3 flex justify-center">
-          {status === "ASSIGNED" && (
-            <button
-              onClick={() => onRemove(assigneeId, firstName, lastName)}
-              className="inline-flex items-center gap-1 text-[12px] font-medium bg-rose-soft hover:bg-rose-soft/80 border border-rose-ink/20 px-2.5 py-1 rounded-md text-rose-ink transition-colors"
-            >
-              <FiUserMinus size={13} />
-              Remove
-            </button>
-          )}
-        </td>
-
-        <td className="px-4 py-3 flex justify-center">
-          <Link to={`/${role}/shifts/${assigneeId}/swap-request`} state={{ assignee }}>
-            <button
-              className="inline-flex items-center gap-1 text-[12px] font-medium bg-mint-soft hover:bg-mint-soft/80 border border-mint-ink/20 px-2.5 py-1 rounded-md text-mint-ink transition-colors"
-            >
-              <IoIosSwap size={13} />
-            </button>
-
-          </Link>
+          <div className="flex justify-end gap-2">
+            {status === "ASSIGNED" && (
+              <>
+                <button
+                  disabled={isCurrentUser}
+                  onClick={() => {
+                    if (!isCurrentUser) {
+                      onOpenSwap(assigneeId);
+                    }
+                  }}
+                  className={`w-8 h-8 flex items-center justify-center rounded-md transition-colors
+    ${
+      isCurrentUser
+        ? "bg-ink-100 text-ink-400 cursor-not-allowed"
+        : "bg-violet-soft text-violet-ink hover:bg-violet-soft/80"
+    }`}
+                  title={
+                    isCurrentUser
+                      ? "You cannot swap with yourself"
+                      : "Request swap"
+                  }
+                >
+                  <IoIosSwap size={12} />
+                </button>
+                {(role === "MANAGER" || role === "ADMIN") && (
+                  <button
+                    onClick={() => onRemove(assigneeId, firstName, lastName)}
+                    className="inline-flex items-center gap-1 text-[12px] font-medium bg-rose-soft hover:bg-rose-soft/80 border border-rose-ink/20 px-2.5 py-1 rounded-md text-rose-ink transition-colors"
+                  >
+                    <FiUserMinus size={13} />
+                  </button>
+                )}
+              </>
+            )}
+          </div>
         </td>
       </tr>
     </tbody>
   );
 };
 
-export default ShiftAssignmentRequestsBody
+export default ShiftAssignmentRequestsBody;

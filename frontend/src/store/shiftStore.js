@@ -1,10 +1,11 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-import { createShift, updateShift, getShifts, cancelShift, getUserShifts } from "../api/shift";
+import { createShift, updateShift, getShifts, cancelShift, getUserShifts, getShiftById } from "../api/shift";
 
 const useShiftStore = create(
   devtools((set) => ({
     shifts: [],
+    shift: null,
     isLoading: false,
     error: null,
     userShifts: [],
@@ -14,6 +15,17 @@ const useShiftStore = create(
       try {
         const data = await getShifts();
         set({ shifts: data, isLoading: false });
+      } catch (error) {
+        set({ error: error.message, isLoading: false });
+        console.error(error);
+      }
+    },
+
+    fetchShiftById: async (id) => {
+      set({ isLoading: true, error: null });
+      try {
+        const data = await getShiftById(id);
+        set({ shift: data, isLoading: false });
       } catch (error) {
         set({ error: error.message, isLoading: false });
         console.error(error);
@@ -56,10 +68,10 @@ const useShiftStore = create(
     },
 
     fetchUserShifts: async () => {
-      set({ isLoading: true, error: null });
       try {
+        set({ isLoading: true, error: null });
         const data = await getUserShifts();
-        console.log(data);
+        console.log(data)
         set({ userShifts: data });
       } catch (error) {
         set({ error: error.message });

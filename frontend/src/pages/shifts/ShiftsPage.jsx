@@ -10,7 +10,6 @@ import { HiEye } from "react-icons/hi";
 import { formatDate, formatTime } from "../../utils/formatDateTime";
 import ConfirmationModal from "../components/shared/ConfirmationModal";
 
-
 const STATUS_CONFIG = {
   OPEN: {
     bg: "bg-mint-soft",
@@ -29,7 +28,7 @@ const STATUS_CONFIG = {
     text: "text-slate-700",
     dot: "bg-slate-500",
     label: "Completed",
-},
+  },
   CANCELLED: {
     bg: "bg-rose-soft",
     text: "text-rose-ink",
@@ -37,8 +36,6 @@ const STATUS_CONFIG = {
     label: "Cancelled",
   },
 };
-
-
 
 const StatusBadge = ({ status }) => {
   const cfg = STATUS_CONFIG[status] ?? STATUS_CONFIG.OPEN;
@@ -53,10 +50,9 @@ const StatusBadge = ({ status }) => {
 };
 
 const ShiftsPage = () => {
-
   const { shifts, isLoading, fetchShifts, removeShift } = useShiftStore();
 
-  const { user } = useAuthStore(state => state);
+  const { user } = useAuthStore((state) => state);
   const role = user?.role.toLowerCase();
   const [modal, setModal] = useState(null);
 
@@ -74,7 +70,9 @@ const ShiftsPage = () => {
           await removeShift(id);
           toast.success("Shift cancelled successfully");
         } catch (error) {
-          toast.error(error?.response?.data?.message ?? "Failed to cancel shift");
+          toast.error(
+            error?.response?.data?.message ?? "Failed to cancel shift",
+          );
         }
       },
     });
@@ -190,7 +188,7 @@ const ShiftsPage = () => {
                         {shift.createdByUsername}
                       </td>
                       <td className="px-4 py-3 text-right">
-                        <div className="inline-flex gap-1.5">
+                        <div className="flex justify-end gap-2">
                           {role !== "user" && shift.status !== "CANCELLED" ? (
                             <>
                               <Link to={`/${role}/shifts/${shift.id}/edit`}>
@@ -200,22 +198,29 @@ const ShiftsPage = () => {
                               </Link>
 
                               <button
-                                onClick={() => handleCancel(shift.id, shift.title)}
+                                onClick={() =>
+                                  handleCancel(shift.id, shift.title)
+                                }
                                 className="inline-flex items-center gap-1 text-[12px] font-medium bg-rose-soft hover:bg-rose-soft/80 border border-rose-ink/20 px-2.5 py-1 rounded-md text-rose-ink transition-colors"
                               >
                                 <FiTrash2 size={13} />
                               </button>
 
-                              <Link to={`/${role}/shifts/${shift.id}/assign-shift`}>
+                              <Link
+                                to={`/${role}/shifts/${shift.id}/assign-shift`}
+                              >
                                 <button className="inline-flex items-center gap-1 text-[12px] font-medium bg-green-50 border border-green-300 px-2.5 py-1 rounded-md text-green-800 transition-colors">
                                   <RiAddLargeLine size={13} />
                                 </button>
                               </Link>
                             </>
                           ) : null}
-                          <Link to={`/${role}/shifts/${shift.id}/shift-requests`}>
+                          <Link
+                            to={`/${role}/shifts/${shift.id}/shift-requests`}
+                          >
                             <button
-                              className="inline-flex items-center gap-1 text-[12px] font-medium bg-blue-50 border border-blue-300 px-2.5 py-1 rounded-md text-blue-800 transition-colors mr-2"
+                              className="w-8 h-8 flex items-center justify-center rounded-md transition-colors bg-blue-50 border-blue-300 text-blue-ink hover:bg-blue-soft/80"
+                              // className="inline-flex items-center gap-1 text-[12px] font-medium bg-blue-50 border border-blue-300 px-2.5 py-1 rounded-md text-blue-800 transition-colors mr-2"
                             >
                               <HiEye size={13} />
                             </button>
