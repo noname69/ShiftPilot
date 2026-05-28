@@ -65,4 +65,6 @@ public interface ShiftAssignmentRepository extends JpaRepository<ShiftAssignment
             @Param("shiftId") Long shiftId,
             @Param("userId") Long userId
     );
+
+    boolean existsByUserIdAndShiftId(Long userId, Long shiftId);
 }

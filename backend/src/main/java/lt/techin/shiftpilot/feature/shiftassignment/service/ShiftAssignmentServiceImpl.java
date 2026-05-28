@@ -1,10 +1,11 @@
 package lt.techin.shiftpilot.feature.shiftassignment.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lt.techin.shiftpilot.exception.ShiftAssignmentNotFoundException;
 import lt.techin.shiftpilot.exception.ShiftNotFoundException;
+import lt.techin.shiftpilot.exception.assignment.ShiftAssignmentException;
 import lt.techin.shiftpilot.exception.user.UserNotFoundException;
-import lt.techin.shiftpilot.feature.shift.dto.ShiftResponse;
 import lt.techin.shiftpilot.feature.shift.mapper.ShiftMapper;
 import lt.techin.shiftpilot.feature.shift.model.Shift;
 import lt.techin.shiftpilot.feature.shift.model.ShiftStatus;
@@ -37,6 +38,7 @@ public class ShiftAssignmentServiceImpl implements ShiftAssignmentService{
     private final ShiftMapper shiftMapper;
 
     @Override
+    @Transactional
     public ShiftAssignResponse assignShift(String username, ShiftAssignRequest request, Long shiftId) {
 
         User manager = userRepository.findByUsername(username)
@@ -56,6 +58,10 @@ public class ShiftAssignmentServiceImpl implements ShiftAssignmentService{
 
             User user = userRepository.findById(userId)
                     .orElseThrow(() -> new UserNotFoundException(userId));
+
+            if(shiftAssignmentRepository.existsByUserIdAndShiftId(user.getId(), shift.getId())){
+                throw new ShiftAssignmentException("User with id: " + userId + " is already assigned to shift with id: " + shift.getId());
+            }
 
             Optional<ShiftAssignment> existing = shiftAssignmentRepository
                     .findByShiftIdAndUserId(shift.getId(), user.getId());

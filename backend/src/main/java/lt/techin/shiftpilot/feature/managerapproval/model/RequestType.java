@@ -2,5 +2,5 @@ package lt.techin.shiftpilot.feature.managerapproval.model;
 
 public enum RequestType {
 
-    SWAP, ABSENCE, SICK, HOLIDAY
+    SWAP, ABSENCE, ILL, VOCATION
 }

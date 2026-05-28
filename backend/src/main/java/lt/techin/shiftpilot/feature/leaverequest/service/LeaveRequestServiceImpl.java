@@ -11,7 +11,6 @@ import lt.techin.shiftpilot.feature.leaverequest.model.LeaveRequest;
 import lt.techin.shiftpilot.feature.leaverequest.repository.LeaveRequestRepository;
 import lt.techin.shiftpilot.feature.managerapproval.model.ApprovalStatus;
 import lt.techin.shiftpilot.feature.managerapproval.model.ManagerApproval;
-import lt.techin.shiftpilot.feature.managerapproval.repository.ManagerApprovalRepository;
 import lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignment;
 import lt.techin.shiftpilot.feature.shiftassignment.repository.ShiftAssignmentRepository;
 import lt.techin.shiftpilot.feature.user.model.User;
@@ -24,7 +23,6 @@ public class LeaveRequestServiceImpl implements LeaveRequestService{
 
     private final LeaveRequestRepository leaveRequestRepository;
     private final ShiftAssignmentRepository shiftAssignmentRepository;
-    private final ManagerApprovalRepository managerApprovalRepository;
     private final UserRepository userRepository;
     private final LeaveRequestMapper leaveRequestMapper;
 
@@ -44,6 +42,8 @@ public class LeaveRequestServiceImpl implements LeaveRequestService{
         leaveRequest.setAssignment(assignment);
         leaveRequest.setReason(request.getReason());
         leaveRequest.setRequester(requester);
+        leaveRequest.setOutFrom(request.getOutFrom());
+        leaveRequest.setOutTill(request.getOutTill());
 
         ManagerApproval approval = new ManagerApproval();
         approval.setManager(manager);

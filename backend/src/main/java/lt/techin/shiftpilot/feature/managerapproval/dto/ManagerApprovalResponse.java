@@ -5,11 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lt.techin.shiftpilot.feature.leaverequest.dto.LeaveRequestResponse;
-import lt.techin.shiftpilot.feature.leaverequest.model.LeaveRequest;
 import lt.techin.shiftpilot.feature.managerapproval.model.ApprovalStatus;
 import lt.techin.shiftpilot.feature.managerapproval.model.RequestType;
 import lt.techin.shiftpilot.feature.swaprequest.dto.SwapRequestResponse;
-import lt.techin.shiftpilot.feature.swaprequest.model.SwapRequest;
 
 import java.time.LocalDateTime;
 
