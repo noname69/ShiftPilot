@@ -5,13 +5,18 @@ import lombok.RequiredArgsConstructor;
 import lt.techin.shiftpilot.feature.shift.dto.ShiftCreateRequest;
 import lt.techin.shiftpilot.feature.shift.dto.ShiftResponse;
 import lt.techin.shiftpilot.feature.shift.dto.ShiftUpdateRequest;
+import lt.techin.shiftpilot.feature.shift.model.ShiftStatus;
 import lt.techin.shiftpilot.feature.shift.service.ShiftService;
+import org.springframework.cglib.core.Local;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -35,14 +40,15 @@ public class ShiftController {
                 .body(response);
     }
 
-    @GetMapping("/test")
-    public ResponseEntity<String> test() {
-        return ResponseEntity.ok("Shift controller works");
-    }
-
     @GetMapping
-    public ResponseEntity<List<ShiftResponse>> getAllShifts() {
-        return ResponseEntity.ok(shiftService.getAllShifts());
+    public ResponseEntity<Page<ShiftResponse>> getAllShifts(
+            @RequestParam(required = false) ShiftStatus status,
+            @RequestParam(required = false) LocalDate dateFrom,
+            @RequestParam(required = false) LocalDate dateTo,
+            @RequestParam(required = false) String createdBy,
+            Pageable pageable
+            ) {
+        return ResponseEntity.ok(shiftService.getAllShifts(status, dateFrom, dateTo, createdBy, pageable));
     }
 
     @GetMapping("/{id}")

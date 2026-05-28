@@ -9,12 +9,19 @@ const useShiftStore = create(
     isLoading: false,
     error: null,
     userShifts: [],
+    totalPages: 0,
+    currentPage: 0,
 
-    fetchShifts: async () => {
+    fetchShifts: async (filters) => {
       set({ isLoading: true, error: null });
       try {
-        const data = await getShifts();
-        set({ shifts: data, isLoading: false });
+        const data = await getShifts(filters);
+        set({
+          shifts: data.content, 
+          totalPages: data.totalPages,
+          currentPage: data.number,
+          isLoading: false
+        });
       } catch (error) {
         set({ error: error.message, isLoading: false });
         console.error(error);
