@@ -13,3 +13,5 @@ export const formatDate = (d) => {
     year: "numeric",
   });
 };
+
+export const formatDateTimeForBackend = (d, t) => `${d}T${t}:00`;

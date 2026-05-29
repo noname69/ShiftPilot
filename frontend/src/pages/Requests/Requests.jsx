@@ -5,9 +5,9 @@ import useAuthStore from "../../store/authStore";
 import useManagerApprovalsStore from "../../store/managerApprovalsStore";
 
 const Requests = ({ isManager = false, isUser = false }) => {
-  const { fetchManagerApprovals, fetchUserRequests, requests } =
+  const { fetchManagerApprovals, fetchUserRequests, requests, processRequest } =
     useManagerApprovalsStore((state) => state);
-  const { sendTargetResponse, sendManagerResponse } = useSwapRequestStore(
+  const { sendTargetResponse } = useSwapRequestStore(
     (state) => state,
   );
 
@@ -48,19 +48,31 @@ const Requests = ({ isManager = false, isUser = false }) => {
     }
   };
 
-  const handleManagerRespond = async (requestId, decision) => {
+  const handleManagerRespond = async (requestId, approvalId, requestType, decision) => {
     console.log("MANAGER RESPOND PAYLOAD:", {
-      swapRequestId: requestId,
+      approvalId: approvalId,
+      requestId: requestId,
+      requestType: requestType,
       approved: decision,
       comment: "",
     });
 
+
     try {
-      const res = await sendManagerResponse({
-        swapRequestId: requestId,
-        approved: decision,
-        comment: "",
-      });
+      // const res = await sendManagerResponse({
+      //   swapRequestId: requestId,
+      //   approved: decision,
+      //   comment: "",
+      // });
+
+
+    const res = await processRequest({
+    "approvalId" : approvalId,
+    "requestId" : requestId,
+    "requestType" : requestType,
+    "decision" : decision
+    // "comment" : ""
+});
 
       console.log("MANAGER RESPOND RESULT:", res);
 
@@ -91,9 +103,9 @@ const Requests = ({ isManager = false, isUser = false }) => {
         </thead>
 
         <tbody className="divide-y divide-ink-100">
-          {(requests ?? []).map((r) => (
+          {(requests ?? []).map((r, index) => (
             <RequestRow
-              key={r.requestId}
+              key={index}
               request={r}
               currentUserId={userId}
               isManager={isManager}

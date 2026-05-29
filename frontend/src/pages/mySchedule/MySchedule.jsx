@@ -2,13 +2,15 @@ import useShiftStore from "../../store/shiftStore";
 import { useEffect } from "react";
 import Footer from "../components/shared/Footer";
 import MyScheduleBody from "./MyScheduleBody";
-
+import LeaveRequestModal from "./LeaveRequestModal";
+import { useState } from "react";
 import { useParams } from "react-router";
 
 const MySchedule = () => {
 
   const { userShifts, fetchUserShifts } = useShiftStore(state => state);
   const { assigneeId } = useParams();
+  const [modal, setModal] = useState(null);
 
   const isSwapMode = !!assigneeId;
 
@@ -47,9 +49,12 @@ const MySchedule = () => {
                 shift={shift}
                 isSwapMode={isSwapMode}
                 selectedShiftId={assigneeId}
+                setModal={setModal}
+                fetchUserShifts={fetchUserShifts}
               />)}
           </table>
         </div>
+        <LeaveRequestModal modal={modal} setModal={setModal} />
       </main>
       <Footer />
     </div>
