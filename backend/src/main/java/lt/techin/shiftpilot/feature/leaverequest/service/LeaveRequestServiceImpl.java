@@ -3,6 +3,7 @@ package lt.techin.shiftpilot.feature.leaverequest.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lt.techin.shiftpilot.exception.assignment.AssignmentNotFoundException;
+import lt.techin.shiftpilot.exception.assignment.RequestException;
 import lt.techin.shiftpilot.exception.user.UserNotFoundException;
 import lt.techin.shiftpilot.feature.leaverequest.dto.CreateLeaveRequest;
 import lt.techin.shiftpilot.feature.leaverequest.dto.LeaveRequestResponse;
@@ -12,6 +13,7 @@ import lt.techin.shiftpilot.feature.leaverequest.repository.LeaveRequestReposito
 import lt.techin.shiftpilot.feature.managerapproval.model.ApprovalStatus;
 import lt.techin.shiftpilot.feature.managerapproval.model.ManagerApproval;
 import lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignment;
+import lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignmentStatus;
 import lt.techin.shiftpilot.feature.shiftassignment.repository.ShiftAssignmentRepository;
 import lt.techin.shiftpilot.feature.user.model.User;
 import lt.techin.shiftpilot.feature.user.repository.UserRepository;
@@ -33,8 +35,15 @@ public class LeaveRequestServiceImpl implements LeaveRequestService{
         ShiftAssignment assignment = shiftAssignmentRepository.findById(assignmentId)
                 .orElseThrow(() -> new AssignmentNotFoundException(assignmentId));
 
+        assignment.setStatus(ShiftAssignmentStatus.REQUEST_APPLIED);
+        shiftAssignmentRepository.save(assignment);
+
         User requester = userRepository.findById(requesterId)
                 .orElseThrow(() -> new UserNotFoundException(requesterId));
+
+        if(leaveRequestRepository.existsByAssignmentId(assignmentId)) {
+            throw new RequestException("Leave request already exists for this assignment");
+        }
 
         User manager = assignment.getAssignedBy();
 

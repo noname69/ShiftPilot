@@ -21,12 +21,11 @@ public class CreateLeaveRequest {
     @NotNull
     private LocalDateTime outTill;
 
-    @AssertTrue(message = "Leaving date must be before coming back date.")
+    @AssertTrue(message = "Return date must be after start date.")
     public boolean isLeavePeriodValid() {
         if (outFrom == null || outTill == null) {
             return true;
         }
-
         return outTill.isAfter(outFrom);
     }
 

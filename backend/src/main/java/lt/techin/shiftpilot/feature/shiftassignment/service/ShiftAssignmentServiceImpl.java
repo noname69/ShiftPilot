@@ -147,7 +147,8 @@ public class ShiftAssignmentServiceImpl implements ShiftAssignmentService{
                             shift.getStatus(),
                             shift.getCreatedBy().getId(),
                             shift.getCreatedBy().getUsername(),
-                            assignment.getId()
+                            assignment.getId(),
+                            assignment.getStatus()
                     );
                 })
                 .toList();

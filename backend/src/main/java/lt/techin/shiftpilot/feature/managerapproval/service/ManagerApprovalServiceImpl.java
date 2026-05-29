@@ -19,6 +19,7 @@ import lt.techin.shiftpilot.feature.managerapproval.model.ManagerApproval;
 import lt.techin.shiftpilot.feature.managerapproval.model.RequestType;
 import lt.techin.shiftpilot.feature.managerapproval.repository.ManagerApprovalRepository;
 import lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignment;
+import lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignmentStatus;
 import lt.techin.shiftpilot.feature.shiftassignment.repository.ShiftAssignmentRepository;
 import lt.techin.shiftpilot.feature.swaprequest.dto.ManagerSwapResponseRequest;
 import lt.techin.shiftpilot.feature.swaprequest.dto.TargetSwapResponseRequest;
@@ -63,7 +64,7 @@ public class ManagerApprovalServiceImpl implements ManagerApprovalService{
                         response.setReason(approval.getLeaveRequest().getReason());
                         response.setRequestId(approval.getLeaveRequest().getId());
                     }
-                    else {
+                    else if (approval.getSwapRequest() != null) {
                         response.setSwapResponse(swapRequestMapper.toResponse(approval.getSwapRequest()));
                         response.setReason(approval.getSwapRequest().getReason());
                         response.setRequestId(approval.getSwapRequest().getId());
@@ -301,10 +302,8 @@ public class ManagerApprovalServiceImpl implements ManagerApprovalService{
         LeaveRequest leaveRequest = leaveRequestRepository.findById(request.getRequestId())
                 .orElseThrow(() -> new ResourceNotFoundException("Request" , request.getRequestId()));
 
-        ShiftAssignment shiftAssignment = leaveRequest.getAssignment();
-
-        if(!(Objects.equals(shiftAssignment.getAssignedBy().getId(), manager.getId()))) {
-            throw new ShiftAssignmentException("Shift wasn't assignem: " + manager.getId());
+        if (!approval.getManager().getId().equals(manager.getId())) {
+            throw new ApprovalException("Approval doesn't belong to manager with id: " + manager.getId());
         }
 
         leaveRequest.setClosedAt(LocalDateTime.now());
@@ -316,14 +315,24 @@ public class ManagerApprovalServiceImpl implements ManagerApprovalService{
             return new ManagerDecisionResponse("Request was rejected.");
         }
 
+        ShiftAssignment shiftAssignment = leaveRequest.getAssignment();
+        shiftAssignment.setStatus(ShiftAssignmentStatus.REMOVED);
+        shiftAssignment.setRemovedAt(LocalDateTime.now());
+        shiftAssignmentRepository.save(shiftAssignment);
+
         approval.setStatus(ApprovalStatus.APPROVED);
         approval.setClosedAt(LocalDateTime.now());
         managerApprovalRepository.save(approval);
 
         User requesterUser = leaveRequest.getRequester();
         requesterUser.setStatus(UserStatus.valueOf(request.getRequestType().toString()));
+        requesterUser.setUpdatedAt(LocalDateTime.now());
+        requesterUser.setOutFrom(leaveRequest.getOutFrom());
+        requesterUser.setOutTill(leaveRequest.getOutTill());
         userRepository.save(requesterUser);
 
         return new ManagerDecisionResponse("Request was approved.");
     }
+
+
 }

@@ -5,5 +5,5 @@ public enum UserStatus {
     INACTIVE,
     ABSENT,
     ILL,
-    VOCATION
+    VACATION
 }
