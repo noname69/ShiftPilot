@@ -33,17 +33,20 @@ const useManagerApprovalsStore = create(
       }
     },
 
-      processRequest: async (sendData) => {
+    processRequest: async (sendData) => {
       try {
+        console.log(sendData)
         set({ isLoading: true });
         const { data } = await api.post(`/managers/me/process-request`, sendData);
         return data.message;
       } catch (error) {
-        console.log(error);
+        console.log("STATUS:", error.response?.status);
+        console.log("DATA:", error.response?.data);
+        console.log("MESSAGE:", error.message);
       } finally {
-        set({ isLoading: false });
-      }
-    },
+      set({ isLoading: false });
+    }
+  },
 
   })),
 );

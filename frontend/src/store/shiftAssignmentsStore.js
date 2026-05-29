@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import api from "../api/api";
+import toast from "react-hot-toast";
 
 const useShiftAssignmentsStore = create(
 
@@ -17,6 +18,7 @@ const useShiftAssignmentsStore = create(
           assignees: [...state.assignees, ...data.assignees]
         }));
         navigate("/manager/shifts");
+        toast.success("User assigned to shift successfully")
       } catch (error) {
         console.log(error);
       } finally {
@@ -37,8 +39,6 @@ const useShiftAssignmentsStore = create(
     },
 
     removeAssignment: async (shiftId, userId) => {
-
-      console.log(userId)
       try {
         set({ isLoading: true });
         await api.patch(`/shifts/${shiftId}/shift-assignments/${userId}/remove`);

@@ -2,9 +2,8 @@ import { formatDate, formatTime } from "../../utils/formatDateTime";
 import { useState } from "react";
 import { TbDoorExit } from "react-icons/tb";
 import useLeaveStore from "../../store/leaveStore";
-
-
 import useSwapStore from "../../store/swapStore";
+
 
 const STATUS_CONFIG = {
   OPEN: {
@@ -52,7 +51,7 @@ const MyScheduleBody = ({ shift, isSwapMode, selectedShiftId, setModal, fetchUse
     description,
     shiftDate,
     startTime,
-    endTime, minEmployees, status, createdByUsername, assigneeId } = shift;
+    endTime, minEmployees, status, createdByUsername, assigneeId, assignmentStatus } = shift;
 
   const [openSwap, setOpenSwap] = useState(false);
   const [reason, setReason] = useState("");
@@ -87,12 +86,14 @@ const MyScheduleBody = ({ shift, isSwapMode, selectedShiftId, setModal, fetchUse
       title: "Leave request",
       message: "Apply leave request",
       confirmButton: "Apply",
-      onConfirm: (formData) => {
-        sendLeaveRequest(assigneeId, formData);
+      onConfirm: async (formData) => {
+        await sendLeaveRequest(assigneeId, formData);
         fetchUserShifts();
       },
     });
   };
+
+  console.log(assignmentStatus)
 
   return (
     <tbody className="divide-y divide-ink-100">
@@ -124,7 +125,7 @@ const MyScheduleBody = ({ shift, isSwapMode, selectedShiftId, setModal, fetchUse
         </td>
         <td className="px-4 py-3 flex justify-center">
 
-          {status === "OPEN" && (
+          {assignmentStatus === "ASSIGNED" && status === "OPEN" && (
             <button
               className="w-8 h-8 flex items-center justify-center rounded-md bg-rose-200 text-rose-800 hover:bg-mint-soft/80"
               title="Apply leave Request"

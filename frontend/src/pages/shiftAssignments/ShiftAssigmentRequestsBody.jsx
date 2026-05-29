@@ -82,7 +82,7 @@ const ShiftAssignmentRequestsBody = ({ assignee, onRemove, onOpenSwap }) => {
                     }
                   }}
                   className={`w-8 h-8 flex items-center justify-center rounded-md transition-colors
-    ${isCurrentUser
+                  ${isCurrentUser
                       ? "bg-ink-100 text-ink-400 cursor-not-allowed"
                       : "bg-violet-soft text-violet-ink hover:bg-violet-soft/80"
                     }`}

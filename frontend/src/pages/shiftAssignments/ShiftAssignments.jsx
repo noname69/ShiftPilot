@@ -10,7 +10,7 @@ import { getShiftById } from "../../api/shift";
 const ShiftAssignments = () => {
   const { users, fetchUsers } = useUserStore(state => state);
   const [selectedUsers, setSelectedUsers] = useState([]);
-  const employees = users.filter(user => user.role === "USER");
+  const employees = users.filter(user => user.role === "USER" && user.status === "ACTIVE");
   const { shiftId } = useParams();
   const { getShiftAssignees, assignees, assignEmployees } = useShiftAssignmentsStore(state => state);
   const [modal, setModal] = useState(null);

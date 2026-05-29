@@ -29,7 +29,7 @@ const LeaveRequestModal = ({ modal, setModal }) => {
       outTill: formatDateTimeForBackend(formData.outTill, formData.endTime)
     }
     onConfirm?.(sendData);
-    // reset();
+    reset();
     setModal(null);
   };
 
@@ -120,9 +120,7 @@ const LeaveRequestModal = ({ modal, setModal }) => {
                 rows={5}
                 placeholder="Enter leave reason..."
                 className="w-full rounded-xl border border-ink-200 bg-white px-4 py-3 text-[13px] outline-none focus:border-violet-300 focus:ring-2 focus:ring-violet-100 resize-none"
-                {...register("reason", {
-                  required: "Reason is required",
-                })}
+                {...register("reason")}
               />
 
             </form>

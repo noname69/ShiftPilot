@@ -4,6 +4,7 @@ import Footer from "../components/shared/Footer";
 import useUserStore from "../../store/userStore";
 import useAuthStore from "../../store/authStore";
 import { FiEdit2, FiTrash2, FiRotateCcw } from "react-icons/fi";
+import { formatDateTimeForFrontend } from "./../../utils/formatDateTime"
 
 const STATUS_CONFIG = {
   ACTIVE: {
@@ -18,6 +19,27 @@ const STATUS_CONFIG = {
     text: "text-rose-ink",
     dot: "bg-rose-ink",
     label: "Inactive",
+  },
+
+  ILL: {
+    bg: "bg-yellow-100",
+    text: "text-yellow-800",
+    dot: "bg-yellow-500",
+    label: "ILL",
+  },
+
+  VACATION: {
+    bg: "bg-yellow-100",
+    text: "text-yellow-800",
+    dot: "bg-yellow-500",
+    label: "On vacation",
+  },
+
+  ABSENCE: {
+    bg: "bg-yellow-100",
+    text: "text-yellow-800",
+    dot: "bg-yellow-500",
+    label: "Absence",
   },
 };
 
@@ -130,8 +152,11 @@ const UsersPage = () => {
                       Status
                     </th>
 
-                    <th className="text-left font-medium px-4 py-2.5">
-                      Hours this week
+                    <th className="font-medium px-4 py-2.5 w-26">
+                      Out From
+                    </th>
+                    <th className="text-left font-medium px-4 py-2.5 w-26">
+                      Out Until
                     </th>
 
                     <th className="text-left font-medium px-4 py-2.5">
@@ -172,9 +197,13 @@ const UsersPage = () => {
                         <StatusBadge status={user.status} />
                       </td>
 
-                      {/* HOURS */}
-                      <td className="px-4 py-3 font-mono text-[12px] text-ink-700">
-                        {user.weeklyHours ?? 0}h
+                      {/* OUT FROM TILL */}
+                      <td className="px-4 py-3 font-mono text-[12px] text-ink-700 text-center">
+                        {formatDateTimeForFrontend(user.outFrom) ?? ""}
+                      </td>
+
+                      <td className="px-4 py-3 font-mono text-[12px] text-ink-700 text-center">
+                        {formatDateTimeForFrontend(user.outTill) ?? ""}
                       </td>
 
                       {/* CONTACT */}

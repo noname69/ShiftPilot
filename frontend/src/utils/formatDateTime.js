@@ -14,4 +14,17 @@ export const formatDate = (d) => {
   });
 };
 
-export const formatDateTimeForBackend = (d, t) => `${d}T${t}:00`;
+export const formatDateTimeForBackend = (d, t) => {
+  if(d === null || t === null) {
+    return "";
+  }
+  return `${d}T${t}:00`;
+}
+
+export const formatDateTimeForFrontend = (dateTime) => {
+  if (!dateTime) return "";
+
+  return dateTime.replace("T", " ").slice(0, 16);
+};
+
+

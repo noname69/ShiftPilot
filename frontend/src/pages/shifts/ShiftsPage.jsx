@@ -5,12 +5,13 @@ import Footer from "../components/shared/Footer";
 import useShiftStore from "../../store/shiftStore";
 import useAuthStore from "../../store/authStore";
 import { FiEdit2, FiTrash2 } from "react-icons/fi";
-import { RiAddLargeLine } from "react-icons/ri";
 import { HiEye } from "react-icons/hi";
 import { formatDate, formatTime } from "../../utils/formatDateTime";
 import ConfirmationModal from "../components/shared/ConfirmationModal";
 import ShiftFilter from "../components/shared/ShiftFilter";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { FiUserCheck } from "react-icons/fi";
+
 
 const STATUS_CONFIG = {
   OPEN: {
@@ -235,8 +236,11 @@ const ShiftsPage = () => {
                               <Link
                                 to={`/${role}/shifts/${shift.id}/assign-shift`}
                               >
-                                <button className="inline-flex items-center gap-1 text-[12px] font-medium bg-green-50 border border-green-300 px-2.5 py-1 rounded-md text-green-800 transition-colors">
-                                  <RiAddLargeLine size={13} />
+                                <button 
+                                // className="inline-flex items-center gap-1 text-[12px] font-medium bg-mint-soft hover:bg-mint-soft/80 border border-mint-ink/20 px-2.5 py-1 rounded-md text-mint-ink transition-colors"
+                                className="w-8 h-8 flex items-center justify-center rounded-md transition-colors bg-mint-soft border border-mint-ink/20 text-mint-ink hover:bg-mint-soft/80"
+                                >
+                                  <FiUserCheck size={13} />
                                 </button>
                               </Link>
                             </>
@@ -246,7 +250,6 @@ const ShiftsPage = () => {
                           >
                             <button
                               className="w-8 h-8 flex items-center justify-center rounded-md transition-colors bg-blue-50 border-blue-300 text-blue-ink hover:bg-blue-soft/80"
-                              // className="inline-flex items-center gap-1 text-[12px] font-medium bg-blue-50 border border-blue-300 px-2.5 py-1 rounded-md text-blue-800 transition-colors mr-2"
                             >
                               <HiEye size={13} />
                             </button>
