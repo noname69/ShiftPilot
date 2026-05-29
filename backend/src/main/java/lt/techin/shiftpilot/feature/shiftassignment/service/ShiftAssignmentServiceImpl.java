@@ -19,6 +19,7 @@ import lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignmentStatus;
 import lt.techin.shiftpilot.feature.shiftassignment.repository.ShiftAssignmentRepository;
 import lt.techin.shiftpilot.feature.user.mapper.UserMapper;
 import lt.techin.shiftpilot.feature.user.model.User;
+import lt.techin.shiftpilot.feature.user.model.UserStatus;
 import lt.techin.shiftpilot.feature.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -59,8 +60,12 @@ public class ShiftAssignmentServiceImpl implements ShiftAssignmentService{
             User user = userRepository.findById(userId)
                     .orElseThrow(() -> new UserNotFoundException(userId));
 
-            if(shiftAssignmentRepository.existsByUserIdAndShiftId(user.getId(), shift.getId())){
+            if(shiftAssignmentRepository.existsByUserIdAndShiftIdAndStatus(user.getId(), shift.getId(), ShiftAssignmentStatus.ASSIGNED)){
                 throw new ShiftAssignmentException("User with id: " + userId + " is already assigned to shift with id: " + shift.getId());
+            }
+
+            if(!user.getStatus().equals(UserStatus.ACTIVE)) {
+                throw new ShiftAssignmentException("User status: " + user.getStatus().toString() + ". Only ACTIVE users can be assigned to shift.");
             }
 
             Optional<ShiftAssignment> existing = shiftAssignmentRepository
@@ -102,7 +107,7 @@ public class ShiftAssignmentServiceImpl implements ShiftAssignmentService{
     public ShiftAssignResponse getShiftAssignees(Long shiftId) {
 
         List<ShiftAssignment> assignments =
-                shiftAssignmentRepository.findByShiftId(shiftId);
+                shiftAssignmentRepository.findByShiftIdAndStatus(shiftId, ShiftAssignmentStatus.ASSIGNED);
 
         List<AssigneeResponse> responses = assignments.stream()
                 .map(a -> new AssigneeResponse(
@@ -126,7 +131,7 @@ public class ShiftAssignmentServiceImpl implements ShiftAssignmentService{
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException(username));
 
-        List<ShiftAssignment> shiftAssignments = shiftAssignmentRepository.findByUser(user);
+        List<ShiftAssignment> shiftAssignments = shiftAssignmentRepository.findByUserOrStatus(user);
 
         return shiftAssignments.stream()
                 .map(ShiftAssignment::getShift)

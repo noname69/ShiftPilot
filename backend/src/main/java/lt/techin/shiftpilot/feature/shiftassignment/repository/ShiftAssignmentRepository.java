@@ -8,13 +8,23 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface ShiftAssignmentRepository extends JpaRepository<ShiftAssignment, Long> {
 
-    List<ShiftAssignment> findByUser(User user);
+    @Query("""
+    select sa
+    from ShiftAssignment sa
+    where sa.user = :user
+    and sa.status in ('ASSIGNED', 'REQUEST_APPLIED')
+    """)
+    List<ShiftAssignment> findByUserOrStatus(
+            @Param("user") User user
+    );
 
     @Query("""
         select sa.user
@@ -42,7 +52,12 @@ public interface ShiftAssignmentRepository extends JpaRepository<ShiftAssignment
             @Param("shiftId") Long shiftId
     );
 
-    List<ShiftAssignment> findByShiftId(Long shiftId);
+//    List<ShiftAssignment> findByShiftId(Long shiftId);
+    List<ShiftAssignment> findByShiftIdAndStatus(
+            Long shiftId,
+            ShiftAssignmentStatus status
+    );
+
     @Query("""
     select sa
     from ShiftAssignment sa
@@ -66,5 +81,20 @@ public interface ShiftAssignmentRepository extends JpaRepository<ShiftAssignment
             @Param("userId") Long userId
     );
 
-    boolean existsByUserIdAndShiftId(Long userId, Long shiftId);
+    boolean existsByUserIdAndShiftIdAndStatus(
+            Long userId,
+            Long shiftId,
+            ShiftAssignmentStatus status
+    );
+
+    @Query("""
+    SELECT sa FROM ShiftAssignment sa
+    JOIN sa.shift s
+    WHERE s.shiftDate BETWEEN :fromDate AND :tillDate
+    """)
+    List<ShiftAssignment> findAllInTimeFrame(
+            @Param("fromDate") LocalDate fromDate,
+            @Param("tillDate") LocalDate tillDate
+    );
+
 }

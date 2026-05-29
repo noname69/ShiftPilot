@@ -18,6 +18,7 @@ import lt.techin.shiftpilot.feature.managerapproval.model.ApprovalStatus;
 import lt.techin.shiftpilot.feature.managerapproval.model.ManagerApproval;
 import lt.techin.shiftpilot.feature.managerapproval.model.RequestType;
 import lt.techin.shiftpilot.feature.managerapproval.repository.ManagerApprovalRepository;
+import lt.techin.shiftpilot.feature.shift.model.Shift;
 import lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignment;
 import lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignmentStatus;
 import lt.techin.shiftpilot.feature.shiftassignment.repository.ShiftAssignmentRepository;
@@ -29,10 +30,12 @@ import lt.techin.shiftpilot.feature.swaprequest.repository.SwapRequestRepository
 import lt.techin.shiftpilot.feature.user.model.User;
 import lt.techin.shiftpilot.feature.user.model.UserStatus;
 import lt.techin.shiftpilot.feature.user.repository.UserRepository;
+import org.springframework.cglib.core.Local;
 import org.springframework.security.web.firewall.RequestRejectedException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -51,6 +54,7 @@ public class ManagerApprovalServiceImpl implements ManagerApprovalService{
 
     @Override
     public ManagerApprovalsList getAllManagerApprovals(Long managerId) {
+
 
         List<ManagerApproval> approvalList =  managerApprovalRepository.findByManagerId(managerId);
 
@@ -299,6 +303,7 @@ public class ManagerApprovalServiceImpl implements ManagerApprovalService{
                                                        ManagerApproval approval,
                                                        User manager){
 
+
         LeaveRequest leaveRequest = leaveRequestRepository.findById(request.getRequestId())
                 .orElseThrow(() -> new ResourceNotFoundException("Request" , request.getRequestId()));
 
@@ -309,23 +314,27 @@ public class ManagerApprovalServiceImpl implements ManagerApprovalService{
         leaveRequest.setClosedAt(LocalDateTime.now());
         leaveRequestRepository.save(leaveRequest);
 
+        ShiftAssignment shiftAssignment = leaveRequest.getAssignment();
+
         if(!request.isDecision()) {
             approval.setStatus(ApprovalStatus.MANAGER_REJECTED);
+            shiftAssignment.setStatus(ShiftAssignmentStatus.ASSIGNED);
             managerApprovalRepository.save(approval);
             return new ManagerDecisionResponse("Request was rejected.");
         }
 
-        ShiftAssignment shiftAssignment = leaveRequest.getAssignment();
         shiftAssignment.setStatus(ShiftAssignmentStatus.REMOVED);
         shiftAssignment.setRemovedAt(LocalDateTime.now());
         shiftAssignmentRepository.save(shiftAssignment);
+
+        removeFromShiftsWhenAbsence(leaveRequest.getOutFrom(), leaveRequest.getOutTill());
 
         approval.setStatus(ApprovalStatus.APPROVED);
         approval.setClosedAt(LocalDateTime.now());
         managerApprovalRepository.save(approval);
 
         User requesterUser = leaveRequest.getRequester();
-        requesterUser.setStatus(UserStatus.valueOf(request.getRequestType().toString()));
+        requesterUser.setStatus(UserStatus.valueOf(request.getRequestType().name()));
         requesterUser.setUpdatedAt(LocalDateTime.now());
         requesterUser.setOutFrom(leaveRequest.getOutFrom());
         requesterUser.setOutTill(leaveRequest.getOutTill());
@@ -333,6 +342,20 @@ public class ManagerApprovalServiceImpl implements ManagerApprovalService{
 
         return new ManagerDecisionResponse("Request was approved.");
     }
+
+    private void removeFromShiftsWhenAbsence(LocalDateTime from, LocalDateTime till) {
+
+        List<ShiftAssignment> assignments = shiftAssignmentRepository.findAllInTimeFrame(from.toLocalDate(), till.toLocalDate());
+
+        assignments.forEach(assignment -> {
+            assignment.setStatus(ShiftAssignmentStatus.REMOVED);
+            assignment.setRemovedAt(LocalDateTime.now());
+            shiftAssignmentRepository.save(assignment);
+        });
+
+    }
+
+
 
 
 }
