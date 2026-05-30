@@ -13,3 +13,18 @@ export const formatDate = (d) => {
     year: "numeric",
   });
 };
+
+export const formatDateTimeForBackend = (d, t) => {
+  if(d === null || t === null) {
+    return "";
+  }
+  return `${d}T${t}:00`;
+}
+
+export const formatDateTimeForFrontend = (dateTime) => {
+  if (!dateTime) return "";
+
+  return dateTime.replace("T", " ").slice(0, 16);
+};
+
+

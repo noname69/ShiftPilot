@@ -35,8 +35,8 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserStatus status;
 
-//    @Enumerated(EnumType.STRING)
-//    private WorkStatus workStatus;
+    private LocalDateTime outFrom;
+    private LocalDateTime outTill;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -47,11 +47,11 @@ public class User {
         this.createdAt = now;
         this.updatedAt = now;
         this.status = UserStatus.ACTIVE;
-//        this.workStatus = WorkStatus.AVAILABLE;
     }
 
     @PreUpdate
     public void preUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
+
 }

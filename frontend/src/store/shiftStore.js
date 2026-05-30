@@ -40,6 +40,7 @@ const useShiftStore = create(
     },
 
     addShift: async (formData) => {
+      console.log(formData)
       set({ isLoading: true, error: null });
       try {
         await createShift(formData);
@@ -78,7 +79,6 @@ const useShiftStore = create(
       try {
         set({ isLoading: true, error: null });
         const data = await getUserShifts();
-        console.log(data)
         set({ userShifts: data });
       } catch (error) {
         set({ error: error.message });

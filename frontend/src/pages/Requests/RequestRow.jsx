@@ -98,12 +98,14 @@ const RequestRow = ({
   isManager,
   isUser,
 }) => {
-  const { requestId, approvalStatus, reason, createdAt } = request;
+  const { requestId, approvalStatus, type, approvalId, reason, createdAt } = request;
 
   let requester = {};
   let targetUser = {};
   let requesterShift = {};
   let targetShift = {};
+  
+
 
   const isSwapRequest = request.swapResponse !== null;
 
@@ -112,6 +114,7 @@ const RequestRow = ({
     requesterShift = request.swapResponse.requesterShift;
     targetUser = request.swapResponse.targetUser;
     targetShift = request.swapResponse.targetShift;
+
   } else if (!isSwapRequest) {
     requester = request.leaveResponse.requester;
     requesterShift = request.leaveResponse.requesterShift;
@@ -217,7 +220,8 @@ const RequestRow = ({
           {isManager && approvalStatus === "PENDING_MANAGER_APPROVAL" && (
             <>
               <button
-                onClick={() => onManagerRespond(requestId, true)}
+              // (requestId, approvalId, requestType, decision)
+                onClick={() => onManagerRespond(requestId, approvalId, type, true)}
                 className="w-8 h-8 flex items-center justify-center rounded-md bg-mint-ink text-white hover:bg-mint-ink/90"
                 title="Approve"
               >
@@ -225,7 +229,7 @@ const RequestRow = ({
               </button>
 
               <button
-                onClick={() => onManagerRespond(requestId, false)}
+                onClick={() => onManagerRespond(requestId, approvalId, type, false)}
                 className="w-8 h-8 flex items-center justify-center rounded-md bg-rose-soft text-rose-ink hover:bg-rose-soft/80"
                 title="Reject"
               >

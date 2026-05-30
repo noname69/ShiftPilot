@@ -84,17 +84,17 @@ public class SwapRequestController {
         return authentication.getName();
     }
 
-    @PatchMapping("/manager/respond")
-    public ResponseEntity<Void> respondAsManager(
-            @RequestBody ManagerSwapResponseRequest request,
-            Authentication authentication
-    ) {
-
-        Jwt jwt = (Jwt) authentication.getPrincipal();
-        String username = jwt.getSubject();
-
-        managerApprovalService.respondAsManager(request, username);
-
-        return ResponseEntity.ok().build();
-    }
+//    @PatchMapping("/manager/respond")
+//    public ResponseEntity<Void> respondAsManager(
+//            @RequestBody ManagerSwapResponseRequest request,
+//            Authentication authentication
+//    ) {
+//
+//        Jwt jwt = (Jwt) authentication.getPrincipal();
+//        String username = jwt.getSubject();
+//
+//        managerApprovalService.respondAsManager(request, username);
+//
+//        return ResponseEntity.ok().build();
+//    }
 }

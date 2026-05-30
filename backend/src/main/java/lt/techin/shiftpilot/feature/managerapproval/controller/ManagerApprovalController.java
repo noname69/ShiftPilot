@@ -1,12 +1,17 @@
 package lt.techin.shiftpilot.feature.managerapproval.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lt.techin.shiftpilot.exception.user.UserNotFoundException;
+import lt.techin.shiftpilot.feature.managerapproval.dto.ManagerApprovalRequest;
+import lt.techin.shiftpilot.feature.managerapproval.dto.ManagerApprovalResponse;
 import lt.techin.shiftpilot.feature.managerapproval.dto.ManagerApprovalsList;
+import lt.techin.shiftpilot.feature.managerapproval.dto.ManagerDecisionResponse;
 import lt.techin.shiftpilot.feature.managerapproval.service.ManagerApprovalService;
 import lt.techin.shiftpilot.feature.user.model.User;
 import lt.techin.shiftpilot.feature.user.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
@@ -43,6 +48,19 @@ public class ManagerApprovalController {
                 .orElseThrow(() -> new UserNotFoundException("User with username: " + username + " not found."));
 
         ManagerApprovalsList response = managerApprovalService.getAllUserRequests(user.getId());
+
+        return ResponseEntity.ok().body(response);
+    }
+
+    @PreAuthorize("hasRole('MANAGER')")
+    @PostMapping("/managers/me/process-request")
+    public ResponseEntity<ManagerDecisionResponse> processRequest(Authentication authentication,
+                                                                  @Valid @RequestBody ManagerApprovalRequest request) {
+
+        Jwt jwt = (Jwt) authentication.getPrincipal();
+        String username = jwt.getSubject();
+
+        ManagerDecisionResponse response = managerApprovalService.processRequest(username, request);
 
         return ResponseEntity.ok().body(response);
     }

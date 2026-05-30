@@ -2,5 +2,8 @@ package lt.techin.shiftpilot.feature.user.model;
 
 public enum UserStatus {
     ACTIVE,
-    INACTIVE
+    INACTIVE,
+    ABSENCE,
+    ILL,
+    VACATION
 }
