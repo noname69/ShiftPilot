@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -64,5 +65,17 @@ public interface ShiftAssignmentRepository extends JpaRepository<ShiftAssignment
     Optional<ShiftAssignment> findByShiftIdAndUserId(
             @Param("shiftId") Long shiftId,
             @Param("userId") Long userId
+    );
+
+    @Query("""
+    select sa
+    from ShiftAssignment sa
+    where sa.user.id = :userId
+    and sa.shift.shiftDate between :weekStart and :weekEnd
+    """)
+    List<ShiftAssignment> findByUserIdAndShiftDateBetween(
+            @Param("userId") Long userId,
+            @Param("weekStart") LocalDate weekStart,
+            @Param("weekEnd") LocalDate weekEnd
     );
 }

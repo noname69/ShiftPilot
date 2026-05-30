@@ -9,10 +9,7 @@ import lt.techin.shiftpilot.feature.shift.mapper.ShiftMapper;
 import lt.techin.shiftpilot.feature.shift.model.Shift;
 import lt.techin.shiftpilot.feature.shift.model.ShiftStatus;
 import lt.techin.shiftpilot.feature.shift.repository.ShiftRepository;
-import lt.techin.shiftpilot.feature.shiftassignment.dto.AssigneeResponse;
-import lt.techin.shiftpilot.feature.shiftassignment.dto.MyAssigneeResponse;
-import lt.techin.shiftpilot.feature.shiftassignment.dto.ShiftAssignRequest;
-import lt.techin.shiftpilot.feature.shiftassignment.dto.ShiftAssignResponse;
+import lt.techin.shiftpilot.feature.shiftassignment.dto.*;
 import lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignment;
 import lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignmentStatus;
 import lt.techin.shiftpilot.feature.shiftassignment.repository.ShiftAssignmentRepository;
@@ -21,6 +18,7 @@ import lt.techin.shiftpilot.feature.user.model.User;
 import lt.techin.shiftpilot.feature.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -167,5 +165,27 @@ public class ShiftAssignmentServiceImpl implements ShiftAssignmentService{
         shiftAssignmentRepository.save(assignment);
 
         return userMapper.toAssigneeResponse(assignment.getUser(), ShiftAssignmentStatus.REMOVED, assignment.getUser().getId());
+    }
+
+    @Override
+    public List<UserScheduleResponse> getUserScheduleByWeek(String username, LocalDate weekStart, LocalDate weekEnd) {
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException(username));
+
+        List<ShiftAssignment> assignments = shiftAssignmentRepository.findByUserIdAndShiftDateBetween(user.getId(), weekStart, weekEnd);
+
+        return assignments.stream()
+                .map(sa -> {
+                    Shift shift = sa.getShift();
+                    return new UserScheduleResponse(
+                            shift.getId(),
+                            shift.getTitle(),
+                            shift.getShiftDate(),
+                            shift.getStartTime(),
+                            shift.getEndTime()
+                    );
+                })
+                .toList();
     }
 }

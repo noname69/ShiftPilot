@@ -2,10 +2,7 @@ package lt.techin.shiftpilot.feature.shiftassignment.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lt.techin.shiftpilot.feature.shiftassignment.dto.MyAssigneeResponse;
-import lt.techin.shiftpilot.feature.shiftassignment.dto.AssigneeResponse;
-import lt.techin.shiftpilot.feature.shiftassignment.dto.ShiftAssignRequest;
-import lt.techin.shiftpilot.feature.shiftassignment.dto.ShiftAssignResponse;
+import lt.techin.shiftpilot.feature.shiftassignment.dto.*;
 import lt.techin.shiftpilot.feature.shiftassignment.service.ShiftAssignmentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -13,6 +10,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -64,6 +62,19 @@ public class ShiftAssignmentController {
         AssigneeResponse response = shiftAssignmentService.removeShiftAssignment(shiftId, userId);
 
         return ResponseEntity.ok().body(response);
+    }
+
+    @GetMapping("/shift-assignments/me/schedule")
+    public ResponseEntity<List<UserScheduleResponse>> getWeeklyUserSchedule(
+            @RequestParam LocalDate weekStart,
+            @RequestParam LocalDate weekEnd,
+            @AuthenticationPrincipal Jwt jwt) {
+
+        String username = jwt.getSubject();
+
+        List<UserScheduleResponse> scheduleResponse = shiftAssignmentService.getUserScheduleByWeek(username, weekStart, weekEnd);
+
+        return ResponseEntity.ok(scheduleResponse);
     }
 
 }
