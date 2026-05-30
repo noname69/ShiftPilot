@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.List;
 
+
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
@@ -65,14 +66,14 @@ public class ShiftAssignmentController {
     }
 
     @GetMapping("/shift-assignments/me/schedule")
-    public ResponseEntity<List<UserScheduleResponse>> getWeeklyUserSchedule(
+    public ResponseEntity<WeeklyScheduleResponse> getWeeklyUserSchedule(
             @RequestParam LocalDate weekStart,
             @RequestParam LocalDate weekEnd,
             @AuthenticationPrincipal Jwt jwt) {
 
         String username = jwt.getSubject();
 
-        List<UserScheduleResponse> scheduleResponse = shiftAssignmentService.getUserScheduleByWeek(username, weekStart, weekEnd);
+        WeeklyScheduleResponse scheduleResponse = shiftAssignmentService.getUserScheduleByWeek(username, weekStart, weekEnd);
 
         return ResponseEntity.ok(scheduleResponse);
     }

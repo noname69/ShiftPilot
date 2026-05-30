@@ -14,6 +14,6 @@ public interface ShiftAssignmentService {
 
     AssigneeResponse removeShiftAssignment(Long shiftId, Long userId);
 
-    List<UserScheduleResponse> getUserScheduleByWeek(String username, LocalDate weekStart, LocalDate weekEnd);
+    WeeklyScheduleResponse getUserScheduleByWeek(String username, LocalDate weekStart, LocalDate weekEnd);
 
 }

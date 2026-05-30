@@ -17,6 +17,7 @@ const Schedule = () => {
     startOfWeek(new Date(), { weekStartsOn: 1 })
   );
   const [shifts, setShifts] = useState([]);
+  const [leaveRequests, setLeaveRequests] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const weekEnd = endOfWeek(currentWeekStart, { weekStartsOn: 1 });
@@ -33,7 +34,8 @@ const Schedule = () => {
           weekStart: start,
           weekEnd: end,
         });
-        setShifts(data);
+        setShifts(data.shifts ?? []);
+        setLeaveRequests(data.leaveRequests ?? []);
       } catch (error) {
         console.error("Failed to fetch schedule: ", error);
       } finally {
@@ -53,12 +55,25 @@ const Schedule = () => {
   const handleToday = () =>
     setCurrentWeekStart(startOfWeek(new Date(), { weekStartsOn: 1 }));
 
-  // Filter shifts for a specific day — shiftDate from backend is "yyyy-MM-dd" string
-  // Sort by startTime ascending so earlier shifts appear first
   const getShiftsForDay = (day) =>
     shifts
       .filter((s) => s.shiftDate === format(day, "yyyy-MM-dd"))
       .sort((a, b) => a.shiftStartTime.localeCompare(b.shiftStartTime));
+
+  const getLeavesForDay = (day) => {
+    const dayStr = format(day, "yyyy-MM-dd");
+    return leaveRequests.filter((lr) => {
+      const from = lr.outFrom.slice(0, 10);
+      const till = lr.outTill.slice(0, 10);
+      return from <= dayStr && dayStr <= till;
+    });
+  };
+
+  const LEAVE_CONFIG = {
+    ILL:      { bg: "bg-rose-soft",   border: "border-rose-ink/20",   text: "text-rose-ink",   label: "Sick leave" },
+    ABSENCE:  { bg: "bg-amber-soft",  border: "border-amber-ink/20",  text: "text-amber-ink",  label: "Absence"    },
+    VACATION: { bg: "bg-violet-soft", border: "border-violet-ink/20", text: "text-violet-ink", label: "Vacation"   },
+  };
 
   const weekLabel = `${format(currentWeekStart, "MMM d")} – ${format(weekEnd, "MMM d, yyyy")}`;
 
@@ -147,6 +162,8 @@ const Schedule = () => {
             <div className="grid grid-cols-7 min-h-[420px]">
               {weekDays.map((day) => {
                 const dayShifts = getShiftsForDay(day);
+                const dayLeaves = getLeavesForDay(day);
+                const isEmpty = dayShifts.length === 0 && dayLeaves.length === 0;
 
                 return (
                   <div
@@ -155,26 +172,44 @@ const Schedule = () => {
                       isToday(day) ? "bg-ink-50/40" : ""
                     }`}
                   >
-                    {dayShifts.length === 0 ? (
+                    {isEmpty ? (
                       <p className="text-[11px] text-ink-200 text-center mt-6 select-none">
                         —
                       </p>
                     ) : (
-                      dayShifts.map((shift) => (
-                        <div
-                          key={shift.shiftId}
-                          className="bg-mint-soft border border-mint-ink/20 rounded-md px-2 py-1.5"
-                        >
-                          <p className="text-[11.5px] font-medium text-mint-ink truncate">
-                            {shift.shiftTitle}
-                          </p>
-                          {/* shiftStartTime/shiftEndTime come as "HH:mm:ss", slice to "HH:mm" */}
-                          <p className="text-[11px] text-mint-ink/70 mt-0.5 font-mono">
-                            {shift.shiftStartTime?.slice(0, 5)} –{" "}
-                            {shift.shiftEndTime?.slice(0, 5)}
-                          </p>
-                        </div>
-                      ))
+                      <>
+                        {dayShifts.map((shift) => (
+                          <div
+                            key={shift.shiftId}
+                            className="bg-mint-soft border border-mint-ink/20 rounded-md px-2 py-1.5"
+                          >
+                            <p className="text-[11.5px] font-medium text-mint-ink truncate">
+                              {shift.shiftTitle}
+                            </p>
+                            <p className="text-[11px] text-mint-ink/70 mt-0.5 font-mono">
+                              {shift.shiftStartTime?.slice(0, 5)} –{" "}
+                              {shift.shiftEndTime?.slice(0, 5)}
+                            </p>
+                          </div>
+                        ))}
+
+                        {dayLeaves.map((lr) => {
+                          const cfg = LEAVE_CONFIG[lr.type] ?? LEAVE_CONFIG.ABSENCE;
+                          return (
+                            <div
+                              key={lr.leaveRequestId}
+                              className={`${cfg.bg} border ${cfg.border} rounded-md px-2 py-1.5`}
+                            >
+                              <p className={`text-[11.5px] font-medium ${cfg.text} truncate`}>
+                                {cfg.label}
+                              </p>
+                              <p className={`text-[11px] ${cfg.text} opacity-70 mt-0.5 font-mono`}>
+                                {lr.outFrom.slice(11, 16)} – {lr.outTill.slice(11, 16)}
+                              </p>
+                            </div>
+                          );
+                        })}
+                      </>
                     )}
                   </div>
                 );
