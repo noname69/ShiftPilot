@@ -29,3 +29,8 @@ export const getUserShifts = async () => {
   const response = await api.get(`/users/me/shifts`);
   return response.data;
 }
+
+export const getUserWeeklyShifts = async (filters) => {
+  const response = await api.get("/shift-assignments/me/schedule", {params: filters});
+  return response.data;
+}

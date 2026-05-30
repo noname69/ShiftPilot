@@ -9,12 +9,13 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface ShiftAssignmentRepository extends JpaRepository<ShiftAssignment, Long> {
+
+    List<ShiftAssignment> findByUser(User user);
 
     @Query("""
     select sa
@@ -52,12 +53,9 @@ public interface ShiftAssignmentRepository extends JpaRepository<ShiftAssignment
             @Param("shiftId") Long shiftId
     );
 
-//    List<ShiftAssignment> findByShiftId(Long shiftId);
-    List<ShiftAssignment> findByShiftIdAndStatus(
-            Long shiftId,
-            ShiftAssignmentStatus status
-    );
+    List<ShiftAssignment> findByShiftId(Long shiftId);
 
+    List<ShiftAssignment> findByShiftIdAndStatus(Long shiftId, ShiftAssignmentStatus status);
     @Query("""
     select sa
     from ShiftAssignment sa
@@ -97,4 +95,15 @@ public interface ShiftAssignmentRepository extends JpaRepository<ShiftAssignment
             @Param("tillDate") LocalDate tillDate
     );
 
+    @Query("""
+    select sa
+    from ShiftAssignment sa
+    where sa.user.id = :userId
+    and sa.shift.shiftDate between :weekStart and :weekEnd
+    """)
+    List<ShiftAssignment> findByUserIdAndShiftDateBetween(
+            @Param("userId") Long userId,
+            @Param("weekStart") LocalDate weekStart,
+            @Param("weekEnd") LocalDate weekEnd
+    );
 }

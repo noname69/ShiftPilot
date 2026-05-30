@@ -1,10 +1,8 @@
 package lt.techin.shiftpilot.feature.shiftassignment.service;
 
-import lt.techin.shiftpilot.feature.shiftassignment.dto.MyAssigneeResponse;
-import lt.techin.shiftpilot.feature.shiftassignment.dto.AssigneeResponse;
-import lt.techin.shiftpilot.feature.shiftassignment.dto.ShiftAssignRequest;
-import lt.techin.shiftpilot.feature.shiftassignment.dto.ShiftAssignResponse;
+import lt.techin.shiftpilot.feature.shiftassignment.dto.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface ShiftAssignmentService {
@@ -15,5 +13,7 @@ public interface ShiftAssignmentService {
     List<MyAssigneeResponse> getUserShifts(String username);
 
     AssigneeResponse removeShiftAssignment(Long shiftId, Long userId);
+
+    WeeklyScheduleResponse getUserScheduleByWeek(String username, LocalDate weekStart, LocalDate weekEnd);
 
 }

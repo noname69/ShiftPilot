@@ -6,14 +6,13 @@ import lt.techin.shiftpilot.exception.ShiftAssignmentNotFoundException;
 import lt.techin.shiftpilot.exception.ShiftNotFoundException;
 import lt.techin.shiftpilot.exception.assignment.ShiftAssignmentException;
 import lt.techin.shiftpilot.exception.user.UserNotFoundException;
+import lt.techin.shiftpilot.feature.leaverequest.model.LeaveRequest;
+import lt.techin.shiftpilot.feature.leaverequest.repository.LeaveRequestRepository;
 import lt.techin.shiftpilot.feature.shift.mapper.ShiftMapper;
 import lt.techin.shiftpilot.feature.shift.model.Shift;
 import lt.techin.shiftpilot.feature.shift.model.ShiftStatus;
 import lt.techin.shiftpilot.feature.shift.repository.ShiftRepository;
-import lt.techin.shiftpilot.feature.shiftassignment.dto.AssigneeResponse;
-import lt.techin.shiftpilot.feature.shiftassignment.dto.MyAssigneeResponse;
-import lt.techin.shiftpilot.feature.shiftassignment.dto.ShiftAssignRequest;
-import lt.techin.shiftpilot.feature.shiftassignment.dto.ShiftAssignResponse;
+import lt.techin.shiftpilot.feature.shiftassignment.dto.*;
 import lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignment;
 import lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignmentStatus;
 import lt.techin.shiftpilot.feature.shiftassignment.repository.ShiftAssignmentRepository;
@@ -23,6 +22,7 @@ import lt.techin.shiftpilot.feature.user.model.UserStatus;
 import lt.techin.shiftpilot.feature.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +35,7 @@ public class ShiftAssignmentServiceImpl implements ShiftAssignmentService{
     private final ShiftAssignmentRepository shiftAssignmentRepository;
     private final UserRepository userRepository;
     private final ShiftRepository shiftRepository;
+    private final LeaveRequestRepository leaveRequestRepository;
     private final UserMapper userMapper;
     private final ShiftMapper shiftMapper;
 
@@ -179,5 +180,46 @@ public class ShiftAssignmentServiceImpl implements ShiftAssignmentService{
         shiftAssignmentRepository.save(assignment);
 
         return userMapper.toAssigneeResponse(assignment.getUser(), ShiftAssignmentStatus.REMOVED, assignment.getUser().getId());
+    }
+
+    @Override
+    public WeeklyScheduleResponse getUserScheduleByWeek(String username, LocalDate weekStart, LocalDate weekEnd) {
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException(username));
+
+        List<ShiftAssignment> assignments = shiftAssignmentRepository.findByUserIdAndShiftDateBetween(user.getId(), weekStart, weekEnd);
+
+        List<UserScheduleResponse> shifts = assignments.stream()
+                .map(sa -> {
+                    Shift shift = sa.getShift();
+                    return new UserScheduleResponse(
+                            sa.getId(),
+                            shift.getId(),
+                            shift.getTitle(),
+                            shift.getShiftDate(),
+                            shift.getStartTime(),
+                            shift.getEndTime(),
+                            sa.getStatus()
+                    );
+                })
+                .toList();
+
+        List<LeaveRequest> leaveRequests = leaveRequestRepository.findApprovedLeaveRequestsInRange(
+                user.getId(),
+                weekStart.atStartOfDay(),
+                weekEnd.atTime(23, 59, 59)
+        );
+
+        List<LeaveScheduleEntry> leaveEntries = leaveRequests.stream()
+                .map(lr -> new LeaveScheduleEntry(
+                        lr.getId(),
+                        lr.getApproval().getType(),
+                        lr.getOutFrom(),
+                        lr.getOutTill()
+                ))
+                .toList();
+
+        return new WeeklyScheduleResponse(shifts, leaveEntries);
     }
 }

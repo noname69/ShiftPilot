@@ -39,8 +39,4 @@ public class LeaveRequestController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
-
-
-
-
 }
