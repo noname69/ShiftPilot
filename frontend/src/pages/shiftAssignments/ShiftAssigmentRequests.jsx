@@ -17,6 +17,7 @@ const ShiftAssignmentRequests = () => {
 
   const { getShiftAssignees, assignees, removeAssignment } =
     useShiftAssignmentsStore((state) => state);
+
   const { userShifts, fetchUserShifts } = useShiftStore((state) => state);
 
   const { sendSwapRequest, isLoading, error } = useSwapStore((state) => state);

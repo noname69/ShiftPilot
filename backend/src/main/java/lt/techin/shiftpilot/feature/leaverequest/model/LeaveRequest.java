@@ -35,8 +35,10 @@ public class LeaveRequest {
 
     private String reason;
 
-    private LocalDateTime createdAt;
+    private LocalDateTime outFrom;
+    private LocalDateTime outTill;
 
+    private LocalDateTime createdAt;
     private LocalDateTime closedAt;
 
     @PrePersist

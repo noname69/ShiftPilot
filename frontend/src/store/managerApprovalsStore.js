@@ -9,21 +9,6 @@ const useManagerApprovalsStore = create(
     requests: [],
     isLoading: false,
 
-    assignEmployees: async (formData, shiftId, navigate) => {
-      try {
-        set({ isLoading: true });
-        const { data } = await api.post(`/shifts/${shiftId}/shift-assignments`, formData);
-        set((state) => ({
-          assignees: [...state.assignees, ...data.assignees]
-        }));
-        navigate("/manager/shifts");
-      } catch (error) {
-        console.log(error);
-      } finally {
-        set({ isLoading: false });
-      }
-    },
-
     fetchManagerApprovals: async () => {
       try {
         set({ isLoading: true });
@@ -48,24 +33,20 @@ const useManagerApprovalsStore = create(
       }
     },
 
-    removeAssignment: async (shiftId, userId) => {
-
-      console.log(userId)
+    processRequest: async (sendData) => {
       try {
+        console.log(sendData)
         set({ isLoading: true });
-        await api.patch(`/shifts/${shiftId}/shift-assignments/${userId}/remove`);
-        set((state) => ({
-          assignees: state.assignees.map((a) =>
-            a.id === userId ? { ...a, status: "REMOVED" } : a
-          ),
-        }));
+        const { data } = await api.post(`/managers/me/process-request`, sendData);
+        return data.message;
       } catch (error) {
-        console.log(error);
-        throw error;
+        console.log("STATUS:", error.response?.status);
+        console.log("DATA:", error.response?.data);
+        console.log("MESSAGE:", error.message);
       } finally {
-        set({ isLoading: false });
-      }
-    },
+      set({ isLoading: false });
+    }
+  },
 
   })),
 );

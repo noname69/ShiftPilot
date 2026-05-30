@@ -18,6 +18,16 @@ public interface ShiftAssignmentRepository extends JpaRepository<ShiftAssignment
     List<ShiftAssignment> findByUser(User user);
 
     @Query("""
+    select sa
+    from ShiftAssignment sa
+    where sa.user = :user
+    and sa.status in ('ASSIGNED', 'REQUEST_APPLIED')
+    """)
+    List<ShiftAssignment> findByUserOrStatus(
+            @Param("user") User user
+    );
+
+    @Query("""
         select sa.user
         from ShiftAssignment sa
         where sa.shift.id = :shiftId
@@ -65,6 +75,22 @@ public interface ShiftAssignmentRepository extends JpaRepository<ShiftAssignment
     Optional<ShiftAssignment> findByShiftIdAndUserId(
             @Param("shiftId") Long shiftId,
             @Param("userId") Long userId
+    );
+
+    boolean existsByUserIdAndShiftIdAndStatus(
+            Long userId,
+            Long shiftId,
+            ShiftAssignmentStatus status
+    );
+
+    @Query("""
+    SELECT sa FROM ShiftAssignment sa
+    JOIN sa.shift s
+    WHERE s.shiftDate BETWEEN :fromDate AND :tillDate
+    """)
+    List<ShiftAssignment> findAllInTimeFrame(
+            @Param("fromDate") LocalDate fromDate,
+            @Param("tillDate") LocalDate tillDate
     );
 
     @Query("""

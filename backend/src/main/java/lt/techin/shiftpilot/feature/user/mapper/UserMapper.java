@@ -7,6 +7,8 @@ import lt.techin.shiftpilot.feature.user.dto.UserResponse;
 import lt.techin.shiftpilot.feature.user.model.User;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
@@ -29,9 +31,12 @@ public class UserMapper {
                 user.getLastName(),
                 user.getEmail(),
                 user.getRole(),
-                user.getStatus()
+                user.getStatus(),
+                user.getOutFrom(),
+                user.getOutTill()
         );
     }
+
 
     public AssigneeResponse toAssigneeResponse(User user, ShiftAssignmentStatus status, Long assigneeId) {
         return new AssigneeResponse(

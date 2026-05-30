@@ -1,6 +1,7 @@
 package lt.techin.shiftpilot.feature.shiftassignment.dto;
 
 import lt.techin.shiftpilot.feature.shift.model.ShiftStatus;
+import lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignmentStatus;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -16,6 +17,7 @@ public record MyAssigneeResponse(
         ShiftStatus status,
         Long createdByUserId,
         String createdByUsername,
-        Long assigneeId
+        Long assigneeId,
+        ShiftAssignmentStatus assignmentStatus
 ) {
 }
