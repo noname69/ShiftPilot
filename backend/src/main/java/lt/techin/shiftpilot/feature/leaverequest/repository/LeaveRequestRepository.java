@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -25,7 +26,15 @@ public interface LeaveRequestRepository extends JpaRepository<LeaveRequest, Long
     """)
     List<LeaveRequest> findApprovedLeaveRequestsInRange(
             @Param("userId") Long userId,
-            @Param("weekStart") LocalDateTime weekStart,
-            @Param("weekEnd") LocalDateTime weekEnd
+            @Param("weekStart") LocalDate weekStart,
+            @Param("weekEnd") LocalDate weekEnd
+    );
+
+    List<LeaveRequest> findByOutTillGreaterThanEqual(LocalDate date);
+
+    List<LeaveRequest> findByRequesterIdAndOutFromLessThanEqualAndOutTillGreaterThanEqual(
+            Long userId,
+            LocalDate date1,
+            LocalDate date2
     );
 }

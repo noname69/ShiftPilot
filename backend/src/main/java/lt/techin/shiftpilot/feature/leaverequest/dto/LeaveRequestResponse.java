@@ -18,6 +18,5 @@ public class LeaveRequestResponse {
     private LocalDate outFrom;
     private LocalDate outTill;
     private Long managerApprovalId;
-//    private ShiftSummary requesterShift;
 
 }

@@ -31,10 +31,6 @@ public class LeaveRequest {
     @JoinColumn(name = "manager_approval_id")
     private ManagerApproval approval;
 
-//    @OneToOne
-//    @JoinColumn(name = "assignment_id")
-//    private ShiftAssignment assignment;
-
     private String reason;
 
     private LocalDate outFrom;

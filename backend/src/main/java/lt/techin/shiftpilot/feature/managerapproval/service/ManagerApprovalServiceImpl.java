@@ -333,12 +333,19 @@ public class ManagerApprovalServiceImpl implements ManagerApprovalService{
         approval.setClosedAt(LocalDateTime.now());
         managerApprovalRepository.save(approval);
 
-        User requesterUser = leaveRequest.getRequester();
-        requesterUser.setStatus(UserStatus.valueOf(request.getRequestType().name()));
-        requesterUser.setUpdatedAt(LocalDateTime.now());
-        requesterUser.setOutFrom(leaveRequest.getOutFrom());
-        requesterUser.setOutTill(leaveRequest.getOutTill());
-        userRepository.save(requesterUser);
+        if (!LocalDate.now().isBefore(leaveRequest.getOutFrom())
+                && !LocalDate.now().isAfter(leaveRequest.getOutTill())) {
+            User requesterUser = leaveRequest.getRequester();
+            requesterUser.setStatus(UserStatus.valueOf(request.getRequestType().name()));
+            userRepository.save(requesterUser);
+        }
+
+//
+//
+//        requesterUser.setUpdatedAt(LocalDateTime.now());
+//        requesterUser.setOutFrom(leaveRequest.getOutFrom());
+//        requesterUser.setOutTill(leaveRequest.getOutTill());
+//
 
         return new ManagerDecisionResponse("Request was approved.");
     }

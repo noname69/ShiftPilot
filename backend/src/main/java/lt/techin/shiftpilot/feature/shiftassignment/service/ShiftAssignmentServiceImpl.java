@@ -2,8 +2,10 @@ package lt.techin.shiftpilot.feature.shiftassignment.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lt.techin.shiftpilot.exception.ResourceNotFoundException;
 import lt.techin.shiftpilot.exception.ShiftAssignmentNotFoundException;
 import lt.techin.shiftpilot.exception.ShiftNotFoundException;
+import lt.techin.shiftpilot.exception.assignment.AssignmentNotFoundException;
 import lt.techin.shiftpilot.exception.assignment.ShiftAssignmentException;
 import lt.techin.shiftpilot.exception.user.UserNotFoundException;
 import lt.techin.shiftpilot.feature.leaverequest.model.LeaveRequest;
@@ -207,8 +209,8 @@ public class ShiftAssignmentServiceImpl implements ShiftAssignmentService{
 
         List<LeaveRequest> leaveRequests = leaveRequestRepository.findApprovedLeaveRequestsInRange(
                 user.getId(),
-                weekStart.atStartOfDay(),
-                weekEnd.atTime(23, 59, 59)
+                weekStart,
+                weekEnd
         );
 
         List<LeaveScheduleEntry> leaveEntries = leaveRequests.stream()
@@ -221,5 +223,20 @@ public class ShiftAssignmentServiceImpl implements ShiftAssignmentService{
                 .toList();
 
         return new WeeklyScheduleResponse(shifts, leaveEntries);
+    }
+
+    @Override
+    public void removeEmployeeFromShift(Long userId, Long shiftId) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+
+        shiftRepository.findById(shiftId)
+                .orElseThrow(() -> new ShiftNotFoundException(shiftId));
+
+        ShiftAssignment assignment = shiftAssignmentRepository.findByUserIdAndShiftId(userId, shiftId)
+                .orElseThrow(() -> new ResourceNotFoundException("Shift assignment not found for user with id: " + userId));
+
+        shiftAssignmentRepository.delete(assignment);
     }
 }

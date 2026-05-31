@@ -85,6 +85,8 @@ public interface ShiftAssignmentRepository extends JpaRepository<ShiftAssignment
             ShiftAssignmentStatus status
     );
 
+    Optional<ShiftAssignment> findByUserIdAndShiftId(Long userId, Long shiftId);
+
     @Query("""
     SELECT sa FROM ShiftAssignment sa
     JOIN sa.shift s
@@ -99,7 +101,8 @@ public interface ShiftAssignmentRepository extends JpaRepository<ShiftAssignment
     select sa
     from ShiftAssignment sa
     where sa.user.id = :userId
-    and sa.shift.shiftDate between :weekStart and :weekEnd
+    and sa.shift.shiftDate >= :weekStart
+    and sa.shift.shiftDate <= :weekEnd
     """)
     List<ShiftAssignment> findByUserIdAndShiftDateBetween(
             @Param("userId") Long userId,

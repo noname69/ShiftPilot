@@ -36,9 +36,6 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserStatus status;
 
-    private LocalDate outFrom;
-    private LocalDate outTill;
-
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 

@@ -24,7 +24,6 @@ public class LeaveRequestMapper {
                 .outFrom(request.getOutFrom())
                 .outTill(request.getOutTill())
                 .managerApprovalId(request.getApproval().getId())
-//                .requesterShift(toShiftSummary(request.getAssignment()))
                 .build();
     }
 
@@ -36,20 +35,4 @@ public class LeaveRequestMapper {
                 user.getEmail()
         );
     }
-
-//    private static ShiftSummary toShiftSummary(
-//            ShiftAssignment assignment
-//    ) {
-//
-//        Shift shift = assignment.getShift();
-//
-//        return new ShiftSummary(
-//                assignment.getId(),
-//                shift.getId(),
-//                shift.getTitle(),
-//                shift.getShiftDate(),
-//                shift.getStartTime(),
-//                shift.getEndTime()
-//        );
-//    }
 }

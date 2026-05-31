@@ -78,4 +78,13 @@ public class ShiftAssignmentController {
         return ResponseEntity.ok(scheduleResponse);
     }
 
+    @DeleteMapping("users/{userId}/shifts/{shiftId}")
+    public ResponseEntity<WeeklyScheduleResponse> getWeeklyUserSchedule(@PathVariable Long userId,
+                                                                        @PathVariable Long shiftId) {
+
+        shiftAssignmentService.removeEmployeeFromShift(userId, shiftId);
+
+        return ResponseEntity.noContent().build();
+    }
+
 }

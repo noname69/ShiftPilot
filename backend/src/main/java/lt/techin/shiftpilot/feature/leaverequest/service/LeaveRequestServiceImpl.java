@@ -32,26 +32,13 @@ public class LeaveRequestServiceImpl implements LeaveRequestService{
     @Transactional
     public LeaveRequestResponse createLeaveRequest(Long requesterId, CreateLeaveRequest request) {
 
-//        ShiftAssignment assignment = shiftAssignmentRepository.findById(assignmentId)
-//                .orElseThrow(() -> new AssignmentNotFoundException(assignmentId));
-
-//        assignment.setStatus(ShiftAssignmentStatus.REQUEST_APPLIED);
-//        shiftAssignmentRepository.save(assignment);
-
         User requester = userRepository.findById(requesterId)
                 .orElseThrow(() -> new UserNotFoundException(requesterId));
 
         User manager = userRepository.findById(request.getManagerId())
                 .orElseThrow(() -> new UserNotFoundException(request.getManagerId()));
 
-//        if(leaveRequestRepository.existsByAssignmentId(assignmentId)) {
-//            throw new RequestException("Leave request already exists for this assignment");
-//        }
-
-
-
         LeaveRequest leaveRequest = new LeaveRequest();
-//        leaveRequest.setAssignment(assignment);
         leaveRequest.setReason(request.getReason());
         leaveRequest.setRequester(requester);
         leaveRequest.setOutFrom(request.getOutFrom());
