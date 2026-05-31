@@ -1,7 +1,5 @@
 import { formatDate, formatTime } from "../../utils/formatDateTime";
 import { useState } from "react";
-import { TbDoorExit } from "react-icons/tb";
-import useLeaveStore from "../../store/leaveStore";
 import useSwapStore from "../../store/swapStore";
 
 
@@ -44,20 +42,20 @@ const StatusBadge = ({ status }) => {
   );
 };
 
-const MyScheduleBody = ({ shift, isSwapMode, selectedShiftId, setModal, fetchUserShifts }) => {
+const MyScheduleBody = ({ shift, isSwapMode, selectedShiftId }) => {
 
   const { id,
     title,
     description,
     shiftDate,
     startTime,
-    endTime, minEmployees, status, createdByUsername, assigneeId, assignmentStatus } = shift;
+    endTime, minEmployees, status, createdByUsername, assigneeId } = shift;
 
   const [openSwap, setOpenSwap] = useState(false);
   const [reason, setReason] = useState("");
 
   const { sendSwapRequest } = useSwapStore((state) => state);
-  const { sendLeaveRequest } = useLeaveStore((state) => state);
+  
 
   const handleSend = async () => {
     if (!selectedShiftId) return;
@@ -80,20 +78,6 @@ const MyScheduleBody = ({ shift, isSwapMode, selectedShiftId, setModal, fetchUse
       console.error(result.message);
     }
   };
-
-  const handleLeaveRequest = () => {
-    setModal({
-      title: "Leave request",
-      message: "Apply leave request",
-      confirmButton: "Apply",
-      onConfirm: async (formData) => {
-        await sendLeaveRequest(assigneeId, formData);
-        fetchUserShifts();
-      },
-    });
-  };
-
-  console.log(assignmentStatus)
 
   return (
     <tbody className="divide-y divide-ink-100">
@@ -124,16 +108,6 @@ const MyScheduleBody = ({ shift, isSwapMode, selectedShiftId, setModal, fetchUse
           {createdByUsername}
         </td>
         <td className="px-4 py-3 flex justify-center">
-
-          {assignmentStatus === "ASSIGNED" && status === "OPEN" && (
-            <button
-              className="w-8 h-8 flex items-center justify-center rounded-md bg-rose-200 text-rose-800 hover:bg-mint-soft/80"
-              title="Apply leave Request"
-              onClick={handleLeaveRequest}
-            >
-              <TbDoorExit size={12} />
-            </button>
-          )}
 
           <div className="inline-flex flex-col gap-2 items-end">
             {!isSwapMode ? (

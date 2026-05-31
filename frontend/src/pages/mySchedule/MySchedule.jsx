@@ -5,14 +5,28 @@ import MyScheduleBody from "./MyScheduleBody";
 import LeaveRequestModal from "./LeaveRequestModal";
 import { useState } from "react";
 import { useParams } from "react-router";
+import useLeaveStore from "../../store/leaveStore";
 
 const MySchedule = () => {
 
   const { userShifts, fetchUserShifts } = useShiftStore(state => state);
   const { assigneeId } = useParams();
   const [modal, setModal] = useState(null);
+  const { sendLeaveRequest } = useLeaveStore((state) => state);
 
   const isSwapMode = !!assigneeId;
+
+  const handleLeaveRequest = () => {
+    setModal({
+      title: "Leave request",
+      message: "Apply leave request",
+      confirmButton: "Apply",
+      onConfirm: async (formData) => {
+        await sendLeaveRequest(formData);
+        fetchUserShifts();
+      },
+    });
+  };
 
   useEffect(() => {
     fetchUserShifts();
@@ -27,6 +41,12 @@ const MySchedule = () => {
               My Schedule
             </h1>
             <p className="text-[13px] text-ink-500 mt-0.5">Shifts</p>
+          </div>
+          <div>
+            <button
+              className="my-btn-primary"
+              onClick={handleLeaveRequest}
+            >Request Leave</button>
           </div>
         </div>
         <div className="bg-white rounded-xl2 border border-ink-200 shadow-soft overflow-hidden">
@@ -49,8 +69,6 @@ const MySchedule = () => {
                 shift={shift}
                 isSwapMode={isSwapMode}
                 selectedShiftId={assigneeId}
-                setModal={setModal}
-                fetchUserShifts={fetchUserShifts}
               />)}
           </table>
         </div>

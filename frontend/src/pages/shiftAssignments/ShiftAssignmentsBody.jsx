@@ -1,4 +1,5 @@
 import MyCheckbox from "../components/shared/MyCheckbox";
+import { FaTimes } from "react-icons/fa";
 
 const STATUS_CONFIG = {
   UNASSIGNED: {
@@ -29,7 +30,7 @@ const StatusBadge = ({ status }) => {
 };
 
 
-const ShiftAssignmentsBody = ({ user, selectedUsers, setSelectedUsers, assignees }) => {
+const ShiftAssignmentsBody = ({ user, selectedUsers, setSelectedUsers, assignees, removeEmployee, shiftId }) => {
 
   const { id, firstName, lastName, weeklyHours, email } = user || {};
   const isAssigned = assignees.some(assignee => assignee.id === id);
@@ -41,6 +42,10 @@ const ShiftAssignmentsBody = ({ user, selectedUsers, setSelectedUsers, assignees
         : [...prev, userId]
     );
   };
+
+  const handleRemoveEmployee = () => {
+    removeEmployee(id, shiftId);
+  }
 
   return (
     <tbody className="divide-y divide-ink-100">
@@ -66,20 +71,36 @@ const ShiftAssignmentsBody = ({ user, selectedUsers, setSelectedUsers, assignees
         </td>
 
         <td className="px-4 py-3 font-mono text-[12px] text-ink-700 text-center">
-          <p className="justify-center">{weeklyHours ?? 0}h</p>    
+          <p className="justify-center">{weeklyHours ?? 0}h</p>
         </td>
 
         <td className="px-4 py-3 text-ink-500 text-[12px]">
           {email}
         </td>
 
-        <td className="px-4 py-3 flex justify-center">
-          <MyCheckbox
-            checked={selectedUsers.includes(id)}
-            onChange={() => toggleUser(id)}
-            disabled={isAssigned}
-          />
+        <td className="px-4 py-3">
+          <div className="flex justify-center">
+            <MyCheckbox
+              checked={selectedUsers.includes(id)}
+              onChange={() => toggleUser(id)}
+              disabled={isAssigned}
+            />
+          </div>
         </td>
+
+        {isAssigned &&
+          <td className="px-4 py-3">
+            <div className="flex justify-center">
+              <button
+                onClick={handleRemoveEmployee}
+                className="w-8 h-8 flex items-center justify-center rounded-md bg-rose-soft text-rose-ink hover:bg-rose-soft/80"
+                title="Reject"
+              >
+                <FaTimes size={12} />
+              </button>
+            </div>
+          </td>
+        }
       </tr>
     </tbody>
   )

@@ -9,10 +9,10 @@ const useLeaveStore = create(
 
     isLoading: false,
 
-    sendLeaveRequest: async (assignmentId, formData) => {
+    sendLeaveRequest: async (formData) => {
       try {
         set({ isLoading: true });
-        await api.post(`/shift-assignments/${assignmentId}/leave-requests`, formData);
+        await api.post(`/users/me/leave-requests`, formData);
         toast.success("Leave request was send successfully")
       } catch (error) {
         console.log(error);
