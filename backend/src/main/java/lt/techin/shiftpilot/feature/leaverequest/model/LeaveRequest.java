@@ -8,6 +8,8 @@ import lombok.Setter;
 import lt.techin.shiftpilot.feature.managerapproval.model.ManagerApproval;
 import lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignment;
 import lt.techin.shiftpilot.feature.user.model.User;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -29,14 +31,14 @@ public class LeaveRequest {
     @JoinColumn(name = "manager_approval_id")
     private ManagerApproval approval;
 
-    @OneToOne
-    @JoinColumn(name = "assignment_id")
-    private ShiftAssignment assignment;
+//    @OneToOne
+//    @JoinColumn(name = "assignment_id")
+//    private ShiftAssignment assignment;
 
     private String reason;
 
-    private LocalDateTime outFrom;
-    private LocalDateTime outTill;
+    private LocalDate outFrom;
+    private LocalDate outTill;
 
     private LocalDateTime createdAt;
     private LocalDateTime closedAt;

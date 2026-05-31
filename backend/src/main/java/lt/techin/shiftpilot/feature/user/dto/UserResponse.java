@@ -4,6 +4,7 @@ import lombok.Builder;
 import lt.techin.shiftpilot.feature.user.model.UserRole;
 import lt.techin.shiftpilot.feature.user.model.UserStatus;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Builder
@@ -14,7 +15,7 @@ public record UserResponse(
         String email,
         UserRole role,
         UserStatus status,
-        LocalDateTime outFrom,
-        LocalDateTime outTill
+        LocalDate outFrom,
+        LocalDate outTill
 ) {
 }

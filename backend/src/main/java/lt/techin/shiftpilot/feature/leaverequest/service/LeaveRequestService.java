@@ -4,5 +4,5 @@ import lt.techin.shiftpilot.feature.leaverequest.dto.CreateLeaveRequest;
 import lt.techin.shiftpilot.feature.leaverequest.dto.LeaveRequestResponse;
 
 public interface LeaveRequestService {
-    LeaveRequestResponse createLeaveRequest(Long id, Long assignmentId, CreateLeaveRequest request);
+    LeaveRequestResponse createLeaveRequest(Long id, CreateLeaveRequest request);
 }

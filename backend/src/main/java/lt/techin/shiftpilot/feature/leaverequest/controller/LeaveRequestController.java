@@ -24,9 +24,8 @@ public class LeaveRequestController {
     private final UserRepository userRepository;
 
     @PreAuthorize("hasRole('USER')")
-    @PostMapping("/shift-assignments/{assignmentId}/leave-requests")
+    @PostMapping("/users/me/leave-requests")
     public ResponseEntity<LeaveRequestResponse> createLeaveRequest(Authentication authentication,
-                                                                   @PathVariable Long assignmentId,
                                                                    @Valid @RequestBody CreateLeaveRequest request
     ) {
         Jwt jwt = (Jwt) authentication.getPrincipal();
@@ -35,7 +34,7 @@ public class LeaveRequestController {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException("User with username: " + username + " not found."));
 
-        LeaveRequestResponse response = leaveRequestService.createLeaveRequest(user.getId(), assignmentId, request);
+        LeaveRequestResponse response = leaveRequestService.createLeaveRequest(user.getId(), request);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface LeaveRequestRepository extends JpaRepository<LeaveRequest, Long> {
-    boolean existsByAssignmentId(Long assignmentId);
+//    boolean existsByAssignmentId(Long assignmentId);
 
     @Query("""
         select lr from LeaveRequest lr
