@@ -68,6 +68,7 @@ const LeaveRequestModal = ({ modal, setModal }) => {
                 label="Leave reason"
                 register={register}
                 theme="my-input"
+                required={true}
                 options={[
                   { label: "Absence", value: "ABSENCE" },
                   { label: "Vacation", value: "VACATION" },
@@ -80,6 +81,7 @@ const LeaveRequestModal = ({ modal, setModal }) => {
                 label="Pick responsible manager"
                 register={register}
                 theme="my-input w-fit"
+                required={true}
                 options={managers.map(manager => ({
                   label: `${manager.firstName} ${manager.lastName}`,
                   value: manager.id,
