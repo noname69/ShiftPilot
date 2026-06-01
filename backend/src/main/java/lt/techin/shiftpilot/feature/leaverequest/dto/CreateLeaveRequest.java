@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lt.techin.shiftpilot.feature.managerapproval.model.RequestType;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -16,10 +17,13 @@ public class CreateLeaveRequest {
     private RequestType type;
 
     @NotNull
-    private LocalDateTime outFrom;
+    private LocalDate outFrom;
 
     @NotNull
-    private LocalDateTime outTill;
+    private LocalDate outTill;
+
+    @NotNull
+    private Long managerId;
 
     @AssertTrue(message = "Leaving date can't be in the past.")
     public boolean isOutFromPeriodValid() {
@@ -27,7 +31,7 @@ public class CreateLeaveRequest {
             return true;
         }
 
-        return !outFrom.isBefore(LocalDateTime.now());
+        return !outFrom.isBefore(LocalDate.now());
     }
 
     @AssertTrue(message = "Return date must be after start date.")

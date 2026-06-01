@@ -12,7 +12,7 @@ const ShiftAssignments = () => {
   const [selectedUsers, setSelectedUsers] = useState([]);
   const employees = users.filter(user => user.role === "USER" && user.status === "ACTIVE");
   const { shiftId } = useParams();
-  const { getShiftAssignees, assignees, assignEmployees } = useShiftAssignmentsStore(state => state);
+  const { getShiftAssignees, assignees, assignEmployees, removeEmployeeFromShiftAssignment } = useShiftAssignmentsStore(state => state);
   const [modal, setModal] = useState(null);
   const [shift, setShift] = useState(null);
   const navigate = useNavigate();
@@ -64,7 +64,8 @@ const ShiftAssignments = () => {
                     <th className="text-center font-medium px-4 py-2.5"> Status</th>
                     <th className="text-center font-medium px-4 py-2.5">Hours this week</th>
                     <th className="text-left font-medium px-4 py-2.5">Contact</th>
-                    <th className="text-center font-medium px-4 py-2.5">Assign employee</th>
+                    <th className="text-center font-medium px-4 py-2.5">Assign employees</th>
+                    <th className="text-center font-medium px-4 py-2.5">Actions</th>
                   </tr>
                 </thead>
                 {employees.map(user =>
@@ -74,6 +75,8 @@ const ShiftAssignments = () => {
                     selectedUsers={selectedUsers}
                     setSelectedUsers={setSelectedUsers}
                     assignees={assignees}
+                    removeEmployee={removeEmployeeFromShiftAssignment}
+                    shiftId={shiftId}
                   />)}
               </table>
             </div>

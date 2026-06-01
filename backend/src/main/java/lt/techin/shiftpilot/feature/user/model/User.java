@@ -3,6 +3,7 @@ package lt.techin.shiftpilot.feature.user.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -34,9 +35,6 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     private UserStatus status;
-
-    private LocalDateTime outFrom;
-    private LocalDateTime outTill;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

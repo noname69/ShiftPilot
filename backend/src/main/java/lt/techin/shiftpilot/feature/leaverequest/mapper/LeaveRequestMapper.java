@@ -20,7 +20,10 @@ public class LeaveRequestMapper {
     public LeaveRequestResponse leaveRequestToResponse(LeaveRequest request){
         return LeaveRequestResponse.builder()
                 .requester(toUserSummary(request.getRequester()))
-                .requesterShift(toShiftSummary(request.getAssignment()))
+                .requestId(request.getId())
+                .outFrom(request.getOutFrom())
+                .outTill(request.getOutTill())
+                .managerApprovalId(request.getApproval().getId())
                 .build();
     }
 
@@ -30,22 +33,6 @@ public class LeaveRequestMapper {
                 user.getFirstName(),
                 user.getLastName(),
                 user.getEmail()
-        );
-    }
-
-    private static ShiftSummary toShiftSummary(
-            ShiftAssignment assignment
-    ) {
-
-        Shift shift = assignment.getShift();
-
-        return new ShiftSummary(
-                assignment.getId(),
-                shift.getId(),
-                shift.getTitle(),
-                shift.getShiftDate(),
-                shift.getStartTime(),
-                shift.getEndTime()
         );
     }
 }

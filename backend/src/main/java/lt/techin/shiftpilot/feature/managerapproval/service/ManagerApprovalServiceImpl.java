@@ -314,18 +314,18 @@ public class ManagerApprovalServiceImpl implements ManagerApprovalService{
         leaveRequest.setClosedAt(LocalDateTime.now());
         leaveRequestRepository.save(leaveRequest);
 
-        ShiftAssignment shiftAssignment = leaveRequest.getAssignment();
+//        ShiftAssignment shiftAssignment = leaveRequest.getAssignment();
 
         if(!request.isDecision()) {
             approval.setStatus(ApprovalStatus.MANAGER_REJECTED);
-            shiftAssignment.setStatus(ShiftAssignmentStatus.ASSIGNED);
+//            shiftAssignment.setStatus(ShiftAssignmentStatus.ASSIGNED);
             managerApprovalRepository.save(approval);
             return new ManagerDecisionResponse("Request was rejected.");
         }
 
-        shiftAssignment.setStatus(ShiftAssignmentStatus.REMOVED);
-        shiftAssignment.setRemovedAt(LocalDateTime.now());
-        shiftAssignmentRepository.save(shiftAssignment);
+//        shiftAssignment.setStatus(ShiftAssignmentStatus.REMOVED);
+//        shiftAssignment.setRemovedAt(LocalDateTime.now());
+//        shiftAssignmentRepository.save(shiftAssignment);
 
         removeFromShiftsWhenAbsence(leaveRequest.getOutFrom(), leaveRequest.getOutTill());
 
@@ -333,19 +333,26 @@ public class ManagerApprovalServiceImpl implements ManagerApprovalService{
         approval.setClosedAt(LocalDateTime.now());
         managerApprovalRepository.save(approval);
 
-        User requesterUser = leaveRequest.getRequester();
-        requesterUser.setStatus(UserStatus.valueOf(request.getRequestType().name()));
-        requesterUser.setUpdatedAt(LocalDateTime.now());
-        requesterUser.setOutFrom(leaveRequest.getOutFrom());
-        requesterUser.setOutTill(leaveRequest.getOutTill());
-        userRepository.save(requesterUser);
+        if (!LocalDate.now().isBefore(leaveRequest.getOutFrom())
+                && !LocalDate.now().isAfter(leaveRequest.getOutTill())) {
+            User requesterUser = leaveRequest.getRequester();
+            requesterUser.setStatus(UserStatus.valueOf(request.getRequestType().name()));
+            userRepository.save(requesterUser);
+        }
+
+//
+//
+//        requesterUser.setUpdatedAt(LocalDateTime.now());
+//        requesterUser.setOutFrom(leaveRequest.getOutFrom());
+//        requesterUser.setOutTill(leaveRequest.getOutTill());
+//
 
         return new ManagerDecisionResponse("Request was approved.");
     }
 
-    private void removeFromShiftsWhenAbsence(LocalDateTime from, LocalDateTime till) {
+    private void removeFromShiftsWhenAbsence(LocalDate from, LocalDate till) {
 
-        List<ShiftAssignment> assignments = shiftAssignmentRepository.findAllInTimeFrame(from.toLocalDate(), till.toLocalDate());
+        List<ShiftAssignment> assignments = shiftAssignmentRepository.findAllInTimeFrame(from, till);
 
         assignments.forEach(assignment -> {
             assignment.setStatus(ShiftAssignmentStatus.REMOVED);

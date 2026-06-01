@@ -2,7 +2,8 @@ import { IoClose } from "react-icons/io5";
 import SelectField from "../components/shared/SelectField";
 import { useForm } from "react-hook-form";
 import InputField from "../components/shared/InputField";
-import { formatDateTimeForBackend } from "../../utils/formatDateTime";
+import useUserStore from "../../store/userStore";
+import { useEffect } from "react";
 
 const LeaveRequestModal = ({ modal, setModal }) => {
 
@@ -13,9 +14,16 @@ const LeaveRequestModal = ({ modal, setModal }) => {
     reset,
   } = useForm();
 
+  const { fetchUsers, users } = useUserStore(state => state);
+
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers])
+
   if (!modal) return null;
 
   const { title, message, confirmButton, onConfirm } = modal || {};
+  const managers = users.filter(user => user.role === "MANAGER");
 
   const handleClose = () => {
     setModal(null);
@@ -25,8 +33,10 @@ const LeaveRequestModal = ({ modal, setModal }) => {
     const sendData = {
       reason: formData.reason,
       type: formData.type,
-      outFrom: formatDateTimeForBackend(formData.outFrom, formData.startTime),
-      outTill: formatDateTimeForBackend(formData.outTill, formData.endTime)
+      outFrom: formData.outFrom,
+      outTill: formData.outTill,
+      managerId: formData.managerId
+
     }
     onConfirm?.(sendData);
     reset();
@@ -58,26 +68,30 @@ const LeaveRequestModal = ({ modal, setModal }) => {
                 label="Leave reason"
                 register={register}
                 theme="my-input"
+                required={true}
                 options={[
                   { label: "Absence", value: "ABSENCE" },
                   { label: "Vacation", value: "VACATION" },
                   { label: "ILL", value: "ILL" },
                 ]}
               />
+              <SelectField
+                name="managerId"
+                id="managerId"
+                label="Pick responsible manager"
+                register={register}
+                theme="my-input w-fit"
+                required={true}
+                options={managers.map(manager => ({
+                  label: `${manager.firstName} ${manager.lastName}`,
+                  value: manager.id,
+                }))}
+              />
               <div className="flex gap-2">
                 <InputField
                   label="Leave Date"
                   id="outFrom"
                   type="date"
-                  required
-                  register={register}
-                  errors={errors}
-                  theme="my-input"
-                />
-                <InputField
-                  label="Start Time"
-                  id="startTime"
-                  type="time"
                   required
                   register={register}
                   errors={errors}
@@ -91,16 +105,6 @@ const LeaveRequestModal = ({ modal, setModal }) => {
                   label="Return Date"
                   id="outTill"
                   type="date"
-                  required
-                  register={register}
-                  errors={errors}
-                  theme="my-input"
-                />
-
-                <InputField
-                  label="End Time"
-                  id="endTime"
-                  type="time"
                   required
                   register={register}
                   errors={errors}

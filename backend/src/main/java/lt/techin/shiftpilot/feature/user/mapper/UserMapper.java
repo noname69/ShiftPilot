@@ -1,18 +1,28 @@
 package lt.techin.shiftpilot.feature.user.mapper;
 
+import lombok.RequiredArgsConstructor;
+import lt.techin.shiftpilot.feature.leaverequest.model.LeaveRequest;
+import lt.techin.shiftpilot.feature.leaverequest.repository.LeaveRequestRepository;
 import lt.techin.shiftpilot.feature.shiftassignment.dto.AssigneeResponse;
 import lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignmentStatus;
 import lt.techin.shiftpilot.feature.user.dto.CreateUserRequest;
 import lt.techin.shiftpilot.feature.user.dto.UserResponse;
 import lt.techin.shiftpilot.feature.user.model.User;
+import lt.techin.shiftpilot.feature.user.model.UserStatus;
+import lt.techin.shiftpilot.feature.user.repository.UserRepository;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@RequiredArgsConstructor
 @Component
 public class UserMapper {
+
+    private final LeaveRequestRepository leaveRequestRepository;
+    private final UserRepository userRepository;
+
     public User toEntity(CreateUserRequest request) {
         return User.builder()
                 .firstName(request.firstName())
@@ -25,6 +35,23 @@ public class UserMapper {
     }
 
     public UserResponse toResponse(User user) {
+
+        List<LeaveRequest> leaveRequests = leaveRequestRepository
+                .findByRequesterIdAndOutFromLessThanEqualAndOutTillGreaterThanEqual(user.getId(), LocalDate.now(), LocalDate.now());
+
+        LocalDate outFrom = null;
+        LocalDate outTill = null;
+
+        if(!leaveRequests.isEmpty()) {
+            outFrom = leaveRequests.getFirst().getOutFrom();
+            outTill = leaveRequests.getFirst().getOutTill();
+        }
+
+        if(outFrom == null && outTill == null) {
+            user.setStatus(UserStatus.ACTIVE);
+            userRepository.save(user);
+        }
+
         return new UserResponse(
                 user.getId(),
                 user.getFirstName(),
@@ -32,8 +59,8 @@ public class UserMapper {
                 user.getEmail(),
                 user.getRole(),
                 user.getStatus(),
-                user.getOutFrom(),
-                user.getOutTill()
+                outFrom,
+                outTill
         );
     }
 

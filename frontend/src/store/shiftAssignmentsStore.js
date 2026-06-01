@@ -55,6 +55,21 @@ const useShiftAssignmentsStore = create(
       }
     },
 
+    removeEmployeeFromShiftAssignment: async (userId, shiftId) => {
+      try {
+        set({ isLoading: true });
+        await api.delete(`/users/${userId}/shifts/${shiftId}`);
+        set((state) => ({
+          assignees: state.assignees.filter((a) => a.id !== userId),
+        }));
+        toast.success("User removed successfully")
+      } catch (error) {
+        console.log(error);
+      } finally {
+        set({ isLoading: false });
+      }
+    },
+
   })),
 );
 

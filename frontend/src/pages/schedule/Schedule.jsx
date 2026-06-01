@@ -109,7 +109,7 @@ const Schedule = () => {
                 <FiChevronLeft size={15} />
               </button>
 
-              <span className="px-3 text-[13px] text-ink-700 font-medium min-w-[190px] text-center">
+              <span className="px-3 text-[13px] text-ink-700 font-medium min-w-47.5 text-center">
                 {weekLabel}
               </span>
 
@@ -159,7 +159,7 @@ const Schedule = () => {
             </div>
 
             {/* Day columns */}
-            <div className="grid grid-cols-7 min-h-[420px]">
+            <div className="grid grid-cols-7 min-h-105">
               {weekDays.map((day) => {
                 const dayShifts = getShiftsForDay(day);
                 const dayLeaves = getLeavesForDay(day);

@@ -15,7 +15,6 @@ import PrivateRoute from "./pages/components/shared/PrivateRoute";
 import Schedule from "./pages/schedule/Schedule";
 import MySchedule from "./pages/mySchedule/MySchedule";
 import Dashboard from "./pages/dashboard/Dashboard";
-// import Requests from "./pages/Requests/Requests";
 import ManagerRequests from "./pages/Requests/ManagerRequests";
 import MyRequests from "./pages/Requests/MyRequests";
 import ShiftAssignments from "./pages/shiftAssignments/ShiftAssignments";
