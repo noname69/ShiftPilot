@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface ShiftAssignmentRepository extends JpaRepository<ShiftAssignment, Long> {
@@ -109,4 +110,11 @@ public interface ShiftAssignmentRepository extends JpaRepository<ShiftAssignment
             @Param("weekStart") LocalDate weekStart,
             @Param("weekEnd") LocalDate weekEnd
     );
+
+    @Query("""
+    select sa.user.id
+    from ShiftAssignment sa
+    where sa.shift.id in :shiftIds
+""")
+    Set<Long> findUserIdsByShiftIds(@Param("shiftIds") List<Long> shiftIds);
 }

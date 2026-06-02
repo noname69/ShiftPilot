@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Set;
 
 @Setter
 @Getter
@@ -12,5 +13,6 @@ import java.util.List;
 public class ShiftAssignResponse {
 
     private List<AssigneeResponse> assignees;
+    private Set<Long> overlappingUserIds;
 
 }
