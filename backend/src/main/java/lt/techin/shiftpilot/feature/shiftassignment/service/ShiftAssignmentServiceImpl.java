@@ -10,6 +10,11 @@ import lt.techin.shiftpilot.exception.assignment.ShiftAssignmentException;
 import lt.techin.shiftpilot.exception.user.UserNotFoundException;
 import lt.techin.shiftpilot.feature.leaverequest.model.LeaveRequest;
 import lt.techin.shiftpilot.feature.leaverequest.repository.LeaveRequestRepository;
+import lt.techin.shiftpilot.feature.notification.dto.NotificationResponse;
+import lt.techin.shiftpilot.feature.notification.model.Notification;
+import lt.techin.shiftpilot.feature.notification.model.NotificationType;
+import lt.techin.shiftpilot.feature.notification.service.NotificationService;
+import lt.techin.shiftpilot.feature.notification.service.NotificationServiceImpl;
 import lt.techin.shiftpilot.feature.shift.mapper.ShiftMapper;
 import lt.techin.shiftpilot.feature.shift.model.Shift;
 import lt.techin.shiftpilot.feature.shift.model.ShiftStatus;
@@ -40,6 +45,7 @@ public class ShiftAssignmentServiceImpl implements ShiftAssignmentService{
     private final LeaveRequestRepository leaveRequestRepository;
     private final UserMapper userMapper;
     private final ShiftMapper shiftMapper;
+    private final NotificationService notificationService;
 
     @Override
     @Transactional
@@ -83,6 +89,13 @@ public class ShiftAssignmentServiceImpl implements ShiftAssignmentService{
             shiftAssignment.setStatus(ShiftAssignmentStatus.ASSIGNED);
 
             ShiftAssignment saved = shiftAssignmentRepository.save(shiftAssignment);
+
+            NotificationResponse assignmentNotification = notificationService.createNotification(
+                    user,
+                    "Shift assignment",
+                    "You have been assigned to shift: " + shift.getTitle() + " on " + shift.getShiftDate() + " from " + shift.getStartTime() + " to " + shift.getEndTime() + ".",
+                    NotificationType.SHIFT_ASSIGNED
+            );
 
             AssigneeResponse response = new AssigneeResponse(
                     saved.getUser().getId(),

@@ -1,10 +1,31 @@
-import ProfileDropdown from "./ProfileDropdown"
-import { useLocation } from "react-router"
+import { useEffect, useRef, useState } from "react";
+import { useLocation } from "react-router";
+import ProfileDropdown from "./ProfileDropdown";
+import NotificationPanel from "./NotificationPanel";
+import useNotificationStore from "../../../store/notificationStore";
 
 const ProfileHeader = () => {
-
   const location = useLocation();
   const name = location.state?.name || "Dashboard";
+
+  const [panelOpen, setPanelOpen] = useState(false);
+  const panelRef = useRef(null);
+
+  const { unreadCount, fetchNotifications } = useNotificationStore((state) => state);
+
+  useEffect(() => {
+    fetchNotifications();
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (panelRef.current && !panelRef.current.contains(e.target)) {
+        setPanelOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <header className="sticky top-0 z-30 border-b border-ink-200 bg-ink-50/80 backdrop-blur-md">
@@ -26,17 +47,26 @@ const ProfileHeader = () => {
             Week of May 18 – 24
           </div>
 
-          <div className="relative">
-            <button id="notif-btn" className="relative w-9 h-9 rounded-md border border-ink-200 bg-white hover:bg-ink-50 flex items-center justify-center">
+          <div className="relative" ref={panelRef}>
+            <button
+              id="notif-btn"
+              onClick={() => setPanelOpen((prev) => !prev)}
+              className="relative w-9 h-9 rounded-md border border-ink-200 bg-white hover:bg-ink-50 flex items-center justify-center"
+            >
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
-              <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-rose-ink"></span>
+              {unreadCount > 0 && (
+                <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-rose-ink"></span>
+              )}
             </button>
+
+            {panelOpen && <NotificationPanel />}
           </div>
+
           <ProfileDropdown />
         </div>
       </div>
     </header>
-  )
-}
+  );
+};
 
-export default ProfileHeader
+export default ProfileHeader;
