@@ -34,6 +34,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -63,11 +65,14 @@ public class ShiftAssignmentServiceImpl implements ShiftAssignmentService{
 
         List<Long> assigneeIds = request.getUserIds();
         List<AssigneeResponse> assignedUsers = new ArrayList<>();
+        Set<Long> overlappingUserIds = preventOverlappingShift(shift);
 
         for (Long userId : request.getUserIds()) {
 
             User user = userRepository.findById(userId)
                     .orElseThrow(() -> new UserNotFoundException(userId));
+
+
 
             if(shiftAssignmentRepository.existsByUserIdAndShiftIdAndStatus(user.getId(), shift.getId(), ShiftAssignmentStatus.ASSIGNED)){
                 throw new ShiftAssignmentException("User with id: " + userId + " is already assigned to shift with id: " + shift.getId());
@@ -75,6 +80,10 @@ public class ShiftAssignmentServiceImpl implements ShiftAssignmentService{
 
             if(!user.getStatus().equals(UserStatus.ACTIVE)) {
                 throw new ShiftAssignmentException("User status: " + user.getStatus().toString() + ". Only ACTIVE users can be assigned to shift.");
+            }
+
+            if(overlappingUserIds.contains(user.getId())) {
+                throw new ShiftAssignmentException("User with id: " + user.getId() + " is already assigned to another shift at the same time.");
             }
 
             Optional<ShiftAssignment> existing = shiftAssignmentRepository
@@ -115,7 +124,7 @@ public class ShiftAssignmentServiceImpl implements ShiftAssignmentService{
             assignedUsers.add(response);
         }
 
-        return new ShiftAssignResponse(assignedUsers);
+        return new ShiftAssignResponse(assignedUsers, overlappingUserIds);
 
     }
 
@@ -124,6 +133,11 @@ public class ShiftAssignmentServiceImpl implements ShiftAssignmentService{
 
         List<ShiftAssignment> assignments =
                 shiftAssignmentRepository.findByShiftIdAndStatus(shiftId, ShiftAssignmentStatus.ASSIGNED);
+
+        Shift shift = shiftRepository.findById(shiftId)
+                .orElseThrow(() -> new ShiftNotFoundException(shiftId));
+
+        Set<Long> overlappingUserIds = preventOverlappingShift(shift);
 
         List<AssigneeResponse> responses = assignments.stream()
                 .map(a -> new AssigneeResponse(
@@ -137,7 +151,7 @@ public class ShiftAssignmentServiceImpl implements ShiftAssignmentService{
                 ))
                 .toList();
 
-        return new ShiftAssignResponse(responses);
+        return new ShiftAssignResponse(responses, overlappingUserIds);
 
     }
 
@@ -251,5 +265,19 @@ public class ShiftAssignmentServiceImpl implements ShiftAssignmentService{
                 .orElseThrow(() -> new ResourceNotFoundException("Shift assignment not found for user with id: " + userId));
 
         shiftAssignmentRepository.delete(assignment);
+    }
+
+    private Set<Long> preventOverlappingShift(Shift shift) {
+
+        List<Shift> overlappingShifts = shiftRepository
+                .findOverlappingShifts(shift.getShiftDate(), shift.getStartTime(), shift.getEndTime());
+
+        return shiftAssignmentRepository
+                .findUserIdsByShiftIds(
+                        overlappingShifts.stream()
+                                .map(sh -> sh.getId())
+                                .toList()
+                );
+
     }
 }

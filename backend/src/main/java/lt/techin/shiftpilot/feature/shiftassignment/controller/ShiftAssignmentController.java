@@ -79,7 +79,7 @@ public class ShiftAssignmentController {
     }
 
     @DeleteMapping("users/{userId}/shifts/{shiftId}")
-    public ResponseEntity<WeeklyScheduleResponse> getWeeklyUserSchedule(@PathVariable Long userId,
+    public ResponseEntity<WeeklyScheduleResponse> removeEmployeeFromShift(@PathVariable Long userId,
                                                                         @PathVariable Long shiftId) {
 
         shiftAssignmentService.removeEmployeeFromShift(userId, shiftId);

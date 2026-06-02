@@ -30,7 +30,7 @@ const StatusBadge = ({ status }) => {
 };
 
 
-const ShiftAssignmentsBody = ({ user, selectedUsers, setSelectedUsers, assignees, removeEmployee, shiftId }) => {
+const ShiftAssignmentsBody = ({ user, selectedUsers, setSelectedUsers, assignees, removeEmployee, shiftId, isAlreadyInAnotherShift }) => {
 
   const { id, firstName, lastName, weeklyHours, email } = user || {};
   const isAssigned = assignees.some(assignee => assignee.id === id);
@@ -81,9 +81,9 @@ const ShiftAssignmentsBody = ({ user, selectedUsers, setSelectedUsers, assignees
         <td className="px-4 py-3">
           <div className="flex justify-center">
             <MyCheckbox
-              checked={selectedUsers.includes(id)}
+              checked={selectedUsers.includes(id) || isAlreadyInAnotherShift}
               onChange={() => toggleUser(id)}
-              disabled={isAssigned}
+              disabled={isAssigned || isAlreadyInAnotherShift}
             />
           </div>
         </td>

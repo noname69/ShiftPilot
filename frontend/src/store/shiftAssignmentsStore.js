@@ -8,6 +8,7 @@ const useShiftAssignmentsStore = create(
   devtools((set) => ({
 
     assignees: [],
+    overlappingUserIds: [],
     isLoading: false,
 
     assignEmployees: async (formData, shiftId, navigate) => {
@@ -31,6 +32,7 @@ const useShiftAssignmentsStore = create(
         set({ isLoading: true });
         const { data } = await api.get(`/shifts/${shiftId}/shift-assignees`);
         set(() => ({ assignees: [...data.assignees] }));
+        set(() => ({ overlappingUserIds: [...data.overlappingUserIds] }));
       } catch (error) {
         console.log(error);
       } finally {

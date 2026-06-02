@@ -314,18 +314,11 @@ public class ManagerApprovalServiceImpl implements ManagerApprovalService{
         leaveRequest.setClosedAt(LocalDateTime.now());
         leaveRequestRepository.save(leaveRequest);
 
-//        ShiftAssignment shiftAssignment = leaveRequest.getAssignment();
-
         if(!request.isDecision()) {
             approval.setStatus(ApprovalStatus.MANAGER_REJECTED);
-//            shiftAssignment.setStatus(ShiftAssignmentStatus.ASSIGNED);
             managerApprovalRepository.save(approval);
             return new ManagerDecisionResponse("Request was rejected.");
         }
-
-//        shiftAssignment.setStatus(ShiftAssignmentStatus.REMOVED);
-//        shiftAssignment.setRemovedAt(LocalDateTime.now());
-//        shiftAssignmentRepository.save(shiftAssignment);
 
         removeFromShiftsWhenAbsence(leaveRequest.getOutFrom(), leaveRequest.getOutTill());
 
@@ -339,13 +332,6 @@ public class ManagerApprovalServiceImpl implements ManagerApprovalService{
             requesterUser.setStatus(UserStatus.valueOf(request.getRequestType().name()));
             userRepository.save(requesterUser);
         }
-
-//
-//
-//        requesterUser.setUpdatedAt(LocalDateTime.now());
-//        requesterUser.setOutFrom(leaveRequest.getOutFrom());
-//        requesterUser.setOutTill(leaveRequest.getOutTill());
-//
 
         return new ManagerDecisionResponse("Request was approved.");
     }

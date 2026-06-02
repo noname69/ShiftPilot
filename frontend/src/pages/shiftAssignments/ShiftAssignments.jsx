@@ -12,7 +12,7 @@ const ShiftAssignments = () => {
   const [selectedUsers, setSelectedUsers] = useState([]);
   const employees = users.filter(user => user.role === "USER" && user.status === "ACTIVE");
   const { shiftId } = useParams();
-  const { getShiftAssignees, assignees, assignEmployees, removeEmployeeFromShiftAssignment } = useShiftAssignmentsStore(state => state);
+  const { getShiftAssignees, assignees, assignEmployees, removeEmployeeFromShiftAssignment, overlappingUserIds } = useShiftAssignmentsStore(state => state);
   const [modal, setModal] = useState(null);
   const [shift, setShift] = useState(null);
   const navigate = useNavigate();
@@ -77,6 +77,7 @@ const ShiftAssignments = () => {
                     assignees={assignees}
                     removeEmployee={removeEmployeeFromShiftAssignment}
                     shiftId={shiftId}
+                    isAlreadyInAnotherShift={overlappingUserIds.includes(user.id)}
                   />)}
               </table>
             </div>
