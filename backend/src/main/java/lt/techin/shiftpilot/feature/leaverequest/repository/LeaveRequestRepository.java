@@ -1,6 +1,7 @@
 package lt.techin.shiftpilot.feature.leaverequest.repository;
 
 import lt.techin.shiftpilot.feature.leaverequest.model.LeaveRequest;
+import lt.techin.shiftpilot.feature.user.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -32,9 +33,16 @@ public interface LeaveRequestRepository extends JpaRepository<LeaveRequest, Long
 
     List<LeaveRequest> findByOutTillGreaterThanEqual(LocalDate date);
 
-    List<LeaveRequest> findByRequesterIdAndOutFromLessThanEqualAndOutTillGreaterThanEqual(
-            Long userId,
+    List<LeaveRequest> findByOutFromLessThanEqualAndOutTillGreaterThanEqual(
             LocalDate date1,
             LocalDate date2
     );
+
+    @Query("""
+    select distinct lr.requester
+    from LeaveRequest lr
+    where lr.outFrom <= :today
+      and lr.outTill >= :today
+    """)
+    List<User> findRequestersOnLeave(@Param("today") LocalDate today);
 }

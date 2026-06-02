@@ -34,23 +34,7 @@ public class UserMapper {
                 .build();
     }
 
-    public UserResponse toResponse(User user) {
-
-        List<LeaveRequest> leaveRequests = leaveRequestRepository
-                .findByRequesterIdAndOutFromLessThanEqualAndOutTillGreaterThanEqual(user.getId(), LocalDate.now(), LocalDate.now());
-
-        LocalDate outFrom = null;
-        LocalDate outTill = null;
-
-        if(!leaveRequests.isEmpty()) {
-            outFrom = leaveRequests.getFirst().getOutFrom();
-            outTill = leaveRequests.getFirst().getOutTill();
-        }
-
-        if(outFrom == null && outTill == null) {
-            user.setStatus(UserStatus.ACTIVE);
-            userRepository.save(user);
-        }
+    public UserResponse toResponse(User user, LocalDate outFrom, LocalDate outTill) {
 
         return new UserResponse(
                 user.getId(),
@@ -64,6 +48,9 @@ public class UserMapper {
         );
     }
 
+    public UserResponse toResponse(User user) {
+        return toResponse(user, null, null);
+    }
 
     public AssigneeResponse toAssigneeResponse(User user, ShiftAssignmentStatus status, Long assigneeId) {
         return new AssigneeResponse(

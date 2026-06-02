@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import lt.techin.shiftpilot.exception.user.DuplicateEmailException;
 import lt.techin.shiftpilot.exception.user.DuplicateUsernameException;
 import lt.techin.shiftpilot.exception.user.UserNotFoundException;
+import lt.techin.shiftpilot.feature.leaverequest.model.LeaveRequest;
+import lt.techin.shiftpilot.feature.leaverequest.repository.LeaveRequestRepository;
 import lt.techin.shiftpilot.feature.user.repository.UserRepository;
 import lt.techin.shiftpilot.feature.user.dto.CreateUserRequest;
 import lt.techin.shiftpilot.feature.user.dto.UpdateUserRequest;
@@ -15,7 +17,10 @@ import lt.techin.shiftpilot.feature.user.model.UserStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,13 +29,27 @@ public class UserServiceImpl implements UserService{
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder encoder;
+    private final LeaveRequestRepository leaveRequestRepository;
 
     @Override
     public List<UserResponse> getAll() {
 
+        LocalDate today = LocalDate.now();
+
+        List<LeaveRequest> leaveRequests =
+                leaveRequestRepository.findByOutFromLessThanEqualAndOutTillGreaterThanEqual(today, today);
+
         List<User> users = userRepository.findAll();
 
-        return userMapper.toResponseList(users);
+        return users.stream()
+                .map(user -> {
+                    for(LeaveRequest lr : leaveRequests) {
+                        if(lr.getRequester().getId().equals(user.getId())) {
+                            return userMapper.toResponse(user, lr.getOutFrom(), lr.getOutTill());
+                        }
+                    }
+                    return userMapper.toResponse(user);
+                }).toList();
     }
 
     @Override
