@@ -1,10 +1,15 @@
-const Dashboard = () => {
-  return (
-    <div>
-      Dashboard Page
-      <p>TEST SCROLL</p><p>TEST SCROLL</p><p>TEST SCROLL</p><p>TEST SCROLL</p><p>TEST SCROLL</p><p>TEST SCROLL</p><p>TEST SCROLL</p><p>TEST SCROLL</p><p>TEST SCROLL</p><p>TEST SCROLL</p><p>TEST SCROLL</p><p>TEST SCROLL</p><p>TEST SCROLL</p><p>TEST SCROLL</p><p>TEST SCROLL</p><p>TEST SCROLL</p><p>TEST SCROLL</p><p>TEST SCROLL</p><p>TEST SCROLL</p><p>TEST SCROLL</p><p>TEST SCROLL</p><p>TEST SCROLL</p><p>TEST SCROLL</p><p>TEST SCROLL</p><p>TEST SCROLL</p><p>TEST SCROLL</p><p>TEST SCROLL</p><p>TEST SCROLL</p><p>TEST SCROLL</p><p>TEST SCROLL</p><p>TEST SCROLL</p><p>TEST SCROLL</p><p>TEST SCROLL</p><p>TEST SCROLL</p><p>TEST SCROLL</p><p>TEST SCROLL</p><p>TEST SCROLL</p><p>TEST SCROLL</p>
-    </div>
-  )
-}
+import useAuthStore from "../../store/authStore";
+import ManagerDashboard from "./ManagerDashboard";
+import EmployeeDashboard from "./EmployeeDashboard";
 
-export default Dashboard
+const Dashboard = () => {
+  const role = useAuthStore((s) => s.user.role);
+
+  if (role === "MANAGER" || role === "ADMIN") {
+    return <ManagerDashboard />;
+  }
+
+  return <EmployeeDashboard />;
+};
+
+export default Dashboard;

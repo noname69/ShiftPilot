@@ -1,0 +1,9 @@
+lt/techin/shiftpilot/feature/dashboard/dto/UpcomingShiftEntry.class
+lt/techin/shiftpilot/feature/dashboard/service/DashboardService.class
+lt/techin/shiftpilot/feature/dashboard/dto/ManagerDashboardResponse.class
+lt/techin/shiftpilot/feature/dashboard/dto/TypeCounts.class
+lt/techin/shiftpilot/feature/dashboard/dto/AttendanceEntry.class
+lt/techin/shiftpilot/feature/dashboard/service/DashboardServiceImpl.class
+lt/techin/shiftpilot/feature/dashboard/dto/EmployeeDashboardResponse.class
+lt/techin/shiftpilot/feature/dashboard/controller/DashboardController.class
+lt/techin/shiftpilot/feature/dashboard/dto/PendingRequestEntry.class
