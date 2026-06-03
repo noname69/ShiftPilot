@@ -1,8 +1,14 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import InputField from "../components/shared/InputField";
+import MyCheckbox from "../components/shared/MyCheckbox";
 
-const ShiftForm = ({ onSubmit, defaultValues, submitLabel = "Save", isLoading = false }) => {
+const ShiftForm = ({
+  onSubmit,
+  defaultValues,
+  submitLabel = "Save",
+  isLoading = false,
+}) => {
   const {
     register,
     handleSubmit,
@@ -10,12 +16,18 @@ const ShiftForm = ({ onSubmit, defaultValues, submitLabel = "Save", isLoading = 
     reset,
   } = useForm();
 
+  const [isChecked, setIsChecked] = useState(false);
+
   useEffect(() => {
     if (defaultValues) reset(defaultValues);
+
   }, [defaultValues, reset]);
 
   return (
-    <form className="flex flex-col gap-2 w-full" onSubmit={handleSubmit(onSubmit)}>
+    <form
+      className="flex flex-col gap-2 w-full"
+      onSubmit={handleSubmit(onSubmit)}
+    >
       <InputField
         label="Title"
         id="title"
@@ -67,7 +79,9 @@ const ShiftForm = ({ onSubmit, defaultValues, submitLabel = "Save", isLoading = 
       </div>
       <div className="w-full">
         <div className="flex flex-col items-start gap-2 w-full">
-          <label htmlFor="minEmployees" className="my-para">Min. Employees</label>
+          <label htmlFor="minEmployees" className="my-para">
+            Min. Employees
+          </label>
           <input
             type="number"
             id="minEmployees"
@@ -83,7 +97,41 @@ const ShiftForm = ({ onSubmit, defaultValues, submitLabel = "Save", isLoading = 
         </div>
         <p className="my-error text-start">{errors.minEmployees?.message}</p>
       </div>
-      <button type="submit" className="my-btn-primary mt-2" disabled={isLoading}>
+      <div>
+        <div className="flex justify-between gap-8">
+          <div className="w-35 flex flex-col gap-2">
+            <label htmlFor="draftName" className="my-para">
+              Create shift draft
+            </label>
+            <MyCheckbox
+              onChange={(checked) => setIsChecked(checked)}
+            />
+          </div>
+          <div className={`w-full text-end ${!isChecked && "hidden"}`}>
+            <label htmlFor="draftName" className="my-para text-end">
+              Draft name
+            </label>
+            <input
+              type="text"
+              id="draftName"
+              className="m-1 rounded-lg p-2 w-full text-sm my-input no-spinner"
+              min={3}
+              placeholder="Morning shift draft"
+              {...register("draftName", {
+                min: {
+                  value: 3,
+                  message: "Draft name must contain at least 3 characters",
+                },
+              })}
+            />
+          </div>
+        </div>
+      </div>
+      <button
+        type="submit"
+        className="my-btn-primary mt-2"
+        disabled={isLoading}
+      >
         {submitLabel}
       </button>
     </form>

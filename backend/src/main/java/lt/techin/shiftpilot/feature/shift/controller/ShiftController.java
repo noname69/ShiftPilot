@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -72,5 +73,14 @@ public class ShiftController {
         shiftService.cancelShift(id, username);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @PreAuthorize("hasRole('MANAGER')")
+    @GetMapping("/drafts")
+    public ResponseEntity<List<ShiftResponse>> getDraftedShifts() {
+
+        List<ShiftResponse> response = shiftService.getShiftDrafts();
+
+        return ResponseEntity.ok().body(response);
     }
 }

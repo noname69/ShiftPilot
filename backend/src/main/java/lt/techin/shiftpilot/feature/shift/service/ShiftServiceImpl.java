@@ -3,6 +3,7 @@ package lt.techin.shiftpilot.feature.shift.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lt.techin.shiftpilot.exception.core.BusinessException;
 import lt.techin.shiftpilot.feature.shift.dto.ShiftCreateRequest;
 import lt.techin.shiftpilot.feature.shift.dto.ShiftResponse;
 import lt.techin.shiftpilot.feature.shift.dto.ShiftUpdateRequest;
@@ -11,11 +12,14 @@ import lt.techin.shiftpilot.feature.shift.model.Shift;
 import lt.techin.shiftpilot.feature.shift.model.ShiftStatus;
 import lt.techin.shiftpilot.feature.shift.repository.ShiftRepository;
 import lt.techin.shiftpilot.feature.shift.repository.ShiftSpecifications;
+import lt.techin.shiftpilot.feature.shiftassignment.dto.ShiftAssignRequest;
 import lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignment;
 import lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignmentStatus;
 import lt.techin.shiftpilot.feature.shiftassignment.repository.ShiftAssignmentRepository;
+import lt.techin.shiftpilot.feature.shiftassignment.service.ShiftAssignmentServiceImpl;
 import lt.techin.shiftpilot.feature.user.model.User;
 import lt.techin.shiftpilot.feature.user.repository.UserRepository;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -35,9 +39,12 @@ public class ShiftServiceImpl implements ShiftService {
     private final ShiftMapper shiftMapper;
     private final UserRepository userRepository;
     private final ShiftAssignmentRepository shiftAssignmentRepository;
+    private final ShiftAssignmentServiceImpl shiftAssignmentService;
 
     @Override
+    @Transactional
     public ShiftResponse createShift(ShiftCreateRequest request, String username) {
+
         log.info("event=SHIFT_CREATE_REQUEST title={} shiftDate={} startTime={} endTime={} minEmployees={} createdByUsername={}",
                 request.title(),
                 request.shiftDate(),
@@ -63,13 +70,24 @@ public class ShiftServiceImpl implements ShiftService {
                 shift.getEndTime()
         ));
 
-        Shift savedShift = shiftRepository.save(shift);
+        Shift savedShift;
+        try {
+            savedShift = shiftRepository.save(shift);
+        } catch (DataIntegrityViolationException e) {
+            throw new BusinessException("Draft name already exists.");
+        }
 
         log.info("event=SHIFT_CREATED shiftId={} createdByUserId={} createdByUsername={}",
                 savedShift.getId(),
                 creator.getId(),
                 creator.getUsername()
         );
+
+        System.out.println(request.draftedShiftId() + "primas");
+        if(request.draftedShiftId() != null) {
+            System.out.println("antras");
+            createShiftFromDraft(username, request.draftedShiftId(), savedShift.getId());
+        }
 
         return shiftMapper.toResponse(savedShift);
     }
@@ -188,6 +206,16 @@ public class ShiftServiceImpl implements ShiftService {
         );
     }
 
+    @Override
+    public List<ShiftResponse> getShiftDrafts() {
+
+        List<Shift> shifts = shiftRepository.findByDraftNameIsNotNull();
+
+        return shifts.stream()
+                .map(shiftMapper::toResponse)
+                .toList();
+    }
+
     private Shift findShiftById(Long id) {
         return shiftRepository.findById(id)
                 .orElseThrow(() -> {
@@ -258,4 +286,13 @@ public class ShiftServiceImpl implements ShiftService {
 
         return shift;
     }
+
+    private void createShiftFromDraft(String username, Long draftedShiftId, Long savedShiftId) {
+
+        List<Long> userIds = shiftAssignmentRepository.findUserIdsByShiftId(draftedShiftId).stream().toList();
+        ShiftAssignRequest assignees = new ShiftAssignRequest(userIds);
+        shiftAssignmentService.assignShift(username, assignees, savedShiftId);
+
+    }
+
 }

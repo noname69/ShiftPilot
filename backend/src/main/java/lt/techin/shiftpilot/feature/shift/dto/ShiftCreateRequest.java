@@ -13,6 +13,8 @@ public record ShiftCreateRequest(
         @NotNull LocalDate shiftDate,
         @NotNull LocalTime startTime,
         @NotNull LocalTime endTime,
-        @Min(1) int minEmployees
+        @Min(1) int minEmployees,
+        String draftName,
+        Long draftedShiftId
 ) {
 }

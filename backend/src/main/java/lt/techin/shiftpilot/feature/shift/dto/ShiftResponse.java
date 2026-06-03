@@ -15,6 +15,7 @@ public record ShiftResponse(
         int minEmployees,
         ShiftStatus status,
         Long createdByUserId,
-        String createdByUsername
+        String createdByUsername,
+        String draftName
 ) {
 }

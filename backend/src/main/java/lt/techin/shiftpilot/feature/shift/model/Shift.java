@@ -15,6 +15,7 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class Shift {
 
     @Id
@@ -35,6 +36,9 @@ public class Shift {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by_user_id", nullable = false)
     private User createdBy;
+
+    @Column(unique = true)
+    private String draftName;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
