@@ -36,7 +36,7 @@ public class ShiftDraft {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "shiftDraft")
+    @OneToMany(mappedBy = "shiftDraft", cascade = CascadeType.ALL)
     private List<DraftEmployee> draftEmployees;
 
     @PrePersist

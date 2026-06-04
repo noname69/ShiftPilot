@@ -2,11 +2,9 @@ import { Link } from "react-router";
 import Footer from "../components/shared/Footer";
 import DraftForm from "./DraftForm";
 import useAuthStore from "../../store/authStore";
-// import { useState } from "react";
 
 const DraftCreatePage = () => {
   const role = useAuthStore((state) => state.user.role);
-  // const [addedUsers, setAddedUsers] = useState([]);
 
   return (
     <div className="flex flex-col flex-1">
@@ -24,8 +22,6 @@ const DraftCreatePage = () => {
           <div className="my-card">
             <DraftForm
               submitLabel="Create Shift"
-              // addedUsers={addedUsers}
-              // setAddedUsers={setAddedUsers}
             />
           </div>
 

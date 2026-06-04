@@ -4,7 +4,7 @@ import ShiftForm from "./ShiftForm";
 import useShiftStore from "../../store/shiftStore";
 import useAuthStore from "../../store/authStore";
 import { useState } from "react";
-import ShiftDrafts from "../shiftDrafts/ShiftDrafts"
+import ShiftDrafts from "../shiftDrafts/ShiftDrafts";
 import toast from "react-hot-toast";
 
 const ShiftCreatePage = () => {
@@ -14,13 +14,16 @@ const ShiftCreatePage = () => {
   const [defaultValues, setDefaultValues] = useState(null);
 
   const onSubmit = async (data) => {
-    const draftedShiftId = defaultValues?.draftedShiftId || "";
-    const success = await addShift({...data, draftedShiftId: draftedShiftId });
+
+    const { draftId, userIds } = defaultValues || {};
+
+    const success = await addShift({ ...data, draftId, userIds });
     if (success) {
       navigate("/shifts");
-      toast.success("Shift created successfully")
+      toast.success("Shift created successfully");
     }
   };
+
 
   return (
     <div className="flex flex-col flex-1">
@@ -38,11 +41,15 @@ const ShiftCreatePage = () => {
 
           <div className="flex flex-col gap-6">
             <div className="my-card bg-ink-100">
-              <ShiftDrafts setDefaultValues={setDefaultValues}/>
+              <ShiftDrafts setDefaultValues={setDefaultValues} />
             </div>
 
             <div className="my-card">
-              <ShiftForm onSubmit={onSubmit} defaultValues={defaultValues} submitLabel="Create Shift" />
+              <ShiftForm
+                onSubmit={onSubmit}
+                defaultValues={defaultValues}
+                submitLabel="Create Shift"
+              />
             </div>
           </div>
 

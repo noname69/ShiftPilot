@@ -22,14 +22,35 @@ const useShiftDraftsStore = create(
       }
     },
 
-    createShiftDraft: async (formData) => {
+    createShiftDraft: async (formData, navigate, role) => {
       try {
         set({ isLoading: true });
         await api.post(`/shift-drafts`, formData);
         toast.success("Draft created successfully")
+        navigate(`/${role}/shifts`)
       } catch (error) {
         console.log(error);
-        toast.error(error)
+        const msg = error?.response?.data?.message || error.message;
+        toast.error(msg);
+      } finally {
+        set({ isLoading: false });
+      }
+    },
+
+    removeDraft: async (draftId, navigate, role) => {
+      try {
+        console.log(draftId)
+        set({ isLoading: true });
+        await api.delete(`/shift-drafts/${draftId}`);
+        set((state) => ({
+          drafts: state.drafts.filter(draft => draft.id !== draftId)
+        }));
+        navigate(`/${role}/shifts`)
+        toast.success("Draft deleted successfully")
+      } catch (error) {
+        console.log(error);
+        const msg = error?.response?.data?.message || error.message;
+        toast.error(msg);
       } finally {
         set({ isLoading: false });
       }

@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-import { createShift, updateShift, getShifts, cancelShift, getUserShifts, getShiftById, getDraftedShifts } from "../api/shift";
+import { createShift, updateShift, getShifts, cancelShift, getUserShifts, getShiftById } from "../api/shift";
+import toast from "react-hot-toast";
 
 const useShiftStore = create(
   devtools((set) => ({
@@ -52,6 +53,8 @@ const useShiftStore = create(
       } catch (error) {
         set({ error: error.message, isLoading: false });
         console.error(error);
+        const msg = error?.response?.data?.message || error.message;
+        toast.error(msg);
         return false;
       }
     },
@@ -83,19 +86,6 @@ const useShiftStore = create(
         set({ isLoading: true, error: null });
         const data = await getUserShifts();
         set({ userShifts: data });
-      } catch (error) {
-        set({ error: error.message });
-        console.error(error);
-      } finally {
-        set({ isLoading: false })
-      }
-    },
-
-    fetchDraftedShifts: async () => {
-      try {
-        set({ isLoading: true, error: null });
-        const data = await getDraftedShifts();
-        set({ draftedShifts: data });
       } catch (error) {
         set({ error: error.message });
         console.error(error);

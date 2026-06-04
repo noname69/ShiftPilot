@@ -1,12 +1,10 @@
 import { useForm } from "react-hook-form";
 import SelectField from "../components/shared/SelectField";
 import { useEffect } from "react";
-// import useShiftStore from "../../store/shiftStore";
 import useShiftDraftsStore from "../../store/shiftDraftsStore";
 
 export default function ShiftDrafts({ setDefaultValues }) {
-  // const { fetchDraftedShifts, draftedShifts, fetchShiftById } = useShiftStore();
-  const { fetchShiftDrafts, drafts } = useShiftDraftsStore(state => state);
+  const { fetchShiftDrafts, drafts } = useShiftDraftsStore((state) => state);
 
   const {
     register,
@@ -14,69 +12,62 @@ export default function ShiftDrafts({ setDefaultValues }) {
     formState: { errors },
   } = useForm();
 
-  // const drafts = draftedShifts.map((shift) => {
-  //   if (shift.draftName !== null) {
-  //     return { label: shift.draftName, value: shift.id };
-  //   }
-  // });
+  const availableDrafts = drafts.map((draft) => {
+    return { label: draft.title, value: draft.id };
+  });
 
-  const pickedDraft = watch("shiftId");
+  const pickedDraft = watch("draftId");
 
   useEffect(() => {
     fetchShiftDrafts();
   }, [fetchShiftDrafts]);
 
-  console.log(drafts)
+  useEffect(() => {
+    const loadDraft = () => {
+      if (!pickedDraft) {
+        setDefaultValues({
+          title: "",
+          description: "",
+          shiftDate: "",
+          startTime: "",
+          endTime: "",
+          minEmployees: "",
+          draftId: "",
+          userIds: []
+        });
+        return;
+      }
 
-  // useEffect(() => {
-  //   const loadShift = async () => {
-  //     if (!pickedDraft) {
-  //       setDefaultValues({
-  //         title: "",
-  //         description: "",
-  //         shiftDate: "",
-  //         startTime: "",
-  //         endTime: "",
-  //         minEmployees: "",
-  //         draftedShiftId: "",
-  //       });
-  //       return;
-  //     }
+      const draft = drafts.find((d) => d.id === Number(pickedDraft));
+      const { id, title, description, startTime, endTime, minEmployees, draftEmployees } = draft;
+      const userIds = draftEmployees.map(empl => empl.id);
 
-  //     const shift = await fetchShiftById(pickedDraft);
-  //     const {
-  //       id,
-  //       title,
-  //       description,
-  //       startTime,
-  //       endTime,
-  //       minEmployees,
-  //     } = shift;
+      setDefaultValues({
+        title: title,
+        description: description,
+        shiftDate: "",
+        startTime: startTime?.slice(0, 5) ?? "",
+        endTime: endTime?.slice(0, 5) ?? "",
+        minEmployees: minEmployees,
+        draftId: id,
+        userIds: userIds
+      });
+    };
 
-  //     setDefaultValues({
-  //       title: title,
-  //       description: description,
-  //       shiftDate: "",
-  //       startTime: startTime?.slice(0, 5) ?? "",
-  //       endTime: endTime?.slice(0, 5) ?? "",
-  //       minEmployees: minEmployees,
-  //       draftedShiftId: id
-  //     });
-  //   };
+    loadDraft();
+  }, [pickedDraft, drafts, setDefaultValues]);
 
-  //   loadShift();
-  // }, [pickedDraft, fetchShiftById, setDefaultValues]);
 
   return (
     <form className="space-y-4">
       <div className="flex flex-col gap-1">
         <SelectField
           label="Select a draft to prefill shift details and assignees"
-          name="shiftId"
-          id="shiftId"
+          name="draftId"
+          id="draftId"
           register={register}
           theme="my-input"
-          options={[{ label: "Select a draft", value: "" }, ...drafts]}
+          options={[{ label: "Select a draft", value: "" }, ...availableDrafts]}
         />
 
         {errors.shiftType && (

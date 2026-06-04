@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import InputField from "../components/shared/InputField";
-// import MyCheckbox from "../components/shared/MyCheckbox";
 
 const ShiftForm = ({
   onSubmit,
@@ -16,7 +15,6 @@ const ShiftForm = ({
     reset,
   } = useForm();
 
-  // const [isChecked, setIsChecked] = useState(false);
 
   useEffect(() => {
     if (defaultValues) reset(defaultValues);
@@ -97,36 +95,6 @@ const ShiftForm = ({
         </div>
         <p className="my-error text-start">{errors.minEmployees?.message}</p>
       </div>
-      {/* <div> */}
-        {/* <div className="flex justify-between gap-8"> */}
-          {/* <div className="w-35 flex flex-col gap-2">
-            <label htmlFor="draftName" className="my-para">
-              Create shift draft
-            </label>
-            <MyCheckbox
-              onChange={(checked) => setIsChecked(checked)}
-            />
-          </div> */}
-          {/* <div className={`w-full text-end ${!isChecked && "hidden"}`}>
-            <label htmlFor="draftName" className="my-para text-end">
-              Draft name
-            </label>
-            <input
-              type="text"
-              id="draftName"
-              className="m-1 rounded-lg p-2 w-full text-sm my-input no-spinner"
-              min={3}
-              placeholder="Morning shift draft"
-              {...register("draftName", {
-                min: {
-                  value: 3,
-                  message: "Draft name must contain at least 3 characters",
-                },
-              })}
-            />
-          </div> */}
-        {/* </div> */}
-      {/* </div> */}
       <button
         type="submit"
         className="my-btn-primary mt-2"

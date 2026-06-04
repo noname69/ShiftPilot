@@ -40,7 +40,7 @@ public class ShiftDraftController {
                 .body(response);
     }
 
-    @DeleteMapping("/shift-drafts/{draftId}")
+    @DeleteMapping("/{draftId}")
     public ResponseEntity<Void> deleteDraft(
             @PathVariable Long draftId,
             @AuthenticationPrincipal Jwt jwt

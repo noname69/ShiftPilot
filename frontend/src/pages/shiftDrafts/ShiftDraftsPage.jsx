@@ -4,6 +4,7 @@ import Footer from "../components/shared/Footer";
 import useAuthStore from "../../store/authStore";
 import ConfirmationModal from "../components/shared/ConfirmationModal";
 import useShiftDraftsStore from "../../store/shiftDraftsStore";
+import ShiftDraftsRow from "./ShiftDraftsRow";
 
 const ShiftDraftsPage = () => {
 
@@ -56,7 +57,7 @@ const ShiftDraftsPage = () => {
               <div className="flex flex-col items-center justify-center py-20 gap-3">
                 <p className="text-[14px] text-ink-500">No drafts yet.</p>
                 <Link
-                  to={`/${role}/shifts/new`}
+                  to={`/${role}/shift-drafts/new`}
                   className="inline-flex items-center gap-1.5 text-[13px] font-medium text-white bg-ink-900 hover:bg-ink-800 px-3 py-1.5 rounded-md shadow-soft transition-colors cursor-pointer"
                 >
                   <svg
@@ -80,7 +81,6 @@ const ShiftDraftsPage = () => {
                     <th className="text-left font-medium px-4 py-2.5 hidden md:table-cell">
                       Description
                     </th>
-                    <th className="text-left font-medium px-4 py-2.5">Date</th>
                     <th className="text-left font-medium px-4 py-2.5 hidden sm:table-cell">
                       Time
                     </th>
@@ -95,6 +95,9 @@ const ShiftDraftsPage = () => {
                     </th>
                   </tr>
                 </thead>
+                <tbody>
+                  {drafts?.map(draft => <ShiftDraftsRow draft={draft}/>)}
+                </tbody>
               </table>
             )}
           </div>

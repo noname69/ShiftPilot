@@ -5,19 +5,21 @@ import DraftEmployeesModal from "./DraftEmployeesModal";
 import { useNavigate } from "react-router";
 import { FiUserCheck } from "react-icons/fi";
 import useShiftDraftsStore from "../../store/shiftDraftsStore";
+import useAuthStore from "../../store/authStore";
 
 const DraftForm = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-    reset,
   } = useForm();
 
-  const { createShiftDraft, isLoading } = useShiftDraftsStore(state => state);
+  const { createShiftDraft, isLoading } = useShiftDraftsStore((state) => state);
+  const navigate = useNavigate();
 
   const [modal, setModal] = useState(null);
   const [addedUsers, setAddedUsers] = useState([]);
+  const role = useAuthStore(state => state.user.role)
 
   const handleAddDraftEmployees = () => {
     setModal({
@@ -27,9 +29,8 @@ const DraftForm = () => {
   };
 
   const onSubmit = (formData) => {
-
-    const userIds = addedUsers.map(user => user.id);
-    createShiftDraft({...formData, userIds})
+    const userIds = addedUsers.map((user) => user.id);
+    createShiftDraft({ ...formData, userIds }, navigate, role);
   };
 
   return (
@@ -99,6 +100,7 @@ const DraftForm = () => {
       </div>
       <div>
         <button
+          type="button"
           onClick={handleAddDraftEmployees}
           className="flex gap-2 p-2 w-fit items-center rounded-lg border border-mint-ink/20 bg-mint-soft text-sm font-medium text-mint-ink transition-colors hover:bg-mint-soft/80"
         >
@@ -107,19 +109,21 @@ const DraftForm = () => {
         </button>
       </div>
 
-      <button 
-        type="submit" 
+      <button
+        type="submit"
         className="my-btn-primary mt-2"
         disabled={isLoading}
       >
         Create Draft
       </button>
-      <DraftEmployeesModal
-        modal={modal}
-        setModal={setModal}
-        addedUsers={addedUsers}
-        setAddedUsers={setAddedUsers}
-      />
+      {modal && (
+        <DraftEmployeesModal
+          modal={modal}
+          setModal={setModal}
+          addedUsers={addedUsers}
+          setAddedUsers={setAddedUsers}
+        />
+      )}
     </form>
   );
 };
