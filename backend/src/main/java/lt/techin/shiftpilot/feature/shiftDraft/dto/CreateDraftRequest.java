@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalTime;
-import java.util.List;
+import java.util.Set;
 
 @Getter
 @AllArgsConstructor
@@ -22,6 +22,6 @@ public class CreateDraftRequest {
     @NotNull
     private int minEmployees;
 
-    private List<Long> userIds;
+    private Set<Long> userIds;
 
 }

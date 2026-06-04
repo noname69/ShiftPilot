@@ -2,6 +2,8 @@ package lt.techin.shiftpilot.feature.shiftDraft.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lt.techin.shiftpilot.exception.ResourceNotFoundException;
+import lt.techin.shiftpilot.exception.core.BusinessException;
 import lt.techin.shiftpilot.exception.user.UserNotFoundException;
 import lt.techin.shiftpilot.feature.shiftDraft.dto.CreateDraftRequest;
 import lt.techin.shiftpilot.feature.shiftDraft.dto.ShiftDraftResponse;
@@ -12,6 +14,7 @@ import lt.techin.shiftpilot.feature.shiftDraft.repository.DraftEmployeeRepositor
 import lt.techin.shiftpilot.feature.shiftDraft.repository.ShiftDraftRepository;
 import lt.techin.shiftpilot.feature.user.model.User;
 import lt.techin.shiftpilot.feature.user.repository.UserRepository;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -44,7 +47,7 @@ public class ShiftDraftServiceImpl implements ShiftDraftService{
         ShiftDraft draft = shiftDraftMapper.toEntity(request);
         draft.setCreatedBy(manager);
 
-        List<User> users = userRepository.findAllByIdIn(request.getUserIds());
+        List<User> users = userRepository.findAllByIdIn(request.getUserIds().stream().toList());
         List<DraftEmployee> draftEmployees = users.stream()
                 .map(user -> {
                     DraftEmployee draftEmployee = new DraftEmployee();
@@ -54,8 +57,24 @@ public class ShiftDraftServiceImpl implements ShiftDraftService{
                 }).toList();
 
         draft.setDraftEmployees(draftEmployees);
-        ShiftDraft savedDraft = shiftDraftRepository.save(draft);
+
+        ShiftDraft savedDraft;
+        try {
+            savedDraft = shiftDraftRepository.save(draft);
+        } catch (DataIntegrityViolationException e) {
+            throw new BusinessException("Draft name already exists.");
+        }
 
         return shiftDraftMapper.toResponse(savedDraft);
+    }
+
+    @Override
+    public void deleteDraft(Long draftId, String username) {
+
+        ShiftDraft draft = shiftDraftRepository.findById(draftId)
+                .orElseThrow(() -> new ResourceNotFoundException("Draft", draftId));
+
+        shiftDraftRepository.delete(draft);
+
     }
 }

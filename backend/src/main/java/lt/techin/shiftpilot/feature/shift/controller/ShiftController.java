@@ -74,13 +74,4 @@ public class ShiftController {
 
         return ResponseEntity.noContent().build();
     }
-
-    @PreAuthorize("hasRole('MANAGER')")
-    @GetMapping("/drafts")
-    public ResponseEntity<List<ShiftResponse>> getDraftedShifts() {
-
-        List<ShiftResponse> response = shiftService.getShiftDrafts();
-
-        return ResponseEntity.ok().body(response);
-    }
 }

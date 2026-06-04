@@ -9,4 +9,6 @@ public interface ShiftDraftService {
     List<ShiftDraftResponse> getAllDrafts();
 
     ShiftDraftResponse createDraft(CreateDraftRequest request, String username);
+
+    void deleteDraft(Long draftId, String username);
 }

@@ -22,6 +22,7 @@ public class ShiftMapper {
     }
 
     public ShiftResponse toResponse(Shift shift) {
+
         return new ShiftResponse(
                 shift.getId(),
                 shift.getTitle(),
@@ -32,8 +33,7 @@ public class ShiftMapper {
                 shift.getMinEmployees(),
                 shift.getStatus(),
                 shift.getCreatedBy() != null ? shift.getCreatedBy().getId() : null,
-                shift.getCreatedBy() != null ? shift.getCreatedBy().getUsername() : null,
-                shift.getDraftName() != null ? shift.getDraftName() : null
+                shift.getCreatedBy() != null ? shift.getCreatedBy().getUsername() : null
         );
     }
 }

@@ -37,9 +37,6 @@ public class Shift {
     @JoinColumn(name = "created_by_user_id", nullable = false)
     private User createdBy;
 
-    @Column(unique = true)
-    private String draftName;
-
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 

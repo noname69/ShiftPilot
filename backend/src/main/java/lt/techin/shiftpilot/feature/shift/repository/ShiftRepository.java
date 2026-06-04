@@ -25,7 +25,4 @@ public interface ShiftRepository extends JpaRepository<Shift, Long>, JpaSpecific
             @Param("endTime") LocalTime endTime
     );
 
-    List<Shift> findByDraftNameIsNotNull();
-
-
 }

@@ -12,6 +12,8 @@ import lt.techin.shiftpilot.feature.shift.model.Shift;
 import lt.techin.shiftpilot.feature.shift.model.ShiftStatus;
 import lt.techin.shiftpilot.feature.shift.repository.ShiftRepository;
 import lt.techin.shiftpilot.feature.shift.repository.ShiftSpecifications;
+import lt.techin.shiftpilot.feature.shiftDraft.model.ShiftDraft;
+import lt.techin.shiftpilot.feature.shiftDraft.repository.DraftEmployeeRepository;
 import lt.techin.shiftpilot.feature.shiftassignment.dto.ShiftAssignRequest;
 import lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignment;
 import lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignmentStatus;
@@ -40,9 +42,9 @@ public class ShiftServiceImpl implements ShiftService {
     private final UserRepository userRepository;
     private final ShiftAssignmentRepository shiftAssignmentRepository;
     private final ShiftAssignmentServiceImpl shiftAssignmentService;
+    private final DraftEmployeeRepository draftEmployeeRepository;
 
     @Override
-    @Transactional
     public ShiftResponse createShift(ShiftCreateRequest request, String username) {
 
         log.info("event=SHIFT_CREATE_REQUEST title={} shiftDate={} startTime={} endTime={} minEmployees={} createdByUsername={}",
@@ -70,12 +72,8 @@ public class ShiftServiceImpl implements ShiftService {
                 shift.getEndTime()
         ));
 
-        Shift savedShift;
-        try {
-            savedShift = shiftRepository.save(shift);
-        } catch (DataIntegrityViolationException e) {
-            throw new BusinessException("Draft name already exists.");
-        }
+        Shift savedShift = shiftRepository.save(shift);
+        shiftRepository.flush();
 
         log.info("event=SHIFT_CREATED shiftId={} createdByUserId={} createdByUsername={}",
                 savedShift.getId(),
@@ -83,10 +81,8 @@ public class ShiftServiceImpl implements ShiftService {
                 creator.getUsername()
         );
 
-        System.out.println(request.draftedShiftId() + "primas");
-        if(request.draftedShiftId() != null) {
-            System.out.println("antras");
-            createShiftFromDraft(username, request.draftedShiftId(), savedShift.getId());
+        if(request.draftId() != null) {
+            createShiftFromDraft(username, request.userIds(), savedShift.getId());
         }
 
         return shiftMapper.toResponse(savedShift);
@@ -206,16 +202,6 @@ public class ShiftServiceImpl implements ShiftService {
         );
     }
 
-    @Override
-    public List<ShiftResponse> getShiftDrafts() {
-
-        List<Shift> shifts = shiftRepository.findByDraftNameIsNotNull();
-
-        return shifts.stream()
-                .map(shiftMapper::toResponse)
-                .toList();
-    }
-
     private Shift findShiftById(Long id) {
         return shiftRepository.findById(id)
                 .orElseThrow(() -> {
@@ -287,10 +273,10 @@ public class ShiftServiceImpl implements ShiftService {
         return shift;
     }
 
-    private void createShiftFromDraft(String username, Long draftedShiftId, Long savedShiftId) {
+    private void createShiftFromDraft(String username, List<Long> userIds, Long savedShiftId) {
 
-        List<Long> userIds = shiftAssignmentRepository.findUserIdsByShiftId(draftedShiftId).stream().toList();
         ShiftAssignRequest assignees = new ShiftAssignRequest(userIds);
+
         shiftAssignmentService.assignShift(username, assignees, savedShiftId);
 
     }

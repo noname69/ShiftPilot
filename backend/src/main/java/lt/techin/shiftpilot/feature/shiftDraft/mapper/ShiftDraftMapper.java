@@ -1,14 +1,19 @@
 package lt.techin.shiftpilot.feature.shiftDraft.mapper;
+import lombok.RequiredArgsConstructor;
 import lt.techin.shiftpilot.feature.shiftDraft.dto.CreateDraftRequest;
 import lt.techin.shiftpilot.feature.shiftDraft.dto.ShiftDraftResponse;
 import lt.techin.shiftpilot.feature.shiftDraft.model.ShiftDraft;
-import lt.techin.shiftpilot.feature.user.model.User;
+import lt.techin.shiftpilot.feature.user.dto.UserResponse;
+import lt.techin.shiftpilot.feature.user.mapper.UserMapper;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor
 public class ShiftDraftMapper {
+
+    private final UserMapper userMapper;
 
     public ShiftDraft toEntity(CreateDraftRequest request) {
         return ShiftDraft.builder()
@@ -22,8 +27,8 @@ public class ShiftDraftMapper {
 
     public ShiftDraftResponse toResponse(ShiftDraft draft) {
 
-        List<User> draftEmployees = draft.getDraftEmployees().stream()
-                .map(draftEmployee -> draftEmployee.getDraftEmployee())
+        List<UserResponse> draftEmployees = draft.getDraftEmployees().stream()
+                .map(draftEmployee -> userMapper.toResponse(draftEmployee.getDraftEmployee()))
                 .toList();
 
         return ShiftDraftResponse.builder()

@@ -40,4 +40,16 @@ public class ShiftDraftController {
                 .body(response);
     }
 
+    @DeleteMapping("/shift-drafts/{draftId}")
+    public ResponseEntity<Void> deleteDraft(
+            @PathVariable Long draftId,
+            @AuthenticationPrincipal Jwt jwt
+    ) {
+        String username = jwt.getSubject();
+
+        shiftDraftService.deleteDraft(draftId, username);
+
+        return ResponseEntity.noContent().build();
+    }
+
 }

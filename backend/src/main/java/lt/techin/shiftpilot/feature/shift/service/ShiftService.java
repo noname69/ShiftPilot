@@ -22,5 +22,4 @@ public interface ShiftService {
 
     void cancelShift(Long id, String username);
 
-    List<ShiftResponse> getShiftDrafts();
 }

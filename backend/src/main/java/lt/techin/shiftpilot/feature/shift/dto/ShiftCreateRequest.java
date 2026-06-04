@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 public record ShiftCreateRequest(
         @NotBlank String title,
@@ -14,7 +15,7 @@ public record ShiftCreateRequest(
         @NotNull LocalTime startTime,
         @NotNull LocalTime endTime,
         @Min(1) int minEmployees,
-        String draftName,
-        Long draftedShiftId
+        Long draftId,
+        List<Long> userIds
 ) {
 }
