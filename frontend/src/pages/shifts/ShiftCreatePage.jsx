@@ -4,7 +4,7 @@ import ShiftForm from "./ShiftForm";
 import useShiftStore from "../../store/shiftStore";
 import useAuthStore from "../../store/authStore";
 import { useState } from "react";
-import ShiftDrafts from "./ShiftDrafts";
+import ShiftDrafts from "../shiftDrafts/ShiftDrafts"
 import toast from "react-hot-toast";
 
 const ShiftCreatePage = () => {

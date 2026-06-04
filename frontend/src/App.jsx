@@ -19,6 +19,8 @@ import ManagerRequests from "./pages/Requests/ManagerRequests";
 import MyRequests from "./pages/Requests/MyRequests";
 import ShiftAssignments from "./pages/shiftAssignments/ShiftAssignments";
 import ShiftAssignmentRequests from "./pages/shiftAssignments/ShiftAssigmentRequests";
+import ShiftDraftsPage from "./pages/shiftDrafts/ShiftDraftsPage";
+import DraftCreatePage from "./pages/shiftDrafts/DraftCreatePage";
 import { Toaster } from "react-hot-toast";
 
 function App() {
@@ -51,6 +53,8 @@ function App() {
             <Route path="requests" element={<ManagerRequests />} />
             <Route path="shifts" element={<ShiftsPage />} />
             <Route path="shifts/new" element={<ShiftCreatePage />} />
+            <Route path="shift-drafts" element={<ShiftDraftsPage />} />
+            <Route path="shift-drafts/new" element={<DraftCreatePage />} />
             <Route path="shifts/:id/edit" element={<ShiftEditPage />} />
             <Route path="users" element={<UsersPage />} />
             <Route path="users/new" element={<UserCreatePage />} />
@@ -58,7 +62,6 @@ function App() {
             <Route path="shifts/:shiftId/assign-shift" element={<ShiftAssignments />} />
             <Route path="shifts/:shiftId/shift-requests" element={<ShiftAssignmentRequests />} />
             <Route path="shifts/:assigneeId/swap-request" element={<MySchedule />} />
-
           </Route>
         </Route>
 

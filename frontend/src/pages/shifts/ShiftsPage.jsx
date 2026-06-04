@@ -12,7 +12,6 @@ import ShiftFilter from "../components/shared/ShiftFilter";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { FiUserCheck } from "react-icons/fi";
 
-
 const STATUS_CONFIG = {
   OPEN: {
     bg: "bg-mint-soft",
@@ -115,21 +114,28 @@ const ShiftsPage = () => {
               Manage all scheduled shifts
             </p>
           </div>
-          <Link to={`/${role}/shifts/new`}>
-            <button className="inline-flex items-center gap-1.5 text-[13px] font-medium text-white bg-ink-900 hover:bg-ink-800 px-3 py-1.5 rounded-md shadow-soft transition-colors">
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.2"
-              >
-                <path d="M12 5v14M5 12h14" />
-              </svg>
-              New shift
-            </button>
-          </Link>
+          <div className="flex gap-4">
+            <Link to={`/${role}/shifts/new`}>
+              <button className="inline-flex items-center gap-1.5 text-[13px] font-medium text-white bg-ink-900 hover:bg-ink-800 px-3 py-1.5 rounded-md shadow-soft transition-colors">
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.2"
+                >
+                  <path d="M12 5v14M5 12h14" />
+                </svg>
+                New shift
+              </button>
+            </Link>
+            <Link to={`/${role}/shift-drafts`}>
+              <button className="inline-flex items-center gap-1.5 text-[13px] font-medium text-white bg-ink-900 hover:bg-ink-800 px-3 py-1.5 rounded-md shadow-soft transition-colors">
+                Shift drafts
+              </button>
+            </Link>
+          </div>
         </div>
         <div>
           <ShiftFilter filters={filters} onFilterChange={handleFilterChange} />
@@ -236,9 +242,8 @@ const ShiftsPage = () => {
                               <Link
                                 to={`/${role}/shifts/${shift.id}/assign-shift`}
                               >
-                                <button 
-                                // className="inline-flex items-center gap-1 text-[12px] font-medium bg-mint-soft hover:bg-mint-soft/80 border border-mint-ink/20 px-2.5 py-1 rounded-md text-mint-ink transition-colors"
-                                className="w-8 h-8 flex items-center justify-center rounded-md transition-colors bg-mint-soft border border-mint-ink/20 text-mint-ink hover:bg-mint-soft/80"
+                                <button
+                                  className="w-8 h-8 flex items-center justify-center rounded-md transition-colors bg-mint-soft border border-mint-ink/20 text-mint-ink hover:bg-mint-soft/80"
                                 >
                                   <FiUserCheck size={13} />
                                 </button>
@@ -248,9 +253,7 @@ const ShiftsPage = () => {
                           <Link
                             to={`/${role}/shifts/${shift.id}/shift-requests`}
                           >
-                            <button
-                              className="w-8 h-8 flex items-center justify-center rounded-md transition-colors bg-blue-50 border-blue-300 text-blue-ink hover:bg-blue-soft/80"
-                            >
+                            <button className="w-8 h-8 flex items-center justify-center rounded-md transition-colors bg-blue-50 border-blue-300 text-blue-ink hover:bg-blue-soft/80">
                               <HiEye size={13} />
                             </button>
                           </Link>
