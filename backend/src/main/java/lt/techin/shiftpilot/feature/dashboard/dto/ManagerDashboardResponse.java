@@ -6,6 +6,7 @@ public record ManagerDashboardResponse(
         TypeCounts swapSummary,
         TypeCounts leaveSummary,
         List<PendingRequestEntry> pendingRequests,
-        List<AttendanceEntry> todayAttendance
+        List<AttendanceEntry> todayAttendance,
+        CoverageEntry coverage
 ) {
 }

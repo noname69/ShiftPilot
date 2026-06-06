@@ -4,13 +4,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lt.techin.shiftpilot.feature.user.dto.CreateUserRequest;
 import lt.techin.shiftpilot.feature.user.dto.UpdateUserRequest;
-import lt.techin.shiftpilot.feature.user.dto.UserFilter;
 import lt.techin.shiftpilot.feature.user.dto.UserResponse;
 import lt.techin.shiftpilot.feature.user.service.UserService;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

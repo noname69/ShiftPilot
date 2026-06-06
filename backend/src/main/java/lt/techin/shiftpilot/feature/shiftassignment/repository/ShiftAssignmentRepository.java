@@ -117,4 +117,16 @@ public interface ShiftAssignmentRepository extends JpaRepository<ShiftAssignment
     where sa.shift.id in :shiftIds
 """)
     Set<Long> findUserIdsByShiftIds(@Param("shiftIds") List<Long> shiftIds);
+
+    @Query("""
+    SELECT sa FROM ShiftAssignment sa
+    JOIN sa.shift s
+    WHERE s.shiftDate = :today
+      AND s.createdBy.id = :managerId
+      AND sa.status = lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignmentStatus.ASSIGNED
+    """)
+    List<ShiftAssignment> findAssignedTodayByManagerId(
+            @Param("today") LocalDate today,
+            @Param("managerId") Long managerId
+    );
 }

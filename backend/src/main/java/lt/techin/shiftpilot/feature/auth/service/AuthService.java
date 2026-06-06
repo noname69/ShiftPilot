@@ -66,6 +66,8 @@ public class AuthService {
         response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
 
         return new AuthResponse(
+                user.getFirstName(),
+                user.getLastName(),
                 "Login successful",
                 user.getUsername(),
                 user.getId(),
@@ -99,6 +101,8 @@ public class AuthService {
         response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
 
         return new AuthResponse(
+                user.getFirstName(),
+                user.getLastName(),
                 "Token refreshed",
                 user.getUsername(),
                 user.getId(),
@@ -158,7 +162,7 @@ public class AuthService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new AuthenticationException("User with username '" + username + "' is not authenticated."));
 
-        return new AuthResponse("Authenticated", user.getUsername(), user.getId(), user.getRole());
+        return new AuthResponse(user.getFirstName(), user.getLastName(), "Authenticated", user.getUsername(), user.getId(), user.getRole());
 
     }
 }

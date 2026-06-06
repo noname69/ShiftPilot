@@ -4,6 +4,9 @@ import java.util.List;
 
 public record EmployeeDashboardResponse(
         List<UpcomingShiftEntry> upcomingShifts,
-        TypeCounts requestSummary
+        List<UpcomingShiftEntry> completedShifts,
+        TypeCounts requestSummary,
+        HoursSummary hoursSummary,
+        List<PendingRequestEntry> pendingRequests
 ) {
 }
