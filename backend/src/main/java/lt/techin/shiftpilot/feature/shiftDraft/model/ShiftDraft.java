@@ -1,44 +1,43 @@
-package lt.techin.shiftpilot.feature.shift.model;
+package lt.techin.shiftpilot.feature.shiftDraft.model;
 
 import jakarta.persistence.*;
 import lombok.*;
 import lt.techin.shiftpilot.feature.user.model.User;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
 @Entity
-@Table(name = "shifts")
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
-@ToString
-public class Shift {
+@Table(name = "shift_drafts")
+public class ShiftDraft {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true)
     private String title;
-    private String description;
 
-    private LocalDate shiftDate;
+    private String description;
     private LocalTime startTime;
     private LocalTime endTime;
     private int minEmployees;
 
-    @Enumerated(EnumType.STRING)
-    private ShiftStatus status;
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "created_by_user_id", nullable = false)
+    @JoinColumn(name = "created_by_user_id")
     private User createdBy;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "shiftDraft", cascade = CascadeType.ALL)
+    private List<DraftEmployee> draftEmployees;
 
     @PrePersist
     public void prePersist() {
@@ -51,5 +50,4 @@ public class Shift {
     public void preUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
-
 }

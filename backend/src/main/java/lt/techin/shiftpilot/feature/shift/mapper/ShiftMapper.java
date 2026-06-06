@@ -22,6 +22,7 @@ public class ShiftMapper {
     }
 
     public ShiftResponse toResponse(Shift shift) {
+
         return new ShiftResponse(
                 shift.getId(),
                 shift.getTitle(),

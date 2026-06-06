@@ -33,16 +33,16 @@ const useAuthStore = create(
       }
     },
 
-    // registerUser: async (formData, navigate) => {
-    //   try {
-    //     await api.post(`/users`, formData);
-    //     navigate("/");
-    //     toast.success("User registered successfully")
-    //   } catch (error) {
-    //     console.log(error);
-    //     toast.error(error.response.data.message);
-    //   }
-    // },
+    registerUser: async (formData, navigate) => {
+      try {
+        await api.post(`/users`, formData);
+        navigate("/");
+        toast.success("User registered successfully")
+      } catch (error) {
+        console.log(error);
+        toast.error(error.response.data.message);
+      }
+    },
 
     logoutUser: async (navigate) => {
       try {
