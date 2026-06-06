@@ -3,6 +3,7 @@ package lt.techin.shiftpilot.feature.shift.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lt.techin.shiftpilot.exception.core.BusinessException;
 import lt.techin.shiftpilot.feature.shift.dto.ShiftCreateRequest;
 import lt.techin.shiftpilot.feature.shift.dto.ShiftResponse;
 import lt.techin.shiftpilot.feature.shift.dto.ShiftUpdateRequest;
@@ -11,11 +12,16 @@ import lt.techin.shiftpilot.feature.shift.model.Shift;
 import lt.techin.shiftpilot.feature.shift.model.ShiftStatus;
 import lt.techin.shiftpilot.feature.shift.repository.ShiftRepository;
 import lt.techin.shiftpilot.feature.shift.repository.ShiftSpecifications;
+import lt.techin.shiftpilot.feature.shiftDraft.model.ShiftDraft;
+import lt.techin.shiftpilot.feature.shiftDraft.repository.DraftEmployeeRepository;
+import lt.techin.shiftpilot.feature.shiftassignment.dto.ShiftAssignRequest;
 import lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignment;
 import lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignmentStatus;
 import lt.techin.shiftpilot.feature.shiftassignment.repository.ShiftAssignmentRepository;
+import lt.techin.shiftpilot.feature.shiftassignment.service.ShiftAssignmentServiceImpl;
 import lt.techin.shiftpilot.feature.user.model.User;
 import lt.techin.shiftpilot.feature.user.repository.UserRepository;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -35,9 +41,12 @@ public class ShiftServiceImpl implements ShiftService {
     private final ShiftMapper shiftMapper;
     private final UserRepository userRepository;
     private final ShiftAssignmentRepository shiftAssignmentRepository;
+    private final ShiftAssignmentServiceImpl shiftAssignmentService;
+    private final DraftEmployeeRepository draftEmployeeRepository;
 
     @Override
     public ShiftResponse createShift(ShiftCreateRequest request, String username) {
+
         log.info("event=SHIFT_CREATE_REQUEST title={} shiftDate={} startTime={} endTime={} minEmployees={} createdByUsername={}",
                 request.title(),
                 request.shiftDate(),
@@ -64,12 +73,17 @@ public class ShiftServiceImpl implements ShiftService {
         ));
 
         Shift savedShift = shiftRepository.save(shift);
+        shiftRepository.flush();
 
         log.info("event=SHIFT_CREATED shiftId={} createdByUserId={} createdByUsername={}",
                 savedShift.getId(),
                 creator.getId(),
                 creator.getUsername()
         );
+
+        if(request.draftId() != null) {
+            createShiftFromDraft(username, request.userIds(), savedShift.getId());
+        }
 
         return shiftMapper.toResponse(savedShift);
     }
@@ -258,4 +272,13 @@ public class ShiftServiceImpl implements ShiftService {
 
         return shift;
     }
+
+    private void createShiftFromDraft(String username, List<Long> userIds, Long savedShiftId) {
+
+        ShiftAssignRequest assignees = new ShiftAssignRequest(userIds);
+
+        shiftAssignmentService.assignShift(username, assignees, savedShiftId);
+
+    }
+
 }

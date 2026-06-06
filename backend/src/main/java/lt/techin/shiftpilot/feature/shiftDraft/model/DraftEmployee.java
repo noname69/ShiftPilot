@@ -1,41 +1,32 @@
-package lt.techin.shiftpilot.feature.shift.model;
+package lt.techin.shiftpilot.feature.shiftDraft.model;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lt.techin.shiftpilot.feature.user.model.User;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 @Entity
-@Table(name = "shifts")
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-@ToString
-public class Shift {
+public class DraftEmployee {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String title;
-    private String description;
-
-    private LocalDate shiftDate;
-    private LocalTime startTime;
-    private LocalTime endTime;
-    private int minEmployees;
-
-    @Enumerated(EnumType.STRING)
-    private ShiftStatus status;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User draftEmployee;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "created_by_user_id", nullable = false)
-    private User createdBy;
+    @JoinColumn(name = "shift_draft_id")
+    private ShiftDraft shiftDraft;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -51,5 +42,4 @@ public class Shift {
     public void preUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
-
 }

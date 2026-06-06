@@ -15,6 +15,13 @@ const STATUS_CONFIG = {
     dot: "bg-rose-ink",
     label: "Assigned",
   },
+
+  OVERLAPPING: {
+    bg: "bg-yellow-100",
+    text: "text-yellow-800",
+    dot: "bg-yellow-500",
+    label: "Overlapping",
+  },
 };
 
 const StatusBadge = ({ status }) => {
@@ -29,30 +36,33 @@ const StatusBadge = ({ status }) => {
   );
 };
 
-
-const ShiftAssignmentsBody = ({ user, selectedUsers, setSelectedUsers, assignees, removeEmployee, shiftId, isAlreadyInAnotherShift }) => {
-
+const ShiftAssignmentsBody = ({
+  user,
+  selectedUsers,
+  setSelectedUsers,
+  assignees,
+  removeEmployee,
+  shiftId,
+  isAlreadyInAnotherShift,
+}) => {
   const { id, firstName, lastName, weeklyHours, email } = user || {};
-  const isAssigned = assignees.some(assignee => assignee.id === id);
+  const isAssigned = assignees.some((assignee) => assignee.id === id);
 
   const toggleUser = (userId) => {
     setSelectedUsers((prev) =>
       prev.includes(userId)
         ? prev.filter((id) => id !== userId)
-        : [...prev, userId]
+        : [...prev, userId],
     );
   };
 
   const handleRemoveEmployee = () => {
     removeEmployee(id, shiftId);
-  }
+  };
 
   return (
     <tbody className="divide-y divide-ink-100">
-      <tr
-        key={id}
-        className="hover:bg-ink-50/60 transition-colors"
-      >
+      <tr key={id} className="hover:bg-ink-50/60 transition-colors">
         <td className="px-4 py-3">
           <div className="flex items-center gap-2.5">
             <div className="w-7 h-7 rounded-full bg-violet-soft text-violet-ink text-[11px] font-semibold flex items-center justify-center">
@@ -67,28 +77,26 @@ const ShiftAssignmentsBody = ({ user, selectedUsers, setSelectedUsers, assignees
         </td>
 
         <td className="px-4 py-3 text-center">
-          <StatusBadge status={isAssigned ? "ASSIGNED" : "UNASSIGNED"} />
+          <StatusBadge status={isAssigned ? "ASSIGNED" : isAlreadyInAnotherShift ? "OVERLAPPING" : "UNASSIGNED"} />
         </td>
 
         <td className="px-4 py-3 font-mono text-[12px] text-ink-700 text-center">
           <p className="justify-center">{weeklyHours ?? 0}h</p>
         </td>
 
-        <td className="px-4 py-3 text-ink-500 text-[12px]">
-          {email}
-        </td>
+        <td className="px-4 py-3 text-ink-500 text-[12px]">{email}</td>
 
         <td className="px-4 py-3">
           <div className="flex justify-center">
             <MyCheckbox
-              checked={selectedUsers.includes(id) || isAlreadyInAnotherShift}
+              checked={selectedUsers.includes(id) || isAssigned}
               onChange={() => toggleUser(id)}
               disabled={isAssigned || isAlreadyInAnotherShift}
             />
           </div>
         </td>
 
-        {isAssigned &&
+        {isAssigned && (
           <td className="px-4 py-3">
             <div className="flex justify-center">
               <button
@@ -100,10 +108,10 @@ const ShiftAssignmentsBody = ({ user, selectedUsers, setSelectedUsers, assignees
               </button>
             </div>
           </td>
-        }
+        )}
       </tr>
     </tbody>
-  )
-}
+  );
+};
 
-export default ShiftAssignmentsBody
+export default ShiftAssignmentsBody;

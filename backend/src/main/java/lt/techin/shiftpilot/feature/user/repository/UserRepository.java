@@ -21,7 +21,7 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
     List<User> findAllByStatus(UserStatus status);
     List<User> findAllByStatusAndRoleNot(UserStatus status, UserRole role);
     Optional<User> findByUsername(String username);
-//    List<User> findByStatusNotIn(List<UserStatus> statuses);
+    List<User> findAllByIdIn(List<Long> ids);
 
     @Query("""
     select u
