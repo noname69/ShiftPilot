@@ -8,10 +8,10 @@ const useDashboardStore = create(
         employeeData: null,
         isLoading: false,
 
-        fetchManagerDashboard: async () => {
+        fetchManagerDashboard: async (weekStart, weekEnd) => {
             set({ isLoading: true });
             try {
-                const data = await getManagerDashboard();
+                const data = await getManagerDashboard(weekStart, weekEnd);
                 set({ managerData: data, isLoading: false });
             } catch (error) {
                 set({ isLoading: false });

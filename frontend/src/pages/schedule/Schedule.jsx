@@ -8,7 +8,7 @@ import {
   eachDayOfInterval,
   isToday,
 } from "date-fns";
-import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { getUserWeeklyShifts } from "../../api/shift"; // ← adjust path if needed
 import Footer from "../components/shared/Footer";      // ← adjust path if needed
 
@@ -96,30 +96,25 @@ const Schedule = () => {
           <div className="flex items-center gap-2">
             <button
               onClick={handleToday}
-              className="text-[13px] font-medium border border-ink-200 px-3 py-1.5 rounded-md text-ink-700 hover:bg-ink-50 transition-colors"
+              className="h-7 px-3 text-[12px] font-medium rounded-md border border-ink-200 text-ink-600 hover:bg-ink-100 transition"
             >
               Today
             </button>
-
-            <div className="flex items-center border border-ink-200 rounded-md overflow-hidden">
-              <button
-                onClick={handlePrevWeek}
-                className="px-2.5 py-1.5 hover:bg-ink-50 text-ink-600 transition-colors border-r border-ink-200"
-              >
-                <FiChevronLeft size={15} />
-              </button>
-
-              <span className="px-3 text-[13px] text-ink-700 font-medium min-w-47.5 text-center">
-                {weekLabel}
-              </span>
-
-              <button
-                onClick={handleNextWeek}
-                className="px-2.5 py-1.5 hover:bg-ink-50 text-ink-600 transition-colors border-l border-ink-200"
-              >
-                <FiChevronRight size={15} />
-              </button>
-            </div>
+            <button
+              onClick={handlePrevWeek}
+              className="w-7 h-7 flex items-center justify-center rounded-md border border-ink-200 text-ink-500 hover:bg-ink-100 transition"
+            >
+              <FaChevronLeft size={10} />
+            </button>
+            <span className="text-[12px] text-ink-600 font-mono min-w-47.5 text-center">
+              {weekLabel}
+            </span>
+            <button
+              onClick={handleNextWeek}
+              className="w-7 h-7 flex items-center justify-center rounded-md border border-ink-200 text-ink-500 hover:bg-ink-100 transition"
+            >
+              <FaChevronRight size={10} />
+            </button>
           </div>
         </div>
 
