@@ -1,10 +1,12 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import Footer from "../components/shared/Footer";
 import useUserStore from "../../store/userStore";
 import useAuthStore from "../../store/authStore";
 import { FiEdit2, FiTrash2, FiRotateCcw } from "react-icons/fi";
-import { formatDateTimeForFrontend } from "./../../utils/formatDateTime"
+import { formatDateTimeForFrontend } from "./../../utils/formatDateTime";
+import UserFilter from "./UserFilter";
+import Pagination from "../components/shared/Pagination";
 
 const STATUS_CONFIG = {
   ACTIVE: {
@@ -56,13 +58,34 @@ const StatusBadge = ({ status }) => {
 };
 
 const UsersPage = () => {
-  const { users, isLoading, fetchUsers, removeUser, udeleteUser } =
-    useUserStore();
+  const {
+    users,
+    isLoading,
+    searchUsers,
+    removeUser,
+    udeleteUser,
+    totalPages,
+    currentPage,
+  } = useUserStore();
   const role = useAuthStore((state) => state.user.role);
+  const [page, setPage] = useState(0);
+
+  const [filters, setFilters] = useState({
+    status: null,
+    role: null,
+    searchByFullName: null,
+  });
+
+  const handleFilterChange = (key, value) => {
+    setFilters((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+  };
 
   useEffect(() => {
-    fetchUsers();
-  }, [fetchUsers]);
+    searchUsers({ ...filters, page: page });
+  }, [searchUsers, filters, page]);
 
   const handleDelete = async (id) => {
     const confirmDelete = window.confirm("Delete this user?");
@@ -113,6 +136,9 @@ const UsersPage = () => {
             </button>
           </Link>
         </div>
+        <div>
+          <UserFilter filters={filters} onFilterChange={handleFilterChange} />
+        </div>
         {isLoading ? (
           <div className="flex items-center justify-center py-20 text-[13px] text-ink-400">
             Loading users…
@@ -152,9 +178,7 @@ const UsersPage = () => {
                       Status
                     </th>
 
-                    <th className="font-medium px-4 py-2.5 w-26">
-                      Out From
-                    </th>
+                    <th className="font-medium px-4 py-2.5 w-26">Out From</th>
                     <th className="text-left font-medium px-4 py-2.5 w-26">
                       Out Until
                     </th>
@@ -242,6 +266,11 @@ const UsersPage = () => {
             )}
           </div>
         )}
+        <Pagination
+          totalPages={totalPages}
+          currentPage={currentPage}
+          setPage={setPage}
+        />
       </main>
       <Footer />
     </div>

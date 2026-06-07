@@ -8,11 +8,13 @@ const useManagerApprovalsStore = create(
 
     requests: [],
     isLoading: false,
+    totalPages: 0,
+    currentPage: 0,
 
-    fetchManagerApprovals: async () => {
+    fetchManagerApprovals: async (filters) => {
       try {
         set({ isLoading: true });
-        const { data } = await api.get(`/managers/me/manager-approvals`);
+        const { data } = await api.get(`/managers/me/manager-approvals`, {params: filters});
         set(() => ({ requests: [...data.content] }));
       } catch (error) {
         console.log(error);
@@ -21,10 +23,10 @@ const useManagerApprovalsStore = create(
       }
     },
 
-    fetchUserRequests: async () => {
+    fetchUserRequests: async (filters ) => {
       try {
         set({ isLoading: true });
-        const { data } = await api.get(`/users/me/my-requests`);
+        const { data } = await api.get(`/users/me/my-requests`,  {params: filters});
         set(() => ({ requests: [...data.content] }));
       } catch (error) {
         console.log(error);
@@ -35,7 +37,6 @@ const useManagerApprovalsStore = create(
 
     processRequest: async (sendData) => {
       try {
-        console.log(sendData)
         set({ isLoading: true });
         const { data } = await api.post(`/managers/me/process-request`, sendData);
         return data.message;

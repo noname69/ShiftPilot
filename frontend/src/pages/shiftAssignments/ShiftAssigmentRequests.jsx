@@ -20,7 +20,7 @@ const ShiftAssignmentRequests = () => {
 
   const { userShifts, fetchUserShifts } = useShiftStore((state) => state);
 
-  const { sendSwapRequest, isLoading, error } = useSwapStore((state) => state);
+  const { sendSwapRequest } = useSwapStore((state) => state);
 
   const [modal, setModal] = useState(null);
   const [targetAssignment, setTargetAssignment] = useState(null);
@@ -121,12 +121,7 @@ const ShiftAssignmentRequests = () => {
             onClose={handleCloseSwapModal}
             myAssignments={userShifts}
             shiftId={shiftId}
-            // selectedAssignmentId={selectedAssignmentId}
-            // setSelectedAssignmentId={setSelectedAssignmentId}
-            // reason={reason}
-            // setReason={setReason}
             onSubmit={handleSwapRequestSubmit}
-            // loading={swapRequestLoading}
             assignedUsers={assignees}
           />
         </div>

@@ -15,6 +15,11 @@ export const getUsers = async () => {
   return response.data;
 };
 
+export const searchUsers = async (filters) => {
+  const response = await api.get("/users/search", {params: filters});
+  return response.data;
+};
+
 export const getUserById = async (id) => {
   const response = await api.get(`/users/${id}`);
   return response.data;

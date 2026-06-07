@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lt.techin.shiftpilot.exception.ResourceNotFoundException;
 import lt.techin.shiftpilot.exception.assignment.ApprovalException;
 import lt.techin.shiftpilot.exception.assignment.AssignmentNotFoundException;
-import lt.techin.shiftpilot.exception.assignment.ShiftAssignmentException;
 import lt.techin.shiftpilot.exception.user.UserNotFoundException;
 import lt.techin.shiftpilot.feature.leaverequest.mapper.LeaveRequestMapper;
 import lt.techin.shiftpilot.feature.leaverequest.model.LeaveRequest;
@@ -18,11 +17,10 @@ import lt.techin.shiftpilot.feature.managerapproval.model.ApprovalStatus;
 import lt.techin.shiftpilot.feature.managerapproval.model.ManagerApproval;
 import lt.techin.shiftpilot.feature.managerapproval.model.RequestType;
 import lt.techin.shiftpilot.feature.managerapproval.repository.ManagerApprovalRepository;
-import lt.techin.shiftpilot.feature.shift.model.Shift;
+import lt.techin.shiftpilot.feature.managerapproval.repository.ManagerApprovalSpecifications;
 import lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignment;
 import lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignmentStatus;
 import lt.techin.shiftpilot.feature.shiftassignment.repository.ShiftAssignmentRepository;
-import lt.techin.shiftpilot.feature.swaprequest.dto.ManagerSwapResponseRequest;
 import lt.techin.shiftpilot.feature.swaprequest.dto.TargetSwapResponseRequest;
 import lt.techin.shiftpilot.feature.swaprequest.mapper.SwapRequestMapper;
 import lt.techin.shiftpilot.feature.swaprequest.model.SwapRequest;
@@ -30,13 +28,15 @@ import lt.techin.shiftpilot.feature.swaprequest.repository.SwapRequestRepository
 import lt.techin.shiftpilot.feature.user.model.User;
 import lt.techin.shiftpilot.feature.user.model.UserStatus;
 import lt.techin.shiftpilot.feature.user.repository.UserRepository;
-import org.springframework.cglib.core.Local;
-import org.springframework.security.web.firewall.RequestRejectedException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -53,81 +53,144 @@ public class ManagerApprovalServiceImpl implements ManagerApprovalService{
     private final LeaveRequestRepository leaveRequestRepository;
 
     @Override
-    public ManagerApprovalsList getAllManagerApprovals(Long managerId) {
+    public ManagerApprovalsList getAllManagerApprovals(Long managerId, ApprovalStatus status, LocalDate createdFrom, LocalDate createdTo, String requester, Pageable pageable) {
 
+        LocalDateTime from = createdFrom != null
+                ? createdFrom.atStartOfDay()
+                : null;
 
-        List<ManagerApproval> approvalList =  managerApprovalRepository.findByManagerId(managerId);
+        LocalDateTime to = createdTo != null
+                ? createdTo.atTime(LocalTime.MAX)
+                : null;
 
-        List<ManagerApprovalResponse> responseList = approvalList.stream()
+        Specification<ManagerApproval> spec =
+                ManagerApprovalSpecifications.withFilters(
+                        managerId,
+                        null,
+                        status,
+                        from,
+                        to,
+                        requester
+                );
+
+        Page<ManagerApproval> page = managerApprovalRepository.findAll(spec, pageable);
+
+        List<ManagerApprovalResponse> content = page.getContent()
+                .stream()
                 .map(approval -> {
-                    ManagerApprovalResponse response = new ManagerApprovalResponse();
-                    response.setApprovalId(approval.getId());
 
-                    if(approval.getLeaveRequest() != null) {
-                        response.setLeaveResponse(leaveRequestMapper.leaveRequestToResponse(approval.getLeaveRequest()));
-                        response.setReason(approval.getLeaveRequest().getReason());
-                        response.setRequestId(approval.getLeaveRequest().getId());
-                    }
-                    else if (approval.getSwapRequest() != null) {
-                        response.setSwapResponse(swapRequestMapper.toResponse(approval.getSwapRequest()));
-                        response.setReason(approval.getSwapRequest().getReason());
-                        response.setRequestId(approval.getSwapRequest().getId());
-                    }
+                    ManagerApprovalResponse response = new ManagerApprovalResponse();
+
+                    response.setApprovalId(approval.getId());
                     response.setApprovalStatus(approval.getStatus());
                     response.setType(approval.getType());
                     response.setCreatedAt(approval.getCreatedAt());
+                    response.setManagerComment(approval.getManagerComment());
 
-                    if(approval.getClosedAt() != null) {
+                    if (approval.getClosedAt() != null) {
                         response.setCompletedAt(approval.getClosedAt());
                     }
 
-                    if(StringUtils.hasText(approval.getManagerComment())){
-                        response.setManagerComment(approval.getManagerComment());
-                    };
+                    if (approval.getLeaveRequest() != null) {
+                        response.setLeaveResponse(
+                                leaveRequestMapper.leaveRequestToResponse(approval.getLeaveRequest())
+                        );
+                        response.setReason(approval.getLeaveRequest().getReason());
+                        response.setRequestId(approval.getLeaveRequest().getId());
+                    }
+
+                    if (approval.getSwapRequest() != null) {
+                        response.setSwapResponse(
+                                swapRequestMapper.toResponse(approval.getSwapRequest())
+                        );
+                        response.setReason(approval.getSwapRequest().getReason());
+                        response.setRequestId(approval.getSwapRequest().getId());
+                    }
 
                     return response;
+                })
+                .toList();
 
-                }).toList();
+        ManagerApprovalsList response = new ManagerApprovalsList();
+        response.setContent(content);
+        response.setNumber(page.getNumber());
+        response.setSize(page.getSize());
+        response.setTotalElements(page.getTotalElements());
+        response.setTotalPages(page.getTotalPages());
+        response.setFirst(page.isFirst());
+        response.setLast(page.isLast());
 
-        return new ManagerApprovalsList(responseList);
+        return response;
     }
 
     @Override
-    public ManagerApprovalsList getAllUserRequests(Long userId) {
-        List<ManagerApproval> userRequests =  managerApprovalRepository.findAllByUserInvolved(userId);
+    public ManagerApprovalsList getAllUserRequests(Long userId, ApprovalStatus status, LocalDate createdFrom, LocalDate createdTo, Pageable pageable) {
 
-        List<ManagerApprovalResponse> responseList = userRequests.stream()
+        LocalDateTime from = createdFrom != null
+                ? createdFrom.atStartOfDay()
+                : null;
+
+        LocalDateTime to = createdTo != null
+                ? createdTo.atTime(LocalTime.MAX)
+                : null;
+
+        Specification<ManagerApproval> spec =
+                ManagerApprovalSpecifications.withFilters(
+                        null,
+                        userId,
+                        status,
+                        from,
+                        to,
+                        null
+                );
+
+        Page<ManagerApproval> page =
+                managerApprovalRepository.findAll(spec, pageable);
+
+        List<ManagerApprovalResponse> content = page.getContent()
+                .stream()
                 .map(approval -> {
-                    ManagerApprovalResponse response = new ManagerApprovalResponse();
-                    response.setApprovalId(approval.getId());
 
-                    if(approval.getLeaveRequest() != null) {
-                        response.setLeaveResponse(leaveRequestMapper.leaveRequestToResponse(approval.getLeaveRequest()));
-                        response.setReason(approval.getLeaveRequest().getReason());
-                        response.setRequestId(approval.getLeaveRequest().getId());
-                    }
-                    else {
-                        response.setSwapResponse(swapRequestMapper.toResponse(approval.getSwapRequest()));
-                        response.setReason(approval.getSwapRequest().getReason());
-                        response.setRequestId(approval.getSwapRequest().getId());
-                    }
+                    ManagerApprovalResponse response = new ManagerApprovalResponse();
+
+                    response.setApprovalId(approval.getId());
                     response.setApprovalStatus(approval.getStatus());
                     response.setType(approval.getType());
                     response.setCreatedAt(approval.getCreatedAt());
+                    response.setManagerComment(approval.getManagerComment());
 
-                    if(approval.getClosedAt() != null) {
+                    if (approval.getClosedAt() != null) {
                         response.setCompletedAt(approval.getClosedAt());
                     }
 
-                    if(StringUtils.hasText(approval.getManagerComment())){
-                        response.setManagerComment(approval.getManagerComment());
-                    };
+                    if (approval.getLeaveRequest() != null) {
+                        response.setLeaveResponse(
+                                leaveRequestMapper.leaveRequestToResponse(approval.getLeaveRequest())
+                        );
+                        response.setReason(approval.getLeaveRequest().getReason());
+                        response.setRequestId(approval.getLeaveRequest().getId());
+                    } else {
+                        response.setSwapResponse(
+                                swapRequestMapper.toResponse(approval.getSwapRequest())
+                        );
+                        response.setReason(approval.getSwapRequest().getReason());
+                        response.setRequestId(approval.getSwapRequest().getId());
+                    }
 
                     return response;
+                })
+                .toList();
 
-                }).toList();
+        ManagerApprovalsList response = new ManagerApprovalsList();
+        response.setContent(content);
+        response.setNumber(page.getNumber());
+        response.setSize(page.getSize());
+        response.setTotalElements(page.getTotalElements());
+        response.setTotalPages(page.getTotalPages());
+        response.setFirst(page.isFirst());
+        response.setLast(page.isLast());
 
-        return new ManagerApprovalsList(responseList);
+        return response;
     }
 
     @Transactional

@@ -1,24 +1,19 @@
-package lt.techin.shiftpilot.feature.managerapproval.dto;
+package lt.techin.shiftpilot.feature.user.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
 
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
-public class ManagerApprovalsList {
+public class UserListResponse {
 
-    private List<ManagerApprovalResponse> content;
+    private List<UserResponse> content;
     private Integer number;
     private Integer size;
     private Long totalElements;
     private Integer totalPages;
     private boolean first;
     private boolean last;
-
 }

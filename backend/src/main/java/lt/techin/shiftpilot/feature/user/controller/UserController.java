@@ -2,13 +2,22 @@ package lt.techin.shiftpilot.feature.user.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lt.techin.shiftpilot.feature.shift.model.ShiftStatus;
 import lt.techin.shiftpilot.feature.user.dto.CreateUserRequest;
 import lt.techin.shiftpilot.feature.user.dto.UpdateUserRequest;
+import lt.techin.shiftpilot.feature.user.dto.UserListResponse;
 import lt.techin.shiftpilot.feature.user.dto.UserResponse;
+import lt.techin.shiftpilot.feature.user.model.UserRole;
+import lt.techin.shiftpilot.feature.user.model.UserStatus;
 import lt.techin.shiftpilot.feature.user.service.UserService;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -21,6 +30,16 @@ public class UserController {
     @GetMapping
     public List<UserResponse> getAll() {
         return userService.getAll();
+    }
+
+    @GetMapping("/search")
+    public UserListResponse getFilteredUsers(
+            @RequestParam(required = false) UserStatus status,
+            @RequestParam(required = false) UserRole role,
+            @RequestParam(required = false) String searchByFullName,
+            @ParameterObject @PageableDefault(page = 0, size = 10, sort="createdAt", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
+        return userService.getFilteredUsers(status, role, searchByFullName, pageable);
     }
 
     @GetMapping("/{id}")
