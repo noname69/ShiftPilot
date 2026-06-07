@@ -120,17 +120,6 @@ const RequestRow = ({
     requesterShift = request.leaveResponse.requesterShift;
   }
 
-  // const isTargetUser = currentUserId === targetUser?.id;
-
-  // const canTargetRespond =
-  //   isTargetUser && status === "PENDING_TARGET_APPROVAL";
-
-  // const canManagerRespond =
-  //   isManager && status === "PENDING_MANAGER_APPROVAL";
-
-  // const canAdminRespond =
-  //   isAdmin && status === "PENDING_MANAGER_APPROVAL";
-
   const time = (t) => (t ? t.slice(0, 5) : "");
 
   return (

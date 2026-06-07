@@ -1,7 +1,9 @@
 package lt.techin.shiftpilot.feature.managerapproval.repository;
 
 import lt.techin.shiftpilot.feature.managerapproval.model.ManagerApproval;
+import lt.techin.shiftpilot.feature.user.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -9,7 +11,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface ManagerApprovalRepository extends JpaRepository<ManagerApproval, Long> {
+public interface ManagerApprovalRepository extends JpaRepository<ManagerApproval, Long>, JpaSpecificationExecutor<ManagerApproval> {
 
     List<ManagerApproval> findByManagerId(Long managerId);
 

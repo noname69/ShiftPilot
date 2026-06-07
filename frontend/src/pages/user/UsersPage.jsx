@@ -266,7 +266,11 @@ const UsersPage = () => {
             )}
           </div>
         )}
-        <Pagination totalPages={totalPages} currentPage={currentPage} setPage={setPage}/>
+        <Pagination
+          totalPages={totalPages}
+          currentPage={currentPage}
+          setPage={setPage}
+        />
       </main>
       <Footer />
     </div>
