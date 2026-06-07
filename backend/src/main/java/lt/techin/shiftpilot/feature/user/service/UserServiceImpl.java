@@ -7,6 +7,9 @@ import lt.techin.shiftpilot.exception.user.DuplicateUsernameException;
 import lt.techin.shiftpilot.exception.user.UserNotFoundException;
 import lt.techin.shiftpilot.feature.leaverequest.model.LeaveRequest;
 import lt.techin.shiftpilot.feature.leaverequest.repository.LeaveRequestRepository;
+import lt.techin.shiftpilot.feature.shift.model.ShiftStatus;
+import lt.techin.shiftpilot.feature.user.dto.UserListResponse;
+import lt.techin.shiftpilot.feature.user.model.UserRole;
 import lt.techin.shiftpilot.feature.user.repository.UserRepository;
 import lt.techin.shiftpilot.feature.user.dto.CreateUserRequest;
 import lt.techin.shiftpilot.feature.user.dto.UpdateUserRequest;
@@ -14,6 +17,10 @@ import lt.techin.shiftpilot.feature.user.dto.UserResponse;
 import lt.techin.shiftpilot.feature.user.mapper.UserMapper;
 import lt.techin.shiftpilot.feature.user.model.User;
 import lt.techin.shiftpilot.feature.user.model.UserStatus;
+import lt.techin.shiftpilot.feature.user.repository.UserSpecifications;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -135,4 +142,43 @@ public class UserServiceImpl implements UserService{
 
         user.setStatus(UserStatus.ACTIVE);
     }
+
+    @Override
+    public UserListResponse getFilteredUsers(UserStatus status, UserRole role, String searchByFullName, Pageable pageable) {
+
+        Specification<User> specification =
+                UserSpecifications.withFilters(
+                        status,
+                        role,
+                        searchByFullName
+                );
+
+        Page<User> pageUsers = userRepository.findAll(specification, pageable);
+
+        List<LeaveRequest> leaveRequests =
+                leaveRequestRepository.findByOutFromLessThanEqualAndOutTillGreaterThanEqual(LocalDate.now(), LocalDate.now());
+
+        List<UserResponse> userResponses = pageUsers.stream()
+                .map(user -> {
+                    for(LeaveRequest lr : leaveRequests) {
+                        if(lr.getRequester().getId().equals(user.getId())) {
+                            return userMapper.toResponse(user, lr.getOutFrom(), lr.getOutTill());
+                        }
+                    }
+                    return userMapper.toResponse(user);
+                }).toList();
+
+
+        UserListResponse response = new UserListResponse();
+        response.setContent(userResponses);
+        response.setNumber(pageUsers.getNumber());
+        response.setSize(pageUsers.getSize());
+        response.setTotalElements(pageUsers.getTotalElements());
+        response.setTotalPages(pageUsers.getTotalPages());
+        response.setFirst(pageUsers.isFirst());
+        response.setLast(pageUsers.isLast());
+
+        return response;
+    }
+
 }

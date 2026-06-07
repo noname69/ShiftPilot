@@ -25,8 +25,6 @@ public class UserScheduler {
     @Transactional
     public void activateUsersWhenAfterOutTillIsPassed() {
 
-        System.out.println("Scheduler");
-
         LocalDate today = LocalDate.now();
 
         List<LeaveRequest> leaveRequests = leaveRequestRepository.findByOutFromLessThanEqualAndOutTillGreaterThanEqual(today, today);

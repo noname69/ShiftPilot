@@ -6,6 +6,7 @@ import {
   updateUser,
   deleteUser,
   restoreUser,
+  searchUsers
 } from "../api/user";
 
 const useUserStore = create(
@@ -13,6 +14,9 @@ const useUserStore = create(
     users: [],
     isLoading: false,
     error: null,
+    totalPages: 0,
+    currentPage: 0,
+    totalElements: 0,
 
     fetchUsers: async () => {
       set({ isLoading: true, error: null });
@@ -30,6 +34,29 @@ const useUserStore = create(
           error: error.message,
           isLoading: false,
         });
+      }
+    },
+
+    searchUsers: async (filters) => {
+      set({ isLoading: true, error: null });
+
+      try {
+        const data = await searchUsers(filters);
+
+        set({
+          users: data.content,
+          totalPages: data.totalPages,
+          currentPage: data.number,
+          totalElements: data.totalElements,
+          isLoading: false,
+        });
+      } catch (error) {
+        set({
+          error: error.message,
+          isLoading: false,
+        });
+
+        console.error(error);
       }
     },
 
