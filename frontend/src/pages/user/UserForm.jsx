@@ -88,7 +88,7 @@ const UserForm = ({
       <InputField
         id="password"
         label="Password"
-        type="text"
+        type="password"
         required
         register={register}
         errors={errors}

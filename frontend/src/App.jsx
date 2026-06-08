@@ -76,6 +76,7 @@ function App() {
             <Route path="requests" element={<ManagerRequests />} />
             <Route path="users" element={<UsersPage />} />
             <Route path="users/new" element={<UserCreatePage />} />
+            <Route path="users/:userId/edit" element={<UserEditPage />} />
             <Route path="shifts/:shiftId/assign-shift" element={<ShiftAssignments />} />
             <Route path="shifts/:shiftId/shift-requests" element={<ShiftAssignmentRequests />} />
           </Route>

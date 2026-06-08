@@ -152,12 +152,12 @@ const Requests = ({ isManager = false, isUser = false }) => {
             ))}
           </tbody>
         </table>
-        <Pagination
-          totalPages={totalPages}
-          currentPage={currentPage}
-          setPage={setPage}
-        />
       </div>
+      <Pagination
+        totalPages={totalPages}
+        currentPage={currentPage}
+        setPage={setPage}
+      />
     </div>
   );
 };

@@ -7,6 +7,7 @@ import { FiEdit2, FiTrash2, FiRotateCcw } from "react-icons/fi";
 import { formatDateTimeForFrontend } from "./../../utils/formatDateTime";
 import UserFilter from "./UserFilter";
 import Pagination from "../components/shared/Pagination";
+import ConfirmationModal from "../components/shared/ConfirmationModal"
 
 const STATUS_CONFIG = {
   ACTIVE: {
@@ -63,12 +64,13 @@ const UsersPage = () => {
     isLoading,
     searchUsers,
     removeUser,
-    udeleteUser,
+    makeActive,
     totalPages,
     currentPage,
   } = useUserStore();
   const role = useAuthStore((state) => state.user.role);
   const [page, setPage] = useState(0);
+  const [modal, setModal] = useState(null);
 
   const [filters, setFilters] = useState({
     status: null,
@@ -87,28 +89,35 @@ const UsersPage = () => {
     searchUsers({ ...filters, page: page });
   }, [searchUsers, filters, page]);
 
-  const handleDelete = async (id) => {
-    const confirmDelete = window.confirm("Delete this user?");
 
-    if (!confirmDelete) return;
+  const handleRestore = (id) => {
 
-    const success = await removeUser(id);
+    const user = users.find((u) => u.id === id);
 
-    if (!success) {
-      console.log("Delete failed");
-    }
+    setModal({
+      title: "Restore user",
+      message: `Would you like to restore ${user.firstName + " " + user.lastName}?`,
+      confirmButton: "Restore",
+      onConfirm: async () => {
+        makeActive(id);
+      },
+    });
   };
 
-  const handleRestore = async (id) => {
-    const confirmRestore = window.confirm("Restore this user?");
+    const handleDelete = (id) => {
 
-    if (!confirmRestore) return;
-    const success = await udeleteUser(id);
+    const user = users.find((u) => u.id === id);
 
-    if (!success) {
-      console.log("Restore failed");
-    }
+    setModal({
+      title: "Remove user",
+      message: `Would you like to remove ${user.firstName + " " + user.lastName}?`,
+      confirmButton: "Remove",
+      onConfirm: async () => {
+        removeUser(id);
+      },
+    });
   };
+
 
   return (
     <div className="flex flex-col flex-1">
@@ -272,6 +281,7 @@ const UsersPage = () => {
           setPage={setPage}
         />
       </main>
+      <ConfirmationModal modal={modal} setModal={setModal}/>
       <Footer />
     </div>
   );

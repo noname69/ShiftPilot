@@ -2,6 +2,7 @@ package lt.techin.shiftpilot.feature.user.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lt.techin.shiftpilot.exception.core.BusinessException;
 import lt.techin.shiftpilot.exception.user.DuplicateEmailException;
 import lt.techin.shiftpilot.exception.user.DuplicateUsernameException;
 import lt.techin.shiftpilot.exception.user.UserNotFoundException;
@@ -112,17 +113,13 @@ public class UserServiceImpl implements UserService{
             user.setEmail(request.email());
         }
 
-        if (request.status() != null) {
-            user.setStatus(request.status());
-        }
-
         if (request.role() != null) {
             user.setRole(request.role());
         }
 
-//        User saved = userRepository.save(user);
+        User saved = userRepository.save(user);
 
-        return userMapper.toResponse(user);
+        return userMapper.toResponse(saved);
     }
 
     @Override
@@ -139,6 +136,10 @@ public class UserServiceImpl implements UserService{
     public void restore(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
+
+        if(!user.getStatus().equals(UserStatus.INACTIVE)) {
+            throw new BusinessException("Only inactive users can be restored.");
+        }
 
         user.setStatus(UserStatus.ACTIVE);
     }
