@@ -4,5 +4,6 @@ public enum ShiftStatus {
     OPEN,
     ONGOING,
     COMPLETED,
-    CANCELLED
+    CANCELLED,
+    DELETED
 }

@@ -44,6 +44,7 @@ const ShiftAssignmentsBody = ({
   removeEmployee,
   shiftId,
   isAlreadyInAnotherShift,
+  shiftStatus,
 }) => {
   const { id, firstName, lastName, weeklyHours, email } = user || {};
   const isAssigned = assignees.some((assignee) => assignee.id === id);
@@ -96,7 +97,7 @@ const ShiftAssignmentsBody = ({
           </div>
         </td>
 
-        {isAssigned && (
+        {isAssigned && shiftStatus === "OPEN" && (
           <td className="px-4 py-3">
             <div className="flex justify-center">
               <button

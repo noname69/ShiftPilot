@@ -37,7 +37,7 @@ const StatusBadge = ({ status }) => {
   );
 };
 
-const ShiftAssignmentRequestsBody = ({ assignee, onRemove, onOpenSwap }) => {
+const ShiftAssignmentRequestsBody = ({ assignee, onRemove, onOpenSwap, shiftStatus }) => {
   const role = useAuthStore((state) => state.user.role);
   const { id, firstName, lastName, weeklyHours, email, status, assigneeId } =
     assignee || {};
@@ -72,7 +72,7 @@ const ShiftAssignmentRequestsBody = ({ assignee, onRemove, onOpenSwap }) => {
 
         <td className="px-4 py-3 flex justify-center">
           <div className="flex justify-end gap-2">
-            {status === "ASSIGNED" && (
+            {status === "ASSIGNED" && shiftStatus === "OPEN" && (
               <>
                 <button
                   disabled={isCurrentUser}

@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-import { createShift, updateShift, getShifts, cancelShift, getUserShifts, getShiftById } from "../api/shift";
+import { createShift, updateShift, getShifts, deleteShift, getUserShifts, getShiftById } from "../api/shift";
 import toast from "react-hot-toast";
 
 const useShiftStore = create(
@@ -72,11 +72,9 @@ const useShiftStore = create(
     },
 
     removeShift: async (id) => {
-      await cancelShift(id);
+      await deleteShift(id);
       set((state) => ({
-        shifts: state.shifts.map((s) =>
-          s.id === id ? { ...s, status: "CANCELLED" } : s
-        ),
+        shifts: state.shifts.filter((s) => s.id !== id),
       }));
     },
 

@@ -5,6 +5,7 @@ import ShiftForm from "./ShiftForm";
 import useShiftStore from "../../store/shiftStore";
 import { getShiftById } from "../../api/shift";
 import useAuthStore from "../../store/authStore";
+import toast from "react-hot-toast";
 
 const ShiftEditPage = () => {
   const { id } = useParams();
@@ -31,7 +32,10 @@ const ShiftEditPage = () => {
 
   const onSubmit = async (data) => {
     const success = await editShift(id, data);
-    if (success) navigate("/shifts");
+    if (success) {
+      toast.success("Shift changes saved");
+      navigate(`/${role}/shifts`);
+    }
   };
   return (
     <div className="flex flex-col flex-1">

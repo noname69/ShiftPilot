@@ -20,6 +20,6 @@ public interface ShiftService {
 
     ShiftResponse updateShift(Long id, ShiftUpdateRequest request);
 
-    void cancelShift(Long id, String username);
+    void deleteShift(Long id, String username);
 
 }

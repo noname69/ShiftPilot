@@ -12,16 +12,18 @@ import lt.techin.shiftpilot.feature.shift.model.Shift;
 import lt.techin.shiftpilot.feature.shift.model.ShiftStatus;
 import lt.techin.shiftpilot.feature.shift.repository.ShiftRepository;
 import lt.techin.shiftpilot.feature.shift.repository.ShiftSpecifications;
-import lt.techin.shiftpilot.feature.shiftDraft.model.ShiftDraft;
 import lt.techin.shiftpilot.feature.shiftDraft.repository.DraftEmployeeRepository;
 import lt.techin.shiftpilot.feature.shiftassignment.dto.ShiftAssignRequest;
 import lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignment;
 import lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignmentStatus;
 import lt.techin.shiftpilot.feature.shiftassignment.repository.ShiftAssignmentRepository;
+import lt.techin.shiftpilot.feature.managerapproval.model.ApprovalStatus;
+import lt.techin.shiftpilot.feature.notification.model.NotificationType;
+import lt.techin.shiftpilot.feature.notification.service.NotificationService;
 import lt.techin.shiftpilot.feature.shiftassignment.service.ShiftAssignmentServiceImpl;
+import lt.techin.shiftpilot.feature.swaprequest.repository.SwapRequestRepository;
 import lt.techin.shiftpilot.feature.user.model.User;
 import lt.techin.shiftpilot.feature.user.repository.UserRepository;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -29,6 +31,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Slf4j
@@ -43,6 +46,11 @@ public class ShiftServiceImpl implements ShiftService {
     private final ShiftAssignmentRepository shiftAssignmentRepository;
     private final ShiftAssignmentServiceImpl shiftAssignmentService;
     private final DraftEmployeeRepository draftEmployeeRepository;
+    private final NotificationService notificationService;
+    private final SwapRequestRepository swapRequestRepository;
+
+    private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private static final DateTimeFormatter TIME_FMT = DateTimeFormatter.ofPattern("HH:mm");
 
     @Override
     public ShiftResponse createShift(ShiftCreateRequest request, String username) {
@@ -138,7 +146,7 @@ public class ShiftServiceImpl implements ShiftService {
         shift.setStartTime(request.startTime());
         shift.setEndTime(request.endTime());
         shift.setMinEmployees(request.minEmployees());
-        if (shift.getStatus() != ShiftStatus.CANCELLED) {
+        if (shift.getStatus() != ShiftStatus.CANCELLED && shift.getStatus() != ShiftStatus.DELETED) {
             shift.setStatus(calculateStatus(
                     request.shiftDate(),
                     request.startTime(),
@@ -165,41 +173,54 @@ public class ShiftServiceImpl implements ShiftService {
     }
 
     @Override
-    public void cancelShift(Long id, String username) {
-        log.info("event=SHIFT_CANCEL_REQUEST shiftId={} requestedByUsername={}", id, username);
+    public void deleteShift(Long id, String username) {
+        log.info("event=SHIFT_DELETE_REQUEST shiftId={} requestedByUsername={}", id, username);
 
         Shift shift = findShiftById(id);
 
-        if (shift.getStatus() == ShiftStatus.CANCELLED) {
-            throw new IllegalStateException("Shift is already cancelled.");
+        if (shift.getStatus() != ShiftStatus.OPEN) {
+            throw new IllegalStateException("Only OPEN shifts can be deleted.");
         }
-
-        if (shift.getStatus() == ShiftStatus.ONGOING) {
-            throw new IllegalStateException("Cannot cancel an ongoing shift.");
-        }
-
-        if (shift.getStatus() == ShiftStatus.COMPLETED) {
-            throw new IllegalStateException("Cannot cancel a completed shift.");
-        }
-
-        shift.setStatus(ShiftStatus.CANCELLED);
-        shiftRepository.save(shift);
 
         List<ShiftAssignment> assignments = shiftAssignmentRepository.findAllByShiftId(id);
+
+        String dateStr = shift.getShiftDate().format(DATE_FMT);
+        String timeStr = shift.getStartTime().format(TIME_FMT) + " - " + shift.getEndTime().format(TIME_FMT);
+
         assignments.stream()
                 .filter(a -> a.getStatus() == ShiftAssignmentStatus.ASSIGNED)
-                .forEach(a -> {
-                    a.setStatus(ShiftAssignmentStatus.REMOVED);
-                    a.setRemovedAt(java.time.LocalDateTime.now());
-                });
-        shiftAssignmentRepository.saveAll(assignments);
+                .forEach(a -> notificationService.createNotification(
+                        a.getUser(),
+                        "Removed from shift",
+                        String.format("You have been removed from shift: %s, %s, %s",
+                                shift.getTitle(), dateStr, timeStr),
+                        NotificationType.SHIFT_CANCELLED
+                ));
 
-        log.info("event=SHIFT_CANCELLED shiftId={} title={} shiftDate={} cancelledByUsername={}",
-                shift.getId(),
-                shift.getTitle(),
-                shift.getShiftDate(),
-                username
-        );
+        List<ShiftAssignment> assignedAssignments = assignments.stream()
+                .filter(a -> a.getStatus() == ShiftAssignmentStatus.ASSIGNED)
+                .toList();
+
+        assignedAssignments.forEach(a -> {
+            a.setStatus(ShiftAssignmentStatus.REMOVED);
+            a.setRemovedAt(java.time.LocalDateTime.now());
+        });
+        shiftAssignmentRepository.saveAll(assignedAssignments);
+
+        if (!assignments.isEmpty()) {
+            List<Long> assignmentIds = assignments.stream().map(ShiftAssignment::getId).toList();
+            swapRequestRepository.findAllByAssignmentIds(assignmentIds).forEach(sr -> {
+                if (sr.getApproval() != null) {
+                    sr.getApproval().setStatus(ApprovalStatus.CANCELLED);
+                }
+            });
+        }
+
+        shift.setStatus(ShiftStatus.DELETED);
+        shiftRepository.save(shift);
+
+        log.info("event=SHIFT_DELETED shiftId={} title={} shiftDate={} deletedByUsername={}",
+                id, shift.getTitle(), shift.getShiftDate(), username);
     }
 
     private Shift findShiftById(Long id) {
@@ -245,7 +266,7 @@ public class ShiftServiceImpl implements ShiftService {
     }
 
     private Shift refreshStatusIfNeeded(Shift shift) {
-        if (shift.getStatus() == ShiftStatus.CANCELLED) {
+        if (shift.getStatus() == ShiftStatus.CANCELLED || shift.getStatus() == ShiftStatus.DELETED) {
             return shift;
         }
 
