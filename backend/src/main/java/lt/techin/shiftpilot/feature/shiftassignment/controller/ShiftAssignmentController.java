@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lt.techin.shiftpilot.feature.shiftassignment.dto.*;
 import lt.techin.shiftpilot.feature.shiftassignment.service.ShiftAssignmentService;
+import lt.techin.shiftpilot.feature.user.model.UserStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -69,10 +70,11 @@ public class ShiftAssignmentController {
     @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
     @GetMapping("/shift-assignments/schedule")
     public ResponseEntity<WeeklyScheduleResponse> getAllWeeklyUsersSchedule(
+            @RequestParam(required = false) Long userId,
             @RequestParam LocalDate weekStart,
             @RequestParam LocalDate weekEnd) {
 
-        WeeklyScheduleResponse scheduleResponse = shiftAssignmentService.getAllUsersScheduleByWeek(weekStart, weekEnd);
+        WeeklyScheduleResponse scheduleResponse = shiftAssignmentService.getAllUsersScheduleByWeek(userId, weekStart, weekEnd);
 
         return ResponseEntity.ok(scheduleResponse);
     }

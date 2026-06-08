@@ -23,10 +23,12 @@ import lt.techin.shiftpilot.feature.shiftassignment.dto.*;
 import lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignment;
 import lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignmentStatus;
 import lt.techin.shiftpilot.feature.shiftassignment.repository.ShiftAssignmentRepository;
+import lt.techin.shiftpilot.feature.shiftassignment.repository.ShiftAssignmentSpecifications;
 import lt.techin.shiftpilot.feature.user.mapper.UserMapper;
 import lt.techin.shiftpilot.feature.user.model.User;
 import lt.techin.shiftpilot.feature.user.model.UserStatus;
 import lt.techin.shiftpilot.feature.user.repository.UserRepository;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -268,9 +270,21 @@ public class ShiftAssignmentServiceImpl implements ShiftAssignmentService{
     }
 
     @Override
-    public WeeklyScheduleResponse getAllUsersScheduleByWeek(LocalDate weekStart, LocalDate weekEnd) {
+    public WeeklyScheduleResponse getAllUsersScheduleByWeek(
+            Long userId,
+            LocalDate weekStart,
+            LocalDate weekEnd
+    ) {
 
-        List<ShiftAssignment> assignments = shiftAssignmentRepository.findByShiftDateBetween(weekStart, weekEnd);
+        Specification<ShiftAssignment> spec =
+                ShiftAssignmentSpecifications.withFilters(
+                        userId,
+                        weekStart,
+                        weekEnd
+                );
+
+        List<ShiftAssignment> assignments =
+                shiftAssignmentRepository.findAll(spec);
 
         List<UserScheduleResponse> shifts = assignments.stream()
                 .map(sa -> {
@@ -287,10 +301,11 @@ public class ShiftAssignmentServiceImpl implements ShiftAssignmentService{
                 })
                 .toList();
 
-        List<LeaveRequest> leaveRequests = leaveRequestRepository.findApprovedLeaveRequestsInRange(
-                weekStart,
-                weekEnd
-        );
+        List<LeaveRequest> leaveRequests =
+                leaveRequestRepository.findApprovedLeaveRequestsInRange(
+                        weekStart,
+                        weekEnd
+                );
 
         List<LeaveScheduleEntry> leaveEntries = leaveRequests.stream()
                 .map(lr -> new LeaveScheduleEntry(

@@ -18,5 +18,5 @@ public interface ShiftAssignmentService {
 
     void removeEmployeeFromShift(Long userId, Long shiftId);
 
-    WeeklyScheduleResponse getAllUsersScheduleByWeek(LocalDate weekStart, LocalDate weekEnd);
+    WeeklyScheduleResponse getAllUsersScheduleByWeek(Long userId, LocalDate weekStart, LocalDate weekEnd);
 }
