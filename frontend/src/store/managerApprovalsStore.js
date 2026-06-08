@@ -14,8 +14,12 @@ const useManagerApprovalsStore = create(
     fetchManagerApprovals: async (filters) => {
       try {
         set({ isLoading: true });
-        const { data } = await api.get(`/managers/me/manager-approvals`, {params: filters});
-        set(() => ({ requests: [...data.content] }));
+        const { data } = await api.get(`/managers/me/manager-approvals`, { params: filters });
+        set({
+          requests: data.content,
+          totalPages: data.totalPages,
+          currentPage: data.number,
+        });
       } catch (error) {
         console.log(error);
       } finally {
@@ -23,11 +27,15 @@ const useManagerApprovalsStore = create(
       }
     },
 
-    fetchUserRequests: async (filters ) => {
+    fetchUserRequests: async (filters) => {
       try {
         set({ isLoading: true });
-        const { data } = await api.get(`/users/me/my-requests`,  {params: filters});
-        set(() => ({ requests: [...data.content] }));
+        const { data } = await api.get(`/users/me/my-requests`, { params: filters });
+        set({
+          requests: data.content,
+          totalPages: data.totalPages,
+          currentPage: data.number,
+        });
       } catch (error) {
         console.log(error);
       } finally {
@@ -45,9 +53,9 @@ const useManagerApprovalsStore = create(
         console.log("DATA:", error.response?.data);
         console.log("MESSAGE:", error.message);
       } finally {
-      set({ isLoading: false });
-    }
-  },
+        set({ isLoading: false });
+      }
+    },
 
   })),
 );

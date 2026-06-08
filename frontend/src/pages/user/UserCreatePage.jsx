@@ -10,11 +10,7 @@ const UserCreatePage = () => {
   const role = useAuthStore(state => state.user.role);
 
   const onSubmit = async (data) => {
-    const result = await addUser(data);
-    if (!result.success) {
-      return;
-    }
-    navigate(`/${role}/users`);
+    await addUser(data, navigate, role);
   };
 
   return (

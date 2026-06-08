@@ -8,6 +8,7 @@ import {
   restoreUser,
   searchUsers
 } from "../api/user";
+import toast from "react-hot-toast";
 
 const useUserStore = create(
   devtools((set) => ({
@@ -60,49 +61,34 @@ const useUserStore = create(
       }
     },
 
-    addUser: async (formData) => {
+    addUser: async (formData, navigate, role) => {
       set({ isLoading: true, error: null });
       try {
         await createUser(formData);
-
         set({ isLoading: false });
-        return { success: true };
+        navigate(`/${role}/users`);
+        toast.success("User created successfully");
+
       } catch (error) {
         set({ isLoading: false });
-
-        const message =
-          error?.response?.data?.message || "Failed to create user";
-
-        set({ error: message });
-
-        return {
-          success: false,
-          message,
-          status: error?.response?.status,
-        };
+        console.log(error);
+        const msg = error?.response?.data?.message || error.message || "Failed to create a user";
+        toast.error(msg);
       }
     },
 
-    editUser: async (id, formData) => {
+    editUser: async (id, formData, navigate, role) => {
       set({ isLoading: true, error: null });
       try {
         await updateUser(id, formData);
-
         set({ isLoading: false });
-        return { success: true };
+        navigate(`/${role}/users`);
+        toast.success("User updated successfully");
       } catch (error) {
         set({ isLoading: false });
-
         const message =
           error?.response?.data?.message || "Failed to update user";
-
-        set({ error: message });
-
-        return {
-          success: false,
-          message,
-          status: error?.response?.status,
-        };
+        toast.error(message);
       }
     },
 
@@ -111,19 +97,19 @@ const useUserStore = create(
         await deleteUser(id);
 
         set((state) => ({
-          users: state.users.map((u) =>
-            u.id === id ? { ...u, status: "INACTIVE" } : u,
+          users: state.users.map((user) =>
+            user.id === id ? { ...user, status: "INACTIVE" } : user,
           ),
         }));
-
-        return true;
+        toast.success("User removed successfully");
       } catch (error) {
         console.error(error);
-        return false;
+        const msg = error?.response?.data?.message || error.message || "Failed to remove user";
+        toast.error(msg);
       }
     },
 
-    udeleteUser: async (id) => {
+    makeActive: async (id) => {
       try {
         await restoreUser(id);
         set((state) => ({
@@ -131,10 +117,10 @@ const useUserStore = create(
             user.id === id ? { ...user, status: "ACTIVE" } : user,
           ),
         }));
-        return true;
+        toast.success("User restored successfully");
       } catch (error) {
-        console.error(error);
-        return false;
+        const msg = error?.response?.data?.message || error.message;
+        toast.error(msg);
       }
     },
   })),

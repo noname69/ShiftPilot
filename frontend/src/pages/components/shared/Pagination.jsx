@@ -1,13 +1,14 @@
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 
 const Pagination = ({ totalPages, currentPage, setPage }) => {
+
   return (
     <>
-      {totalPages > 1 && (
-        <div className="flex items-center justify-between px-4 py-3 border-t border-ink-200">
-          <p className="text-[13px] text-ink-500">
-            Page {currentPage + 1} of {totalPages}
-          </p>
+      <div className="flex items-center justify-between px-4 py-3 border-t border-ink-200">
+        <p className="text-[13px] text-ink-500">
+          Page {currentPage + 1} of {totalPages}
+        </p>
+        {totalPages > 1 && (
           <div className="flex items-center gap-1">
             <button
               onClick={() => setPage((p) => p - 1)}
@@ -37,8 +38,8 @@ const Pagination = ({ totalPages, currentPage, setPage }) => {
               <FiChevronRight size={14} />
             </button>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </>
   );
 };

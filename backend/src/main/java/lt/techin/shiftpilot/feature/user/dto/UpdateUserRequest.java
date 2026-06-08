@@ -16,9 +16,6 @@ public record UpdateUserRequest(
         String email,
 
         @NotNull
-        UserRole role,
-
-        @NotNull
-        UserStatus status
+        UserRole role
 ) {
 }

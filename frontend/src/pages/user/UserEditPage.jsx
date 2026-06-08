@@ -1,14 +1,16 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router";
 import Footer from "../components/shared/Footer";
-import UserForm from "./UserForm";
+import EditUserFrom from "./EditUserFrom";
 import useUserStore from "../../store/userStore";
 import useAuthStore from "../../store/authStore";
+import ConfirmationModal from "../components/shared/ConfirmationModal"
 
 const UserEditPage = () => {
-  const { id } = useParams();
+  const { userId } = useParams();
   const navigate = useNavigate();
-  const role = useAuthStore(state => state.user.role);
+  const role = useAuthStore((state) => state.user.role);
+  const [modal, setModal] = useState(null);
 
   const { users, fetchUsers, editUser, error } = useUserStore();
 
@@ -18,14 +20,18 @@ const UserEditPage = () => {
     }
   }, [users.length, fetchUsers]);
 
-  const user = users.find((u) => String(u.id) === id);
+  const user = users.find((u) => String(u.id) === userId);
 
-  const onSubmit = async (data) => {
-    const result = await editUser(id, data);
-    if (!result.success) {
-      return;
-    }
-    navigate(`/${role}/users`);
+  const onSubmit = (data) => {
+    const user = users.find((u) => String(u.id) === userId);
+    setModal({
+      title: "Update user info",
+      message: `Would you like to update ${user.firstName + " " + user.lastName}?`,
+      confirmButton: "Update",
+      onConfirm: async () => {
+        editUser(userId, data, navigate, role);
+      },
+    });
   };
 
   return (
@@ -40,12 +46,7 @@ const UserEditPage = () => {
 
           <div className="my-card">
             {user ? (
-              <UserForm
-                onSubmit={onSubmit}
-                defaultValues={user}
-                submitLabel="Update User"
-                isEdit={true}
-              />
+              <EditUserFrom onSubmit={onSubmit} defaultValues={user} />
             ) : (
               <p className="text-sm text-gray-500">Loading user...</p>
             )}
@@ -65,6 +66,7 @@ const UserEditPage = () => {
           </div>
         </div>
       </main>
+      <ConfirmationModal modal={modal} setModal={setModal}/>
 
       <Footer />
     </div>
