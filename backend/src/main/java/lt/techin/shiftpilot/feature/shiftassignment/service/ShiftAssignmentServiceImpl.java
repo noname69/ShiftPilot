@@ -267,6 +267,43 @@ public class ShiftAssignmentServiceImpl implements ShiftAssignmentService{
         shiftAssignmentRepository.delete(assignment);
     }
 
+    @Override
+    public WeeklyScheduleResponse getAllUsersScheduleByWeek(LocalDate weekStart, LocalDate weekEnd) {
+
+        List<ShiftAssignment> assignments = shiftAssignmentRepository.findByShiftDateBetween(weekStart, weekEnd);
+
+        List<UserScheduleResponse> shifts = assignments.stream()
+                .map(sa -> {
+                    Shift shift = sa.getShift();
+                    return new UserScheduleResponse(
+                            sa.getId(),
+                            shift.getId(),
+                            shift.getTitle(),
+                            shift.getShiftDate(),
+                            shift.getStartTime(),
+                            shift.getEndTime(),
+                            sa.getStatus()
+                    );
+                })
+                .toList();
+
+        List<LeaveRequest> leaveRequests = leaveRequestRepository.findApprovedLeaveRequestsInRange(
+                weekStart,
+                weekEnd
+        );
+
+        List<LeaveScheduleEntry> leaveEntries = leaveRequests.stream()
+                .map(lr -> new LeaveScheduleEntry(
+                        lr.getId(),
+                        lr.getApproval().getType(),
+                        lr.getOutFrom(),
+                        lr.getOutTill()
+                ))
+                .toList();
+
+        return new WeeklyScheduleResponse(shifts, leaveEntries);
+    }
+
     private Set<Long> preventOverlappingShift(Shift shift) {
 
         List<Shift> overlappingShifts = shiftRepository

@@ -31,6 +31,22 @@ public interface LeaveRequestRepository extends JpaRepository<LeaveRequest, Long
             @Param("weekEnd") LocalDate weekEnd
     );
 
+    @Query("""
+    select lr from LeaveRequest lr
+    where lr.approval.status = lt.techin.shiftpilot.feature.managerapproval.model.ApprovalStatus.APPROVED
+    and lr.approval.type in (
+        lt.techin.shiftpilot.feature.managerapproval.model.RequestType.ILL,
+        lt.techin.shiftpilot.feature.managerapproval.model.RequestType.ABSENCE,
+        lt.techin.shiftpilot.feature.managerapproval.model.RequestType.VACATION
+    )
+    and lr.outFrom <= :weekEnd
+    and lr.outTill >= :weekStart
+    """)
+    List<LeaveRequest> findApprovedLeaveRequestsInRange(
+            @Param("weekStart") LocalDate weekStart,
+            @Param("weekEnd") LocalDate weekEnd
+    );
+
     List<LeaveRequest> findByOutTillGreaterThanEqual(LocalDate date);
 
     List<LeaveRequest> findByOutFromLessThanEqualAndOutTillGreaterThanEqual(

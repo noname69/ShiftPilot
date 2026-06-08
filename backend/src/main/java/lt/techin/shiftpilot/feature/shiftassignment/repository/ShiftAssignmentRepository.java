@@ -112,10 +112,21 @@ public interface ShiftAssignmentRepository extends JpaRepository<ShiftAssignment
     );
 
     @Query("""
+    select sa
+    from ShiftAssignment sa
+    where sa.shift.shiftDate >= :weekStart
+    and sa.shift.shiftDate <= :weekEnd
+    """)
+    List<ShiftAssignment> findByShiftDateBetween(
+            @Param("weekStart") LocalDate weekStart,
+            @Param("weekEnd") LocalDate weekEnd
+    );
+
+    @Query("""
     select sa.user.id
     from ShiftAssignment sa
     where sa.shift.id in :shiftIds
-""")
+    """)
     Set<Long> findUserIdsByShiftIds(@Param("shiftIds") List<Long> shiftIds);
 
     @Query("""

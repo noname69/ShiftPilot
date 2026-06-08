@@ -46,6 +46,4 @@ public class ShiftAssignment {
         this.status = ShiftAssignmentStatus.ASSIGNED;
     }
 
-
-
 }

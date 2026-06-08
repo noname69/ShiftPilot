@@ -9,10 +9,10 @@ import {
   isToday,
 } from "date-fns";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import { getAllUsersWeeklyShifts } from "../../api/shift"; // ← adjust path if needed
+import { getUserWeeklyShifts } from "../../api/shift"; // ← adjust path if needed
 import Footer from "../components/shared/Footer";      // ← adjust path if needed
 
-const Schedule = () => {
+const UserSchedule = () => {
   const [currentWeekStart, setCurrentWeekStart] = useState(
     startOfWeek(new Date(), { weekStartsOn: 1 })
   );
@@ -30,7 +30,7 @@ const Schedule = () => {
     const fetchSchedule = async (start, end) => {
       setIsLoading(true);
       try {
-        const data = await getAllUsersWeeklyShifts({
+        const data = await getUserWeeklyShifts({
           weekStart: start,
           weekEnd: end,
         });
@@ -85,10 +85,10 @@ const Schedule = () => {
         <div className="flex flex-wrap items-end justify-between gap-4 mb-6">
           <div>
             <h1 className="font-serif text-[32px] leading-tight text-ink-900 tracking-tight">
-              Schedule
+              My Schedule
             </h1>
             <p className="text-[13px] text-ink-500 mt-0.5">
-              Weekly shift assignments for users
+              Your assigned shifts for the week
             </p>
           </div>
 
@@ -175,7 +175,7 @@ const Schedule = () => {
                       <>
                         {dayShifts.map((shift) => (
                           <div
-                            key={shift.assignmentId}
+                            key={shift.shiftId}
                             className="bg-mint-soft border border-mint-ink/20 rounded-md px-2 py-1.5"
                           >
                             <p className="text-[11.5px] font-medium text-mint-ink truncate">
@@ -218,4 +218,4 @@ const Schedule = () => {
   );
 };
 
-export default Schedule;
+export default UserSchedule;

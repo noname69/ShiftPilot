@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lt.techin.shiftpilot.feature.shiftassignment.dto.*;
 import lt.techin.shiftpilot.feature.shiftassignment.service.ShiftAssignmentService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -64,6 +65,18 @@ public class ShiftAssignmentController {
 
         return ResponseEntity.ok().body(response);
     }
+
+    @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
+    @GetMapping("/shift-assignments/schedule")
+    public ResponseEntity<WeeklyScheduleResponse> getAllWeeklyUsersSchedule(
+            @RequestParam LocalDate weekStart,
+            @RequestParam LocalDate weekEnd) {
+
+        WeeklyScheduleResponse scheduleResponse = shiftAssignmentService.getAllUsersScheduleByWeek(weekStart, weekEnd);
+
+        return ResponseEntity.ok(scheduleResponse);
+    }
+
 
     @GetMapping("/shift-assignments/me/schedule")
     public ResponseEntity<WeeklyScheduleResponse> getWeeklyUserSchedule(
