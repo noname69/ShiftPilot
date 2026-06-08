@@ -3,6 +3,7 @@ import { useLocation } from "react-router";
 import ProfileDropdown from "./ProfileDropdown";
 import NotificationPanel from "./NotificationPanel";
 import useNotificationStore from "../../../store/notificationStore";
+import { getCurrentWeekRange } from "../../../utils/formatDateTime";
 
 const ProfileHeader = () => {
   const location = useLocation();
@@ -44,7 +45,7 @@ const ProfileHeader = () => {
 
           <div className="hidden md:flex items-center gap-2 text-[12.5px] text-ink-500 px-2.5 py-1 rounded-md border border-ink-200 bg-white">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="3" y="4" width="18" height="17" rx="2"></rect><path d="M3 9h18"></path></svg>
-            Week of May 18 – 24
+            {getCurrentWeekRange()}
           </div>
 
           <div className="relative" ref={panelRef}>

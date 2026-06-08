@@ -1,18 +1,32 @@
 import useShiftStore from "../../store/shiftStore";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Footer from "../components/shared/Footer";
 import MyScheduleBody from "./MyScheduleBody";
 import LeaveRequestModal from "./LeaveRequestModal";
-import { useState } from "react";
 import { useParams } from "react-router";
 import useLeaveStore from "../../store/leaveStore";
+import MyScheduleFilter from "./MyScheduleFilter";
+import Pagination from "../components/shared/Pagination";
 
 const MySchedule = () => {
-
-  const { userShifts, fetchUserShifts } = useShiftStore(state => state);
+  const { userShifts, fetchUserShifts, totalPages, currentPage } =
+    useShiftStore((state) => state);
   const { assigneeId } = useParams();
   const [modal, setModal] = useState(null);
   const { sendLeaveRequest } = useLeaveStore((state) => state);
+  const [page, setPage] = useState(0);
+
+  const [filters, setFilters] = useState({
+    shiftStatus: null,
+    shiftDate: null,
+  });
+
+  const handleFilterChange = (field, value) => {
+    setFilters((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
 
   const isSwapMode = !!assigneeId;
 
@@ -29,8 +43,8 @@ const MySchedule = () => {
   };
 
   useEffect(() => {
-    fetchUserShifts();
-  }, [fetchUserShifts]);
+    fetchUserShifts({ ...filters, page: page });
+  }, [fetchUserShifts, page, filters]);
 
   return (
     <div className="flex flex-col flex-1">
@@ -43,40 +57,60 @@ const MySchedule = () => {
             <p className="text-[13px] text-ink-500 mt-0.5">Shifts</p>
           </div>
           <div>
-            <button
-              className="my-btn-primary"
-              onClick={handleLeaveRequest}
-            >Request Leave</button>
+            <button className="my-btn-primary" onClick={handleLeaveRequest}>
+              Request Leave
+            </button>
           </div>
         </div>
+
+        <MyScheduleFilter
+          filters={filters}
+          onFilterChange={handleFilterChange}
+        />
+
         <div className="bg-white rounded-xl2 border border-ink-200 shadow-soft overflow-hidden">
           <table className="w-full text-[13px]">
             <thead className="bg-ink-50 text-ink-500 text-[11.5px] uppercase tracking-wider border-b border-ink-200">
               <tr>
                 <th className="text-left font-medium px-4 py-2.5">Title</th>
-                <th className="text-left font-medium px-4 py-2.5">Description</th>
+                <th className="text-left font-medium px-4 py-2.5">
+                  Description
+                </th>
                 <th className="text-left font-medium px-4 py-2.5">Date</th>
                 <th className="text-left font-medium px-4 py-2.5">Time</th>
-                <th className="text-center font-medium px-4 py-2.5">Min. Staff</th>
+                <th className="text-center font-medium px-4 py-2.5">
+                  Min. Staff
+                </th>
                 <th className="text-center font-medium px-4 py-2.5">Status</th>
-                <th className="text-center font-medium px-4 py-2.5">Created by</th>
+                <th className="text-center font-medium px-4 py-2.5">
+                  Created by
+                </th>
                 <th className="text-center font-medium px-4 py-2.5">Actions</th>
               </tr>
             </thead>
-            {userShifts.map(shift =>
+
+            {userShifts.map((shift) => (
               <MyScheduleBody
                 key={shift.id}
                 shift={shift}
                 isSwapMode={isSwapMode}
                 selectedShiftId={assigneeId}
-              />)}
+              />
+            ))}
           </table>
         </div>
+
         <LeaveRequestModal modal={modal} setModal={setModal} />
+        <Pagination
+          totalPages={totalPages}
+          currentPage={currentPage}
+          setPage={setPage}
+        />
       </main>
+
       <Footer />
     </div>
-  )
-}
+  );
+};
 
-export default MySchedule
+export default MySchedule;

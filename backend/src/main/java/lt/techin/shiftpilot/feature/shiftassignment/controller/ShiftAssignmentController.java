@@ -2,9 +2,16 @@ package lt.techin.shiftpilot.feature.shiftassignment.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lt.techin.shiftpilot.feature.shift.model.ShiftStatus;
 import lt.techin.shiftpilot.feature.shiftassignment.dto.*;
 import lt.techin.shiftpilot.feature.shiftassignment.service.ShiftAssignmentService;
+import lt.techin.shiftpilot.feature.user.model.UserStatus;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -45,11 +52,13 @@ public class ShiftAssignmentController {
     }
     
     @GetMapping("/users/me/shifts")
-    public ResponseEntity<List<MyAssigneeResponse>> getUserShifts(@AuthenticationPrincipal Jwt jwt) {
-
+    public ResponseEntity<MyAssigneeResponseList> getUserShifts(@AuthenticationPrincipal Jwt jwt,
+                                                                @RequestParam(required = false) LocalDate shiftDate,
+                                                                @RequestParam(required = false) ShiftStatus shiftStatus,
+                                                                @ParameterObject @PageableDefault(page = 0, size = 10, sort="assignedAt", direction = Sort.Direction.DESC) Pageable pageable) {
         String username = jwt.getSubject();
 
-        List<MyAssigneeResponse> responses = shiftAssignmentService.getUserShifts(username);
+        MyAssigneeResponseList responses = shiftAssignmentService.getUserShifts(username, shiftDate, shiftStatus, pageable);
 
         return ResponseEntity.ok().body(responses);
 
@@ -64,6 +73,19 @@ public class ShiftAssignmentController {
 
         return ResponseEntity.ok().body(response);
     }
+
+    @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
+    @GetMapping("/shift-assignments/schedule")
+    public ResponseEntity<WeeklyScheduleResponse> getAllWeeklyUsersSchedule(
+            @RequestParam(required = false) Long userId,
+            @RequestParam LocalDate weekStart,
+            @RequestParam LocalDate weekEnd) {
+
+        WeeklyScheduleResponse scheduleResponse = shiftAssignmentService.getAllUsersScheduleByWeek(userId, weekStart, weekEnd);
+
+        return ResponseEntity.ok(scheduleResponse);
+    }
+
 
     @GetMapping("/shift-assignments/me/schedule")
     public ResponseEntity<WeeklyScheduleResponse> getWeeklyUserSchedule(

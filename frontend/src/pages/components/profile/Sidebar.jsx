@@ -31,7 +31,7 @@ const Sidebar = ({ role }) => {
           : null;
 
   return (
-    <aside className="hidden lg:flex w-61 shrink-0 flex-col border-r border-ink-200 bg-ink-50/60 backdrop-blur-sm">
+    <aside className="hidden lg:flex w-61 shrink-0 flex-col min-h-screen border-r border-ink-200 bg-ink-50/60 backdrop-blur-sm">
       <div className="px-5 pt-5 pb-4 flex items-center gap-2.5">
         <div className="w-7 h-7 rounded-lg bg-ink-900 flex items-center justify-center">
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
@@ -134,18 +134,6 @@ const Sidebar = ({ role }) => {
               </div>
               <div className="text-[11px] text-ink-500">{displayRole}</div>
             </div>
-            <button className="text-ink-400 hover:text-ink-700">
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path d="M9 18l6-6-6-6"></path>
-              </svg>
-            </button>
           </div>
         </div>
       </div>

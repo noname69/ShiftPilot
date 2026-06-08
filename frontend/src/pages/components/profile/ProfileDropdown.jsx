@@ -7,15 +7,16 @@ import { useNavigate } from "react-router";
 import useAuthStore from "../../../store/authStore";
 
 export default function ProfileDropdown() {
-
   const { user, logoutUser } = useAuthStore((state) => state);
 
   const navigate = useNavigate();
 
-  const userPath = user.role === "USER" ? "/user"
-                  : user.role === "MANAGER" ? "/manager"
-                  : user.role === "ADMIN" && "/admin"
-
+  const userPath =
+    user.role === "USER"
+      ? "/user"
+      : user.role === "MANAGER"
+        ? "/manager"
+        : user.role === "ADMIN" && "/admin";
 
   const handleLogout = () => {
     logoutUser(navigate);
@@ -25,15 +26,18 @@ export default function ProfileDropdown() {
     navigate(userPath);
   };
 
-  useEffect(() => { }, [user]);
+  useEffect(() => {}, [user]);
 
   return (
     <Menu as="div" className="relative inline-block text-left z-11">
       <Menu.Button className="w-9 h-9 rounded-full bg-linear-to-br from-ink-700 to-ink-900 text-white flex items-center justify-center text-[12px] font-semibold">
-        AM
+        <div>
+          {user.firstName?.[0]}
+          {user.lastName?.[0]}
+        </div>
       </Menu.Button>
 
-      <Menu.Items className={`absolute right-0 mt-2 w-48 shadow-lg rounded-lg p-4 flex flex-col gap-4 outline-none text-[13px] text-ink-600 hover:bg-ink-100`}>
+      <Menu.Items className="absolute right-0 mt-2 w-48 bg-white border border-ink-200 shadow-lg rounded-lg p-2 flex flex-col gap-4 outline-none text-[13px]">
         <Menu.Item>
           <div
             className="flex items-center gap-2 cursor-pointer"

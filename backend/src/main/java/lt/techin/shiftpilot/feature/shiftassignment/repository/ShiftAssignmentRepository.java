@@ -4,6 +4,7 @@ import lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignment;
 import lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignmentStatus;
 import lt.techin.shiftpilot.feature.user.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -14,7 +15,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Repository
-public interface ShiftAssignmentRepository extends JpaRepository<ShiftAssignment, Long> {
+public interface ShiftAssignmentRepository extends JpaRepository<ShiftAssignment, Long>, JpaSpecificationExecutor<ShiftAssignment> {
 
     List<ShiftAssignment> findByUser(User user);
 
@@ -112,10 +113,21 @@ public interface ShiftAssignmentRepository extends JpaRepository<ShiftAssignment
     );
 
     @Query("""
+    select sa
+    from ShiftAssignment sa
+    where sa.shift.shiftDate >= :weekStart
+    and sa.shift.shiftDate <= :weekEnd
+    """)
+    List<ShiftAssignment> findByShiftDateBetween(
+            @Param("weekStart") LocalDate weekStart,
+            @Param("weekEnd") LocalDate weekEnd
+    );
+
+    @Query("""
     select sa.user.id
     from ShiftAssignment sa
     where sa.shift.id in :shiftIds
-""")
+    """)
     Set<Long> findUserIdsByShiftIds(@Param("shiftIds") List<Long> shiftIds);
 
     @Query("""

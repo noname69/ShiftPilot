@@ -1,6 +1,4 @@
 import { useState, useEffect } from "react";
-import useUserStore from "../../store/userStore";
-import SelectField from "../components/shared/SelectField";
 import {
   startOfWeek,
   endOfWeek,
@@ -11,26 +9,16 @@ import {
   isToday,
 } from "date-fns";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import { getAllUsersWeeklyShifts } from "../../api/shift"; // ← adjust path if needed
-import Footer from "../components/shared/Footer"; // ← adjust path if needed
-import { useForm } from "react-hook-form";
+import { getUserWeeklyShifts } from "../../api/shift"; // ← adjust path if needed
+import Footer from "../components/shared/Footer";      // ← adjust path if needed
 
-const Schedule = () => {
-
-  const {
-    register,
-    watch
-  } = useForm();
-
-  const pickedUser = watch("userId");
-
+const UserSchedule = () => {
   const [currentWeekStart, setCurrentWeekStart] = useState(
-    startOfWeek(new Date(), { weekStartsOn: 1 }),
+    startOfWeek(new Date(), { weekStartsOn: 1 })
   );
   const [shifts, setShifts] = useState([]);
   const [leaveRequests, setLeaveRequests] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const { users, fetchUsers } = useUserStore((state) => state);
 
   const weekEnd = endOfWeek(currentWeekStart, { weekStartsOn: 1 });
   const weekDays = eachDayOfInterval({ start: currentWeekStart, end: weekEnd });
@@ -42,10 +30,9 @@ const Schedule = () => {
     const fetchSchedule = async (start, end) => {
       setIsLoading(true);
       try {
-        const data = await getAllUsersWeeklyShifts({
+        const data = await getUserWeeklyShifts({
           weekStart: start,
           weekEnd: end,
-          userId: pickedUser
         });
         setShifts(data.shifts ?? []);
         setLeaveRequests(data.leaveRequests ?? []);
@@ -57,18 +44,13 @@ const Schedule = () => {
     };
 
     fetchSchedule(formattedStart, formattedEnd);
-    fetchUsers();
-  }, [currentWeekStart, fetchUsers, pickedUser]);
+  }, [currentWeekStart]);
 
-  useEffect(() => {
-    fetchUsers();
-  }, [fetchUsers]);
+  const handlePrevWeek = () =>
+    setCurrentWeekStart((prev) => subWeeks(prev, 1));
 
-  const filteredUsers = users.filter((user) => user.role === "USER");
-
-  const handlePrevWeek = () => setCurrentWeekStart((prev) => subWeeks(prev, 1));
-
-  const handleNextWeek = () => setCurrentWeekStart((prev) => addWeeks(prev, 1));
+  const handleNextWeek = () =>
+    setCurrentWeekStart((prev) => addWeeks(prev, 1));
 
   const handleToday = () =>
     setCurrentWeekStart(startOfWeek(new Date(), { weekStartsOn: 1 }));
@@ -88,59 +70,30 @@ const Schedule = () => {
   };
 
   const LEAVE_CONFIG = {
-    ILL: {
-      bg: "bg-rose-soft",
-      border: "border-rose-ink/20",
-      text: "text-rose-ink",
-      label: "Sick leave",
-    },
-    ABSENCE: {
-      bg: "bg-amber-soft",
-      border: "border-amber-ink/20",
-      text: "text-amber-ink",
-      label: "Absence",
-    },
-    VACATION: {
-      bg: "bg-violet-soft",
-      border: "border-violet-ink/20",
-      text: "text-violet-ink",
-      label: "Vacation",
-    },
+    ILL:      { bg: "bg-rose-soft",   border: "border-rose-ink/20",   text: "text-rose-ink",   label: "Sick leave" },
+    ABSENCE:  { bg: "bg-amber-soft",  border: "border-amber-ink/20",  text: "text-amber-ink",  label: "Absence"    },
+    VACATION: { bg: "bg-violet-soft", border: "border-violet-ink/20", text: "text-violet-ink", label: "Vacation"   },
   };
-
-  const availableUsers = filteredUsers.map((user) => {
-    return { label: user.firstName + " " + user.lastName, value: user.id };
-  });
 
   const weekLabel = `${format(currentWeekStart, "MMM d")} – ${format(weekEnd, "MMM d, yyyy")}`;
 
   return (
     <div className="flex flex-col flex-1">
       <main className="flex-1 px-5 lg:px-8 py-7 max-w-350 mx-auto w-full">
+
         {/* ── Page header ── */}
         <div className="flex flex-wrap items-end justify-between gap-4 mb-6">
           <div>
             <h1 className="font-serif text-[32px] leading-tight text-ink-900 tracking-tight">
-              Schedule
+              My Schedule
             </h1>
             <p className="text-[13px] text-ink-500 mt-0.5">
-              Weekly shift assignments for users
+              Your assigned shifts for the week
             </p>
           </div>
 
           {/* ── Week navigator ── */}
-          <div className="flex items-center gap-4">
-            <SelectField
-              name="userId"
-              id="userId"
-              register={register}
-              theme="my-input"
-              options={[
-                { label: "Select an employee", value: "" },
-                ...availableUsers,
-              ]}
-            />
-
+          <div className="flex items-center gap-2">
             <button
               onClick={handleToday}
               className="h-7 px-3 text-[12px] font-medium rounded-md border border-ink-200 text-ink-600 hover:bg-ink-100 transition"
@@ -172,6 +125,7 @@ const Schedule = () => {
           </div>
         ) : (
           <div className="bg-white rounded-xl2 border border-ink-200 shadow-soft overflow-hidden">
+
             {/* Day header row */}
             <div className="grid grid-cols-7 border-b border-ink-200">
               {weekDays.map((day) => (
@@ -204,8 +158,7 @@ const Schedule = () => {
               {weekDays.map((day) => {
                 const dayShifts = getShiftsForDay(day);
                 const dayLeaves = getLeavesForDay(day);
-                const isEmpty =
-                  dayShifts.length === 0 && dayLeaves.length === 0;
+                const isEmpty = dayShifts.length === 0 && dayLeaves.length === 0;
 
                 return (
                   <div
@@ -222,7 +175,7 @@ const Schedule = () => {
                       <>
                         {dayShifts.map((shift) => (
                           <div
-                            key={shift.assignmentId}
+                            key={shift.shiftId}
                             className="bg-mint-soft border border-mint-ink/20 rounded-md px-2 py-1.5"
                           >
                             <p className="text-[11.5px] font-medium text-mint-ink truncate">
@@ -236,23 +189,17 @@ const Schedule = () => {
                         ))}
 
                         {dayLeaves.map((lr) => {
-                          const cfg =
-                            LEAVE_CONFIG[lr.type] ?? LEAVE_CONFIG.ABSENCE;
+                          const cfg = LEAVE_CONFIG[lr.type] ?? LEAVE_CONFIG.ABSENCE;
                           return (
                             <div
                               key={lr.leaveRequestId}
                               className={`${cfg.bg} border ${cfg.border} rounded-md px-2 py-1.5`}
                             >
-                              <p
-                                className={`text-[11.5px] font-medium ${cfg.text} truncate`}
-                              >
+                              <p className={`text-[11.5px] font-medium ${cfg.text} truncate`}>
                                 {cfg.label}
                               </p>
-                              <p
-                                className={`text-[11px] ${cfg.text} opacity-70 mt-0.5 font-mono`}
-                              >
-                                {lr.outFrom.slice(11, 16)} –{" "}
-                                {lr.outTill.slice(11, 16)}
+                              <p className={`text-[11px] ${cfg.text} opacity-70 mt-0.5 font-mono`}>
+                                {lr.outFrom.slice(11, 16)} – {lr.outTill.slice(11, 16)}
                               </p>
                             </div>
                           );
@@ -271,4 +218,4 @@ const Schedule = () => {
   );
 };
 
-export default Schedule;
+export default UserSchedule;

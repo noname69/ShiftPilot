@@ -21,6 +21,7 @@ import ShiftAssignments from "./pages/shiftAssignments/ShiftAssignments";
 import ShiftAssignmentRequests from "./pages/shiftAssignments/ShiftAssigmentRequests";
 import ShiftDraftsPage from "./pages/shiftDrafts/ShiftDraftsPage";
 import DraftCreatePage from "./pages/shiftDrafts/DraftCreatePage";
+import UserSchedule from "./pages/schedule/UserShedule";
 import { Toaster } from "react-hot-toast";
 
 function App() {
@@ -35,7 +36,7 @@ function App() {
         <Route element={<PrivateRoute userOnly />}>
           <Route path="user" element={<UserPanel />}>
             <Route index element={<Dashboard />} />
-            <Route path="schedule" element={<Schedule />} />
+            <Route path="schedule" element={<UserSchedule />} />
             <Route path="myschedule" element={<MySchedule />} />
             <Route path="my-requests" element={<MyRequests />} />
             <Route path="users" element={<UsersPage />} />

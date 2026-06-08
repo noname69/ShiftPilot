@@ -130,11 +130,13 @@ const ShiftsPage = () => {
                 New shift
               </button>
             </Link>
-            <Link to={`/${role}/shift-drafts`}>
-              <button className="inline-flex items-center gap-1.5 text-[13px] font-medium text-white bg-ink-900 hover:bg-ink-800 px-3 py-1.5 rounded-md shadow-soft transition-colors">
-                Shift drafts
-              </button>
-            </Link>
+            {role !== "user" && (
+              <Link to={`/${role}/shift-drafts`}>
+                <button className="inline-flex items-center gap-1.5 text-[13px] font-medium text-white bg-ink-900 hover:bg-ink-800 px-3 py-1.5 rounded-md shadow-soft transition-colors">
+                  Shift drafts
+                </button>
+              </Link>
+            )}
           </div>
         </div>
         <div>
@@ -242,9 +244,7 @@ const ShiftsPage = () => {
                               <Link
                                 to={`/${role}/shifts/${shift.id}/assign-shift`}
                               >
-                                <button
-                                  className="w-8 h-8 flex items-center justify-center rounded-md transition-colors bg-mint-soft border border-mint-ink/20 text-mint-ink hover:bg-mint-soft/80"
-                                >
+                                <button className="w-8 h-8 flex items-center justify-center rounded-md transition-colors bg-mint-soft border border-mint-ink/20 text-mint-ink hover:bg-mint-soft/80">
                                   <FiUserCheck size={13} />
                                 </button>
                               </Link>
