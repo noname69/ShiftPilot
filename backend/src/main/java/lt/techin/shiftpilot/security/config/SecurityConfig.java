@@ -88,6 +88,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/api/users/**").hasAnyRole("ADMIN", "MANAGER")
                         .requestMatchers(HttpMethod.GET, "/api/users/**").authenticated()
 
+                        .requestMatchers(HttpMethod.PATCH, "/api/swap-requests/*/manager-respond").hasAnyRole("ADMIN", "MANAGER")
                         .requestMatchers(HttpMethod.POST, "/api/shifts").hasAnyRole("ADMIN", "MANAGER")
                         .requestMatchers(HttpMethod.PUT, "/api/shifts/**").hasAnyRole("ADMIN", "MANAGER")
                         .requestMatchers(HttpMethod.DELETE, "/api/shifts/**").hasAnyRole("ADMIN", "MANAGER")

@@ -4,9 +4,14 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lt.techin.shiftpilot.exception.assignment.*;
 import lt.techin.shiftpilot.exception.user.UserNotFoundException;
+import lt.techin.shiftpilot.feature.managerapproval.dto.ManagerApprovalRequest;
 import lt.techin.shiftpilot.feature.managerapproval.model.ApprovalStatus;
 import lt.techin.shiftpilot.feature.managerapproval.model.ManagerApproval;
 import lt.techin.shiftpilot.feature.managerapproval.model.RequestType;
+import lt.techin.shiftpilot.feature.managerapproval.service.ManagerApprovalService;
+import lt.techin.shiftpilot.feature.notification.dto.NotificationResponse;
+import lt.techin.shiftpilot.feature.notification.model.NotificationType;
+import lt.techin.shiftpilot.feature.notification.service.NotificationService;
 import lt.techin.shiftpilot.feature.swaprequest.dto.CreateSwapRequest;
 import lt.techin.shiftpilot.feature.swaprequest.dto.SwapRequestResponse;
 import lt.techin.shiftpilot.feature.swaprequest.mapper.SwapRequestMapper;
@@ -30,6 +35,8 @@ public class SwapRequestServiceImpl implements SwapRequestService {
     private final ShiftAssignmentRepository shiftAssignmentRepository;
     private final UserRepository userRepository;
     private final SwapRequestMapper swapRequestMapper;
+    private final NotificationService notificationService;
+    private final ManagerApprovalService managerApprovalService;
 
     private static final List<ApprovalStatus> ACTIVE_STATUSES = List.of(
             ApprovalStatus.PENDING_TARGET_APPROVAL,
@@ -80,7 +87,42 @@ public class SwapRequestServiceImpl implements SwapRequestService {
 
         SwapRequest saved = swapRequestRepository.save(req);
 
+        String message = String.format(
+                "%s %s wants to swap shifts with you.\nTheir shift: %s, %s, %s - %s\nYour shift: %s, %s, %s - %s",
+                requester.getFirstName(), requester.getLastName(),
+                requesterAssignment.getShift().getTitle(),
+                requesterAssignment.getShift().getShiftDate(),
+                requesterAssignment.getShift().getStartTime().toString().substring(0, 5),
+                requesterAssignment.getShift().getEndTime().toString().substring(0, 5),
+                targetAssignment.getShift().getTitle(),
+                targetAssignment.getShift().getShiftDate(),
+                targetAssignment.getShift().getStartTime().toString().substring(0, 5),
+                targetAssignment.getShift().getEndTime().toString().substring(0, 5)
+        );
+
+        notificationService.createNotification(
+                targetAssignment.getUser(),
+                "Swap request from " + requester.getFirstName() + " " + requester.getLastName(),
+                message,
+                NotificationType.REQUEST_SUBMITTED,
+                saved.getId()
+        );
+
         return swapRequestMapper.toResponse(saved);
+    }
+
+    @Override
+    public void managerRespondFromNotification(Long swapRequestId, boolean decision, String username) {
+        SwapRequest swapRequest = swapRequestRepository.findById(swapRequestId)
+                .orElseThrow(() -> new AssignmentNotFoundException(swapRequestId));
+
+        ManagerApprovalRequest request = new ManagerApprovalRequest();
+        request.setApprovalId(swapRequest.getApproval().getId());
+        request.setRequestId(swapRequestId);
+        request.setRequestType(RequestType.SWAP);
+        request.setDecision(decision);
+
+        managerApprovalService.processRequest(username, request);
     }
 
     private void validateCreateRequest(User requester,

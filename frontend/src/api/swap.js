@@ -35,3 +35,8 @@ export const respondAsManager = async (approved) => {
   );
   return response.data;
 };
+
+export const managerRespondFromNotification = async (swapRequestId, decision) => {
+  const response = await api.patch(`/swap-requests/${swapRequestId}/manager-respond`, { decision });
+  return response.data;
+};

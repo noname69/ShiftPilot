@@ -21,6 +21,8 @@ public class Notification {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Long referenceId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recipient_id", nullable = false)
     private User recipient;
@@ -44,4 +46,5 @@ public class Notification {
         this.createdAt = LocalDateTime.now();
         this.isRead = false;
     }
+
 }

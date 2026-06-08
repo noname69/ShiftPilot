@@ -18,6 +18,8 @@ import lt.techin.shiftpilot.feature.managerapproval.model.ManagerApproval;
 import lt.techin.shiftpilot.feature.managerapproval.model.RequestType;
 import lt.techin.shiftpilot.feature.managerapproval.repository.ManagerApprovalRepository;
 import lt.techin.shiftpilot.feature.managerapproval.repository.ManagerApprovalSpecifications;
+import lt.techin.shiftpilot.feature.notification.model.NotificationType;
+import lt.techin.shiftpilot.feature.notification.service.NotificationService;
 import lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignment;
 import lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignmentStatus;
 import lt.techin.shiftpilot.feature.shiftassignment.repository.ShiftAssignmentRepository;
@@ -51,6 +53,7 @@ public class ManagerApprovalServiceImpl implements ManagerApprovalService{
     private final SwapRequestRepository swapRequestRepository;
     private final ShiftAssignmentRepository shiftAssignmentRepository;
     private final LeaveRequestRepository leaveRequestRepository;
+    private final NotificationService notificationService;
 
     @Override
     public ManagerApprovalsList getAllManagerApprovals(Long managerId, ApprovalStatus status, LocalDate createdFrom, LocalDate createdTo, String requester, Pageable pageable) {
@@ -218,11 +221,48 @@ public class ManagerApprovalServiceImpl implements ManagerApprovalService{
             approval.setStatus(ApprovalStatus.TARGET_REJECTED);
             approval.setManagerComment(request.comment());
             approval.setClosedAt(LocalDateTime.now());
+
+            String shift = swapRequest.getRequesterAssignment().getShift().getTitle() + ", " +
+                    swapRequest.getRequesterAssignment().getShift().getShiftDate() + ", " +
+                    swapRequest.getRequesterAssignment().getShift().getStartTime().toString().substring(0, 5) + " - " +
+                    swapRequest.getRequesterAssignment().getShift().getEndTime().toString().substring(0, 5);
+
+            notificationService.createNotification(
+                    swapRequest.getRequester(),
+                    "Swap request declined",
+                    user.getFirstName() + " " + user.getLastName() + " declined your swap request for: " + shift,
+                    NotificationType.REQUEST_REJECTED,
+                    null);
             return;
         }
 
         approval.setStatus(ApprovalStatus.PENDING_MANAGER_APPROVAL);
         approval.setManagerComment(request.comment());
+
+        User requester = swapRequest.getRequester();
+        String message = String.format(
+                "%s %s accepted %s %s's swap request.\n%s %s's shift: %s, %s, %s - %s\n%s %s's shift: %s, %s, %s - %s",
+                user.getFirstName(), user.getLastName(),
+                requester.getFirstName(), requester.getLastName(),
+                user.getFirstName(), user.getLastName(),
+                swapRequest.getTargetAssignment().getShift().getTitle(),
+                swapRequest.getTargetAssignment().getShift().getShiftDate(),
+                swapRequest.getTargetAssignment().getShift().getStartTime().toString().substring(0, 5),
+                swapRequest.getTargetAssignment().getShift().getEndTime().toString().substring(0, 5),
+                requester.getFirstName(), requester.getLastName(),
+                swapRequest.getRequesterAssignment().getShift().getTitle(),
+                swapRequest.getRequesterAssignment().getShift().getShiftDate(),
+                swapRequest.getRequesterAssignment().getShift().getStartTime().toString().substring(0, 5),
+                swapRequest.getRequesterAssignment().getShift().getEndTime().toString().substring(0, 5)
+        );
+
+        notificationService.createNotification(
+                approval.getManager(),
+                "Swap request awaiting your approval",
+                message,
+                NotificationType.REQUEST_SUBMITTED,
+                swapRequest.getId()
+        );
     }
 
 //    @Transactional
@@ -333,6 +373,20 @@ public class ManagerApprovalServiceImpl implements ManagerApprovalService{
             approval.setStatus(ApprovalStatus.MANAGER_REJECTED);
             approval.setManagerComment(request.getComment());
             approval.setClosedAt(LocalDateTime.now());
+
+            SwapRequest rejectedSwap = swapRequest;
+            String rejectedShift = rejectedSwap.getTargetAssignment().getShift().getTitle() + ", " +
+                    rejectedSwap.getTargetAssignment().getShift().getShiftDate() + ", " +
+                    rejectedSwap.getTargetAssignment().getShift().getStartTime().toString().substring(0, 5) + " - " +
+                    rejectedSwap.getTargetAssignment().getShift().getEndTime().toString().substring(0, 5);
+
+            notificationService.createNotification(
+                    rejectedSwap.getRequester(),
+                    "Swap request rejected",
+                    "Your swap request for shift: " + rejectedShift + " was rejected by the manager.",
+                    NotificationType.REQUEST_REJECTED,
+                    null);
+
             return new ManagerDecisionResponse("Request was rejected.");
         }
 
@@ -358,6 +412,33 @@ public class ManagerApprovalServiceImpl implements ManagerApprovalService{
 
         // save approval
         managerApprovalRepository.save(approval);
+
+        String newRequesterShift = String.format("%s, %s, %s - %s",
+                targetAssignment.getShift().getTitle(),
+                targetAssignment.getShift().getShiftDate(),
+                targetAssignment.getShift().getStartTime().toString().substring(0, 5),
+                targetAssignment.getShift().getEndTime().toString().substring(0, 5));
+
+        String newTargetShift = String.format("%s, %s, %s - %s",
+                requesterAssignment.getShift().getTitle(),
+                requesterAssignment.getShift().getShiftDate(),
+                requesterAssignment.getShift().getStartTime().toString().substring(0, 5),
+                requesterAssignment.getShift().getEndTime().toString().substring(0, 5));
+
+        notificationService.createNotification(
+                requesterUser,
+                "Swap request approved",
+                "Your swap request was approved. You are now assigned to: " + newRequesterShift,
+                NotificationType.REQUEST_APPROVED,
+                null);
+
+        notificationService.createNotification(
+                targetUser,
+                "Shift swap completed",
+                "Your shift swap with " + requesterUser.getFirstName() + " " + requesterUser.getLastName() +
+                        " was approved. You are now assigned to: " + newTargetShift,
+                NotificationType.REQUEST_APPROVED,
+                null);
 
         return new ManagerDecisionResponse("Request was approved.");
     }
