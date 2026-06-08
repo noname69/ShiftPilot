@@ -20,18 +20,23 @@ public class NotificationServiceImpl implements NotificationService {
     private final UserRepository userRepository;
 
     @Override
-    public NotificationResponse createNotification(User recipient , String title, String message, NotificationType type) {
+    public NotificationResponse createNotification(User recipient, String title, String message, NotificationType type) {
+        return createNotification(recipient, title, message, type, null);
+    }
+
+    @Override
+    public NotificationResponse createNotification(User recipient, String title, String message, NotificationType type, Long referenceId) {
 
         Notification notification = new Notification();
-
         notification.setRecipient(recipient);
         notification.setTitle(title);
         notification.setMessage(message);
         notification.setType(type);
+        notification.setReferenceId(referenceId);
 
         Notification saved = notificationRepository.save(notification);
 
-        return new NotificationResponse(saved.getId(), title, message, type, saved.getCreatedAt(), saved.isRead());
+        return new NotificationResponse(saved.getId(), saved.getReferenceId(), title, message, type, saved.getCreatedAt(), saved.isRead());
     }
 
     @Override
@@ -39,9 +44,9 @@ public class NotificationServiceImpl implements NotificationService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException(username));
 
-        return notificationRepository.findByRecipientId(user.getId())
+        return notificationRepository.findByRecipientIdOrderByCreatedAtDesc(user.getId())
                 .stream()
-                .map(n -> new NotificationResponse(n.getId(), n.getTitle(), n.getMessage(), n.getType(), n.getCreatedAt(), n.isRead()))
+                .map(n -> new NotificationResponse(n.getId(), n.getReferenceId(), n.getTitle(), n.getMessage(), n.getType(), n.getCreatedAt(), n.isRead()))
                 .toList();
     }
 

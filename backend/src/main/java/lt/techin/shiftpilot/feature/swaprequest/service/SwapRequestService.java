@@ -11,6 +11,8 @@ public interface SwapRequestService {
             String requesterUsername
     );
 
+    void managerRespondFromNotification(Long swapRequestId, boolean decision, String username);
+
 //    List<SwapRequestResponse> getAllRequests();
 //    List<SwapRequestResponse> getMyRequests(String username);
 }

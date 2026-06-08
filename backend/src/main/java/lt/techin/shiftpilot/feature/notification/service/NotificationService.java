@@ -10,6 +10,8 @@ public interface NotificationService {
 
     NotificationResponse createNotification(User user, String title, String message, NotificationType type);
 
+    NotificationResponse createNotification(User user, String title, String message, NotificationType type, Long referenceId);
+
     List<NotificationResponse> getUserNotifications(String username);
 
     void markAsRead(Long notificationId);

@@ -15,6 +15,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/swap-requests")
@@ -77,6 +78,19 @@ public class SwapRequestController {
 
         managerApprovalService.respondAsTarget(request, username);
 
+        return ResponseEntity.ok().build();
+    }
+
+    @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
+    @PatchMapping("/{swapRequestId}/manager-respond")
+    public ResponseEntity<Void> managerRespondFromNotification(
+            @PathVariable Long swapRequestId,
+            @RequestBody Map<String, Boolean> body,
+            Authentication authentication
+    ) {
+        Jwt jwt = (Jwt) authentication.getPrincipal();
+        String username = jwt.getSubject();
+        swapRequestService.managerRespondFromNotification(swapRequestId, body.get("decision"), username);
         return ResponseEntity.ok().build();
     }
 
