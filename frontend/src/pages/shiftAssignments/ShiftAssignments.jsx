@@ -3,7 +3,8 @@ import Footer from "../components/shared/Footer";
 import useUserStore from "../../store/userStore";
 import ShiftAssignmentsBody from "./ShiftAssignmentsBody";
 import useShiftAssignmentsStore from "../../store/shiftAssignmentsStore";
-import { useParams, useNavigate } from "react-router";
+import { useParams, useNavigate, Link } from "react-router";
+import useAuthStore from "../../store/authStore";
 import ConfirmationModal from "../components/shared/ConfirmationModal"
 import { getShiftById } from "../../api/shift";
 
@@ -12,6 +13,7 @@ const ShiftAssignments = () => {
   const [selectedUsers, setSelectedUsers] = useState([]);
   const employees = users.filter(user => user.role === "USER" && user.status === "ACTIVE");
   const { shiftId } = useParams();
+  const role = useAuthStore((state) => state.user.role);
   const { getShiftAssignees, assignees, assignEmployees, removeEmployeeFromShiftAssignment, overlappingUserIds } = useShiftAssignmentsStore(state => state);
   const [modal, setModal] = useState(null);
   const [shift, setShift] = useState(null);
@@ -78,6 +80,7 @@ const ShiftAssignments = () => {
                     removeEmployee={removeEmployeeFromShiftAssignment}
                     shiftId={shiftId}
                     isAlreadyInAnotherShift={overlappingUserIds.includes(user.id)}
+                    shiftStatus={shift?.status}
                   />)}
               </table>
             </div>
@@ -92,7 +95,14 @@ const ShiftAssignments = () => {
             ) : ""}
           </>
         )}
-
+        <div className="mt-4">
+          <Link
+            to={`/${role?.toLowerCase()}/shifts`}
+            className="text-[13px] text-ink-500 hover:text-ink-900 transition-colors"
+          >
+            ← Back to shifts
+          </Link>
+        </div>
       </main>
       <ConfirmationModal modal={modal} setModal={setModal} />
       <Footer />

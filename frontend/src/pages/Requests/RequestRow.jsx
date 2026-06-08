@@ -107,17 +107,16 @@ const RequestRow = ({
   
 
 
-  const isSwapRequest = request.swapResponse !== null;
+  const isSwapRequest = request.swapResponse != null;
 
   if (isSwapRequest) {
-    requester = request.swapResponse.requester;
-    requesterShift = request.swapResponse.requesterShift;
-    targetUser = request.swapResponse.targetUser;
-    targetShift = request.swapResponse.targetShift;
-
-  } else if (!isSwapRequest) {
-    requester = request.leaveResponse.requester;
-    requesterShift = request.leaveResponse.requesterShift;
+    requester = request.swapResponse?.requester ?? {};
+    requesterShift = request.swapResponse?.requesterShift ?? {};
+    targetUser = request.swapResponse?.targetUser ?? {};
+    targetShift = request.swapResponse?.targetShift ?? {};
+  } else {
+    requester = request.leaveResponse?.requester ?? {};
+    requesterShift = request.leaveResponse?.requesterShift ?? {};
   }
 
   const time = (t) => (t ? t.slice(0, 5) : "");

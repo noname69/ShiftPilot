@@ -65,12 +65,12 @@ public class ShiftController {
         return ResponseEntity.ok(shiftService.updateShift(id, request));
     }
 
-    @PatchMapping("/{id}")
-    public ResponseEntity<Void> cancelShift(@PathVariable Long id,
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteShift(@PathVariable Long id,
                                             @AuthenticationPrincipal Jwt jwt) {
 
         String username = jwt.getSubject();
-        shiftService.cancelShift(id, username);
+        shiftService.deleteShift(id, username);
 
         return ResponseEntity.noContent().build();
     }

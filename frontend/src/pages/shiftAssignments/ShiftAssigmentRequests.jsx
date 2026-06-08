@@ -6,14 +6,17 @@ import ShiftAssignmentRequestsBody from "./ShiftAssigmentRequestsBody";
 import useShiftAssignmentsStore from "../../store/shiftAssignmentsStore";
 import useShiftStore from "../../store/shiftStore";
 import useSwapStore from "../../store/swapStore";
+import { getShiftById } from "../../api/shift";
 
-import { useParams } from "react-router";
+import { useParams, Link } from "react-router";
+import useAuthStore from "../../store/authStore";
 
 import ConfirmationModal from "../components/shared/ConfirmationModal";
 import SwapRequestModal from "../components/swap/SwapRequestModal";
 
 const ShiftAssignmentRequests = () => {
   const { shiftId } = useParams();
+  const role = useAuthStore((state) => state.user.role);
 
   const { getShiftAssignees, assignees, removeAssignment } =
     useShiftAssignmentsStore((state) => state);
@@ -24,11 +27,13 @@ const ShiftAssignmentRequests = () => {
 
   const [modal, setModal] = useState(null);
   const [targetAssignment, setTargetAssignment] = useState(null);
+  const [shift, setShift] = useState(null);
 
   useEffect(() => {
     if (shiftId) {
       getShiftAssignees(shiftId);
       fetchUserShifts();
+      getShiftById(shiftId).then(setShift).catch(console.error);
     }
   }, [getShiftAssignees, shiftId, fetchUserShifts]);
 
@@ -113,6 +118,7 @@ const ShiftAssignmentRequests = () => {
                 assignee={assignee}
                 onRemove={handleRemove}
                 onOpenSwap={handleOpenSwapModal}
+                shiftStatus={shift?.status}
               />
             ))}
           </table>
@@ -124,6 +130,14 @@ const ShiftAssignmentRequests = () => {
             onSubmit={handleSwapRequestSubmit}
             assignedUsers={assignees}
           />
+        </div>
+        <div className="mt-4">
+          <Link
+            to={`/${role?.toLowerCase()}/shifts`}
+            className="text-[13px] text-ink-500 hover:text-ink-900 transition-colors"
+          >
+            ← Back to shifts
+          </Link>
         </div>
       </main>
       <ConfirmationModal modal={modal} setModal={setModal} />

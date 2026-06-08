@@ -33,7 +33,7 @@ const InputField = ({
             pattern:
               type === "email"
                 ? {
-                    value: /^[a-zA-Z0-9]+@(?:[a-zA-Z0-9]+\.)+com+$/,
+                    value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
                     message: "Invalid email",
                   }
                 : null,

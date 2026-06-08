@@ -16,7 +16,7 @@ public final class ShiftSpecifications {
             LocalDate dateTo,
             String createdBy
     ) {
-        Specification<Shift> specification = unrestricted();
+        Specification<Shift> specification = notDeleted();
 
         if (status != null) {
             specification = specification.and(hasStatus(status));
@@ -39,6 +39,11 @@ public final class ShiftSpecifications {
 
     private static Specification<Shift> unrestricted() {
         return (root, query, builder) -> builder.conjunction();
+    }
+
+    private static Specification<Shift> notDeleted() {
+        return (root, query, builder) ->
+                builder.notEqual(root.get("status"), ShiftStatus.DELETED);
     }
 
     public static Specification<Shift> hasStatus(ShiftStatus status) {

@@ -77,18 +77,18 @@ const ShiftsPage = () => {
     fetchShifts({ ...filters, page: page, size: 10 });
   }, [fetchShifts, filters, page]);
 
-  const handleCancel = (id, title) => {
+  const handleDelete = (id, title) => {
     setModal({
-      title: "Cancel shift",
-      message: `Cancel shift "${title}"? All employee assignments will be removed.`,
-      rejectButton: "Cancel shift",
+      title: "Delete shift",
+      message: `Delete shift "${title}"? All employee assignments will be removed and assigned employees will be notified.`,
+      rejectButton: "Delete shift",
       onReject: async () => {
         try {
           await removeShift(id);
-          toast.success("Shift cancelled successfully");
+          toast.success("Shift deleted successfully");
         } catch (error) {
           toast.error(
-            error?.response?.data?.message ?? "Failed to cancel shift",
+            error?.response?.data?.message ?? "Failed to delete shift",
           );
         }
       },
@@ -232,14 +232,16 @@ const ShiftsPage = () => {
                                 </button>
                               </Link>
 
-                              <button
-                                onClick={() =>
-                                  handleCancel(shift.id, shift.title)
-                                }
-                                className="inline-flex items-center gap-1 text-[12px] font-medium bg-rose-soft hover:bg-rose-soft/80 border border-rose-ink/20 px-2.5 py-1 rounded-md text-rose-ink transition-colors"
-                              >
-                                <FiTrash2 size={13} />
-                              </button>
+                              {shift.status === "OPEN" && (
+                                <button
+                                  onClick={() =>
+                                    handleDelete(shift.id, shift.title)
+                                  }
+                                  className="inline-flex items-center gap-1 text-[12px] font-medium bg-rose-soft hover:bg-rose-soft/80 border border-rose-ink/20 px-2.5 py-1 rounded-md text-rose-ink transition-colors"
+                                >
+                                  <FiTrash2 size={13} />
+                                </button>
+                              )}
 
                               <Link
                                 to={`/${role}/shifts/${shift.id}/assign-shift`}
