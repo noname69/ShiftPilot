@@ -5,16 +5,15 @@ import lombok.RequiredArgsConstructor;
 import lt.techin.shiftpilot.exception.ResourceNotFoundException;
 import lt.techin.shiftpilot.exception.ShiftAssignmentNotFoundException;
 import lt.techin.shiftpilot.exception.ShiftNotFoundException;
-import lt.techin.shiftpilot.exception.assignment.AssignmentNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import lt.techin.shiftpilot.exception.assignment.ShiftAssignmentException;
 import lt.techin.shiftpilot.exception.user.UserNotFoundException;
 import lt.techin.shiftpilot.feature.leaverequest.model.LeaveRequest;
 import lt.techin.shiftpilot.feature.leaverequest.repository.LeaveRequestRepository;
 import lt.techin.shiftpilot.feature.notification.dto.NotificationResponse;
-import lt.techin.shiftpilot.feature.notification.model.Notification;
 import lt.techin.shiftpilot.feature.notification.model.NotificationType;
 import lt.techin.shiftpilot.feature.notification.service.NotificationService;
-import lt.techin.shiftpilot.feature.notification.service.NotificationServiceImpl;
 import lt.techin.shiftpilot.feature.shift.mapper.ShiftMapper;
 import lt.techin.shiftpilot.feature.shift.model.Shift;
 import lt.techin.shiftpilot.feature.shift.model.ShiftStatus;
@@ -30,7 +29,6 @@ import lt.techin.shiftpilot.feature.user.model.UserStatus;
 import lt.techin.shiftpilot.feature.user.repository.UserRepository;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -157,21 +155,65 @@ public class ShiftAssignmentServiceImpl implements ShiftAssignmentService{
 
     }
 
+//    @Override
+//    public List<MyAssigneeResponse> getUserShifts(String username) {
+//
+//        User user = userRepository.findByUsername(username)
+//                .orElseThrow(() -> new UserNotFoundException(username));
+//
+//        List<ShiftAssignment> shiftAssignments = shiftAssignmentRepository.findByUserOrStatus(user);
+//
+//        return shiftAssignments.stream()
+//                .map(ShiftAssignment::getShift)
+//                .map(shift -> {
+//                    ShiftAssignment assignment = shiftAssignments.stream()
+//                            .filter(a -> a.getShift().getId().equals(shift.getId()))
+//                            .findFirst()
+//                            .orElseThrow();
+//
+//                    return new MyAssigneeResponse(
+//                            shift.getId(),
+//                            shift.getTitle(),
+//                            shift.getDescription(),
+//                            shift.getShiftDate(),
+//                            shift.getStartTime(),
+//                            shift.getEndTime(),
+//                            shift.getMinEmployees(),
+//                            shift.getStatus(),
+//                            shift.getCreatedBy().getId(),
+//                            shift.getCreatedBy().getUsername(),
+//                            assignment.getId(),
+//                            assignment.getStatus()
+//                    );
+//                })
+//                .toList();
+//    }
     @Override
-    public List<MyAssigneeResponse> getUserShifts(String username) {
+    public MyAssigneeResponseList getUserShifts(
+            String username,
+            LocalDate shiftDate,
+            ShiftStatus shiftStatus,
+            Pageable pageable
+    ) {
 
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException(username));
 
-        List<ShiftAssignment> shiftAssignments = shiftAssignmentRepository.findByUserOrStatus(user);
+        Specification<ShiftAssignment> specification =
+                ShiftAssignmentSpecifications.withFilters(
+                        user.getId(),
+                        null,
+                        null,
+                        shiftDate,
+                        shiftStatus
+                );
 
-        return shiftAssignments.stream()
-                .map(ShiftAssignment::getShift)
-                .map(shift -> {
-                    ShiftAssignment assignment = shiftAssignments.stream()
-                            .filter(a -> a.getShift().getId().equals(shift.getId()))
-                            .findFirst()
-                            .orElseThrow();
+        Page<ShiftAssignment> pageAssignments =
+                shiftAssignmentRepository.findAll(specification, pageable);
+
+        List<MyAssigneeResponse> content = pageAssignments.stream()
+                .map(assignment -> {
+                    Shift shift = assignment.getShift();
 
                     return new MyAssigneeResponse(
                             shift.getId(),
@@ -189,7 +231,19 @@ public class ShiftAssignmentServiceImpl implements ShiftAssignmentService{
                     );
                 })
                 .toList();
+
+        MyAssigneeResponseList response = new MyAssigneeResponseList();
+        response.setContent(content);
+        response.setNumber(pageAssignments.getNumber());
+        response.setSize(pageAssignments.getSize());
+        response.setTotalElements(pageAssignments.getTotalElements());
+        response.setTotalPages(pageAssignments.getTotalPages());
+        response.setFirst(pageAssignments.isFirst());
+        response.setLast(pageAssignments.isLast());
+
+        return response;
     }
+
 
     @Override
     public AssigneeResponse removeShiftAssignment(Long shiftId, Long userId) {
@@ -280,7 +334,9 @@ public class ShiftAssignmentServiceImpl implements ShiftAssignmentService{
                 ShiftAssignmentSpecifications.withFilters(
                         userId,
                         weekStart,
-                        weekEnd
+                        weekEnd,
+                        null,
+                        null
                 );
 
         List<ShiftAssignment> assignments =

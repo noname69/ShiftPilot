@@ -1,6 +1,8 @@
 package lt.techin.shiftpilot.feature.shiftassignment.service;
 
+import lt.techin.shiftpilot.feature.shift.model.ShiftStatus;
 import lt.techin.shiftpilot.feature.shiftassignment.dto.*;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -10,7 +12,7 @@ public interface ShiftAssignmentService {
 
     ShiftAssignResponse getShiftAssignees(Long shiftId);
 
-    List<MyAssigneeResponse> getUserShifts(String username);
+    MyAssigneeResponseList getUserShifts(String username, LocalDate shiftDate, ShiftStatus shiftStatus, Pageable pageable);
 
     AssigneeResponse removeShiftAssignment(Long shiftId, Long userId);
 

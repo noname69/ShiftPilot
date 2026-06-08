@@ -1,7 +1,6 @@
 import api from "./api";
 
 export const createShift = async (data) => {
-  console.log(data)
   const response = await api.post("/shifts", data);
   return response.data;
 };
@@ -25,8 +24,8 @@ export const cancelShift = async (id) => {
   await api.patch(`/shifts/${id}`);
 };
 
-export const getUserShifts = async () => {
-  const response = await api.get(`/users/me/shifts`);
+export const getUserShifts = async (filters) => {
+  const response = await api.get(`/users/me/shifts`, {params: filters});
   return response.data;
 }
 

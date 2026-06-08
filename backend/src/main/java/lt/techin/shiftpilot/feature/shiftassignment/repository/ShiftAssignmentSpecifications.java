@@ -1,6 +1,6 @@
 package lt.techin.shiftpilot.feature.shiftassignment.repository;
 
-import jakarta.persistence.criteria.Predicate;
+import lt.techin.shiftpilot.feature.shift.model.ShiftStatus;
 import lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignment;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -13,15 +13,25 @@ public final class ShiftAssignmentSpecifications {
     public static Specification<ShiftAssignment> withFilters(
             Long userId,
             LocalDate weekStart,
-            LocalDate weekEnd
+            LocalDate weekEnd,
+            LocalDate shiftDate,
+            ShiftStatus shiftStatus
     ) {
-        Specification<ShiftAssignment> spec = (root, query, builder) ->
-                builder.conjunction();
-
-        spec = spec.and(hasShiftDateBetween(weekStart, weekEnd));
+        Specification<ShiftAssignment> spec =
+                (root, query, builder) -> builder.conjunction();
 
         if (userId != null) {
             spec = spec.and(hasUserId(userId));
+        }
+
+        if (shiftStatus != null) {
+            spec = spec.and(hasShiftStatus(shiftStatus));
+        }
+
+        if (shiftDate != null) {
+            spec = spec.and(hasShiftDate(shiftDate));
+        } else if (weekStart != null && weekEnd != null) {
+            spec = spec.and(hasShiftDateBetween(weekStart, weekEnd));
         }
 
         return spec;
@@ -43,4 +53,27 @@ public final class ShiftAssignmentSpecifications {
         return (root, query, builder) ->
                 builder.equal(root.get("user").get("id"), userId);
     }
+
+    public static Specification<ShiftAssignment> hasShiftStatus(
+            ShiftStatus shiftStatus
+    ) {
+        return (root, query, builder) ->
+                builder.equal(
+                        root.get("shift").get("status"),
+                        shiftStatus
+                );
+    }
+
+    public static Specification<ShiftAssignment> hasShiftDate(
+            LocalDate shiftDate
+    ) {
+        return (root, query, builder) ->
+                builder.equal(
+                        root.get("shift").get("shiftDate"),
+                        shiftDate
+                );
+    }
+
+
+
 }

@@ -43,7 +43,6 @@ const useShiftStore = create(
     },
 
     addShift: async (formData) => {
-      console.log(formData)
       set({ isLoading: true, error: null });
       try {
         const data = await createShift(formData);
@@ -81,11 +80,16 @@ const useShiftStore = create(
       }));
     },
 
-    fetchUserShifts: async () => {
+    fetchUserShifts: async (filters) => {
       try {
         set({ isLoading: true, error: null });
-        const data = await getUserShifts();
-        set({ userShifts: data });
+        const data = await getUserShifts(filters);
+        set({
+          userShifts: data.content,
+          totalPages: data.totalPages,
+          currentPage: data.number,
+          isLoading: false
+        });
       } catch (error) {
         set({ error: error.message });
         console.error(error);
