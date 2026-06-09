@@ -44,6 +44,7 @@ const useManagerApprovalsStore = create(
     },
 
     processRequest: async (sendData) => {
+      console.log(sendData)
       try {
         set({ isLoading: true });
         const { data } = await api.post(`/managers/me/process-request`, sendData);

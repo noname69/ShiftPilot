@@ -114,30 +114,31 @@ const ShiftsPage = () => {
               Manage all scheduled shifts
             </p>
           </div>
-          <div className="flex gap-4">
-            <Link to={`/${role}/shifts/new`}>
-              <button className="inline-flex items-center gap-1.5 text-[13px] font-medium text-white bg-ink-900 hover:bg-ink-800 px-3 py-1.5 rounded-md shadow-soft transition-colors">
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.2"
-                >
-                  <path d="M12 5v14M5 12h14" />
-                </svg>
-                New shift
-              </button>
-            </Link>
-            {role !== "user" && (
+
+          {role !== "user" && (
+            <div className="flex gap-4">
+              <Link to={`/${role}/shifts/new`}>
+                <button className="inline-flex items-center gap-1.5 text-[13px] font-medium text-white bg-ink-900 hover:bg-ink-800 px-3 py-1.5 rounded-md shadow-soft transition-colors">
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.2"
+                  >
+                    <path d="M12 5v14M5 12h14" />
+                  </svg>
+                  New shift
+                </button>
+              </Link>
               <Link to={`/${role}/shift-drafts`}>
                 <button className="inline-flex items-center gap-1.5 text-[13px] font-medium text-white bg-ink-900 hover:bg-ink-800 px-3 py-1.5 rounded-md shadow-soft transition-colors">
                   Shift drafts
                 </button>
               </Link>
-            )}
-          </div>
+            </div>
+          )}
         </div>
         <div>
           <ShiftFilter filters={filters} onFilterChange={handleFilterChange} />

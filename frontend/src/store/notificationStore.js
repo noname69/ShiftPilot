@@ -7,14 +7,18 @@ const useNotificationStore = create(
         notifications: [],
         unreadCount: 0,
         isLoading: false,
+        totalPages: 0,
+        currentPage: 0,
 
-        fetchNotifications: async () => {
+        fetchNotifications: async (page) => {
             set({ isLoading: true });
             try {
-                const data = await getNotifications();
+                const data = await getNotifications(page);
                 set({
-                    notifications: data,
-                    unreadCount: data.filter((n) => !n.isRead).length,
+                    notifications: data.content,
+                    totalPages: data.totalPages,
+                    currentPage: data.number,
+                    unreadCount: data.content.filter((n) => !n.isRead).length,
                     isLoading: false,
                 });
             } catch (error) {

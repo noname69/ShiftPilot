@@ -32,8 +32,8 @@ export default function ProfileDropdown() {
     <Menu as="div" className="relative inline-block text-left z-11">
       <Menu.Button className="w-9 h-9 rounded-full bg-linear-to-br from-ink-700 to-ink-900 text-white flex items-center justify-center text-[12px] font-semibold">
         <div>
-          {user.firstName?.[0]}
-          {user.lastName?.[0]}
+          {user.firstName?.[0].toUpperCase()}
+          {user.lastName?.[0].toUpperCase()}
         </div>
       </Menu.Button>
 

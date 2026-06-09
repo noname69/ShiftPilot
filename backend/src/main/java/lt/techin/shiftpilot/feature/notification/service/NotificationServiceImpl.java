@@ -2,6 +2,7 @@ package lt.techin.shiftpilot.feature.notification.service;
 
 import lombok.RequiredArgsConstructor;
 import lt.techin.shiftpilot.exception.notification.NotificationNotFoundException;
+import lt.techin.shiftpilot.feature.notification.dto.NotificationListResponse;
 import lt.techin.shiftpilot.feature.notification.dto.NotificationResponse;
 import lt.techin.shiftpilot.feature.notification.model.Notification;
 import lt.techin.shiftpilot.feature.notification.model.NotificationType;
@@ -9,6 +10,8 @@ import lt.techin.shiftpilot.feature.notification.repository.NotificationReposito
 import lt.techin.shiftpilot.feature.user.model.User;
 import lt.techin.shiftpilot.feature.user.repository.UserRepository;
 import lt.techin.shiftpilot.exception.user.UserNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -39,15 +42,56 @@ public class NotificationServiceImpl implements NotificationService {
         return new NotificationResponse(saved.getId(), saved.getReferenceId(), title, message, type, saved.getCreatedAt(), saved.isRead());
     }
 
+//    @Override
+//    public NotificationListResponse getUserNotifications(String username) {
+//        User user = userRepository.findByUsername(username)
+//                .orElseThrow(() -> new UserNotFoundException(username));
+//
+//        List<NotificationResponse> notifications = notificationRepository.findByRecipientIdOrderByCreatedAtDesc(user.getId())
+//                .stream()
+//                .map(n -> new NotificationResponse(n.getId(), n.getReferenceId(), n.getTitle(), n.getMessage(), n.getType(), n.getCreatedAt(), n.isRead()))
+//                .toList();
+//
+//        return new NotificationListResponse(notifications);
+//    }
+
     @Override
-    public List<NotificationResponse> getUserNotifications(String username) {
+    public NotificationListResponse getUserNotifications(
+            String username,
+            Pageable pageable
+    ) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException(username));
 
-        return notificationRepository.findByRecipientIdOrderByCreatedAtDesc(user.getId())
-                .stream()
-                .map(n -> new NotificationResponse(n.getId(), n.getReferenceId(), n.getTitle(), n.getMessage(), n.getType(), n.getCreatedAt(), n.isRead()))
-                .toList();
+        Page<Notification> notificationPage =
+                notificationRepository.findByRecipientId(
+                        user.getId(),
+                        pageable
+                );
+
+        List<NotificationResponse> notifications =
+                notificationPage.getContent()
+                        .stream()
+                        .map(n -> new NotificationResponse(
+                                n.getId(),
+                                n.getReferenceId(),
+                                n.getTitle(),
+                                n.getMessage(),
+                                n.getType(),
+                                n.getCreatedAt(),
+                                n.isRead()
+                        ))
+                        .toList();
+
+        return new NotificationListResponse(
+                notifications,
+                notificationPage.getNumber(),
+                notificationPage.getSize(),
+                notificationPage.getTotalElements(),
+                notificationPage.getTotalPages(),
+                notificationPage.isFirst(),
+                notificationPage.isLast()
+        );
     }
 
     @Override
