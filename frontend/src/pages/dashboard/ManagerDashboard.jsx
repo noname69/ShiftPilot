@@ -4,6 +4,10 @@ import Footer from "../components/shared/Footer";
 import { formatDate } from "../../utils/formatDateTime";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { processManagerRequest } from "../../api/dashboard";
+import {
+  BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer,
+  PieChart, Pie, Cell,
+} from "recharts";
 
 const getWeekRange = (offset = 0) => {
   const today = new Date();
@@ -42,51 +46,125 @@ const TYPE_LABEL = {
   ABSENCE: "Absence",
 };
 
-const StatCard = ({ label, pending, approved, rejected }) => (
-  <div className="bg-white border border-ink-200 rounded-xl2 shadow-soft p-5">
-    <p className="text-[11px] uppercase tracking-wider text-ink-500 mb-3">{label}</p>
-    <div className="flex gap-4">
-      <div>
-        <p className="text-[26px] font-semibold text-ink-900 leading-none">{pending}</p>
-        <p className="text-[11px] text-amber-ink mt-1">Pending</p>
-      </div>
-      <div className="w-px bg-ink-200" />
-      <div>
-        <p className="text-[26px] font-semibold text-ink-900 leading-none">{approved}</p>
-        <p className="text-[11px] text-mint-ink mt-1">Approved</p>
-      </div>
-      <div className="w-px bg-ink-200" />
-      <div>
-        <p className="text-[26px] font-semibold text-ink-900 leading-none">{rejected}</p>
-        <p className="text-[11px] text-rose-ink mt-1">Rejected</p>
+const AttendanceDonut = ({ todayAttendance }) => {
+  const counts = todayAttendance.reduce((acc, e) => {
+    acc[e.status] = (acc[e.status] || 0) + 1;
+    return acc;
+  }, {});
+  const data = [
+    { name: "On Shift", value: counts.ON_SHIFT || 0, color: "#1F6B3A" },
+    { name: "On Leave", value: counts.ON_LEAVE || 0, color: "#7A5712" },
+    { name: "Unscheduled", value: counts.UNSCHEDULED || 0, color: "#9C9C95" },
+  ].filter((d) => d.value > 0);
+  const total = todayAttendance.length;
+  if (!total) return null;
+  return (
+    <div className="bg-white border border-ink-200 rounded-xl2 shadow-soft p-5">
+      <p className="text-[11px] uppercase tracking-wider text-ink-500 mb-4">Attendance Overview</p>
+      <div className="flex items-center gap-5">
+        <div className="relative flex-shrink-0 w-[100px] h-[100px]">
+          <PieChart width={100} height={100}>
+            <Pie data={data} cx="50%" cy="50%" innerRadius={28} outerRadius={44} dataKey="value" strokeWidth={0}>
+              {data.map((entry, i) => (
+                <Cell key={i} fill={entry.color} />
+              ))}
+            </Pie>
+          </PieChart>
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <span className="text-[16px] font-semibold text-ink-900">{total}</span>
+          </div>
+        </div>
+        <div className="flex flex-col gap-2">
+          {data.map((d) => (
+            <div key={d.name} className="flex items-center gap-2 text-[12px]">
+              <span className="w-2 h-2 rounded-sm flex-shrink-0" style={{ backgroundColor: d.color }} />
+              <span className="text-ink-500">{d.name}</span>
+              <span className="font-semibold text-ink-900 ml-auto pl-3">{d.value}</span>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
-const CoverageCard = ({ coverage }) => (
-  <div className="bg-white border border-ink-200 rounded-xl2 shadow-soft p-5 sm:col-span-2">
-    <p className="text-[11px] uppercase tracking-wider text-ink-500 mb-3">Week Coverage</p>
-    <div className="flex gap-6">
-      <div>
-        <p className="text-[26px] font-semibold text-ink-900 leading-none">{coverage.assignedEmployees}</p>
-        <p className="text-[11px] text-ink-500 mt-1">Assigned</p>
+const RequestComparisonChart = ({ swapSummary, leaveSummary }) => {
+  const data = [
+    { name: "Pending", swap: swapSummary.pendingCount, leave: leaveSummary.pendingCount },
+    { name: "Approved", swap: swapSummary.approvedCount, leave: leaveSummary.approvedCount },
+    { name: "Rejected", swap: swapSummary.rejectedCount, leave: leaveSummary.rejectedCount },
+  ];
+  return (
+    <div className="bg-white border border-ink-200 rounded-xl2 shadow-soft p-5">
+      <p className="text-[11px] uppercase tracking-wider text-ink-500 mb-4">Requests by Status</p>
+      <ResponsiveContainer width="100%" height={130}>
+        <BarChart data={data} barCategoryGap="35%" barGap={3}>
+          <XAxis dataKey="name" tick={{ fontSize: 11, fill: "#6B6B66" }} axisLine={false} tickLine={false} />
+          <YAxis hide allowDecimals={false} />
+          <Tooltip
+            cursor={{ fill: "#F4F4F2" }}
+            content={({ active, payload, label }) =>
+              active && payload?.length ? (
+                <div className="bg-white border border-ink-200 rounded-lg px-2.5 py-1.5 text-[12px] shadow-soft space-y-0.5">
+                  <p className="text-ink-500 font-medium mb-1">{label}</p>
+                  {payload.map((p) => (
+                    <p key={p.name} className="text-ink-800">
+                      <span className="font-semibold">{p.value}</span> {p.name}
+                    </p>
+                  ))}
+                </div>
+              ) : null
+            }
+          />
+          <Legend iconType="square" iconSize={8} wrapperStyle={{ fontSize: 11, color: "#6B6B66" }} />
+          <Bar dataKey="swap" name="Swap" fill="#0F0F10" radius={[3, 3, 0, 0]} />
+          <Bar dataKey="leave" name="Leave" fill="#3B5BDB" radius={[3, 3, 0, 0]} />
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  );
+};
+
+
+const CoverageCard = ({ coverage }) => {
+  const { assignedEmployees, minEmployees, understaffedShiftsCount } = coverage;
+  const pct = minEmployees > 0 ? Math.min((assignedEmployees / minEmployees) * 100, 100) : 100;
+  const met = assignedEmployees >= minEmployees;
+  const gap = Math.max(minEmployees - assignedEmployees, 0);
+
+  return (
+    <div className="bg-white border border-ink-200 rounded-xl2 shadow-soft p-5">
+      <div className="flex items-center justify-between mb-4">
+        <p className="text-[11px] uppercase tracking-wider text-ink-500">Week Coverage</p>
+        {understaffedShiftsCount > 0 && (
+          <span className="text-[11px] font-medium text-rose-ink bg-rose-soft px-2 py-0.5 rounded-full">
+            {understaffedShiftsCount} understaffed {understaffedShiftsCount === 1 ? "shift" : "shifts"}
+          </span>
+        )}
       </div>
-      <div className="w-px bg-ink-200" />
-      <div>
-        <p className="text-[26px] font-semibold text-ink-900 leading-none">{coverage.minEmployees}</p>
-        <p className="text-[11px] text-ink-500 mt-1">Required</p>
+
+      <div className="flex items-end justify-between mb-2">
+        <span className="text-[13px] text-ink-600">
+          <span className="text-[28px] font-semibold text-ink-900 leading-none">{assignedEmployees}</span>
+          <span className="text-ink-400 mx-1">/</span>
+          {minEmployees} required
+        </span>
+        {gap > 0 ? (
+          <span className="text-[12px] text-rose-ink font-medium">{gap} short</span>
+        ) : (
+          <span className="text-[12px] text-mint-ink font-medium">Fully covered</span>
+        )}
       </div>
-      <div className="w-px bg-ink-200" />
-      <div>
-        <p className={`text-[26px] font-semibold leading-none ${coverage.understaffedShiftsCount > 0 ? "text-rose-ink" : "text-mint-ink"}`}>
-          {coverage.understaffedShiftsCount}
-        </p>
-        <p className="text-[11px] text-ink-500 mt-1">Understaffed shifts</p>
+
+      <div className="h-2.5 w-full bg-ink-100 rounded-full overflow-hidden">
+        <div
+          className={`h-full rounded-full transition-all duration-500 ${met ? "bg-mint-ink" : "bg-rose-ink"}`}
+          style={{ width: `${pct}%` }}
+        />
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const ManagerDashboard = () => {
   const [weekOffset, setWeekOffset] = useState(0);
@@ -154,20 +232,16 @@ const ManagerDashboard = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-          <StatCard
-            label="Swap Requests"
-            pending={swapSummary.pendingCount}
-            approved={swapSummary.approvedCount}
-            rejected={swapSummary.rejectedCount}
-          />
-          <StatCard
-            label="Leave Requests"
-            pending={leaveSummary.pendingCount}
-            approved={leaveSummary.approvedCount}
-            rejected={leaveSummary.rejectedCount}
-          />
-          {coverage && <CoverageCard coverage={coverage} />}
+        {coverage && (
+          <div className="mb-8">
+            <CoverageCard coverage={coverage} />
+          </div>
+        )}
+
+        {/* Charts */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
+          <RequestComparisonChart swapSummary={swapSummary} leaveSummary={leaveSummary} />
+          <AttendanceDonut todayAttendance={todayAttendance} />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
