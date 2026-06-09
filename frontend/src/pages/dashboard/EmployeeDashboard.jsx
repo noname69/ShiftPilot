@@ -4,6 +4,10 @@ import Footer from "../components/shared/Footer";
 import { formatTime, formatDate } from "../../utils/formatDateTime";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { respondAsSwapTarget } from "../../api/dashboard";
+import {
+  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell,
+  PieChart, Pie,
+} from "recharts";
 
 const getWeekRange = (offset = 0) => {
   const today = new Date();
@@ -22,6 +26,89 @@ const formatWeekLabel = (weekStart, weekEnd) => {
   const s = new Date(weekStart + "T00:00:00").toLocaleDateString("en-US", opts);
   const e = new Date(weekEnd + "T00:00:00").toLocaleDateString("en-US", { ...opts, year: "numeric" });
   return `${s} – ${e}`;
+};
+
+const DAY_ORDER = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+const computeDayHours = (shifts) => {
+  const acc = Object.fromEntries(DAY_ORDER.map((d) => [d, 0]));
+  shifts.forEach((s) => {
+    const day = new Date(s.shiftDate + "T00:00:00").toLocaleDateString("en-US", { weekday: "short" });
+    const [sh, sm] = s.startTime.split(":").map(Number);
+    const [eh, em] = s.endTime.split(":").map(Number);
+    const h = (eh * 60 + em - (sh * 60 + sm)) / 60;
+    if (acc[day] !== undefined) acc[day] += h;
+  });
+  return DAY_ORDER.map((name) => ({ name, hours: parseFloat(acc[name].toFixed(1)) }));
+};
+
+const WeeklyHoursChart = ({ upcomingShifts, completedShifts }) => {
+  const data = computeDayHours([...upcomingShifts, ...completedShifts]);
+  return (
+    <div className="bg-white border border-ink-200 rounded-xl2 shadow-soft p-5">
+      <p className="text-[11px] uppercase tracking-wider text-ink-500 mb-4">Hours per Day</p>
+      <ResponsiveContainer width="100%" height={120}>
+        <BarChart data={data} barCategoryGap="35%">
+          <XAxis dataKey="name" tick={{ fontSize: 11, fill: "#6B6B66" }} axisLine={false} tickLine={false} />
+          <YAxis hide />
+          <Tooltip
+            cursor={{ fill: "#F4F4F2" }}
+            content={({ active, payload, label }) =>
+              active && payload?.length ? (
+                <div className="bg-white border border-ink-200 rounded-lg px-2.5 py-1.5 text-[12px] shadow-soft">
+                  <span className="text-ink-500">{label} </span>
+                  <span className="font-semibold text-ink-900">{payload[0].value}h</span>
+                </div>
+              ) : null
+            }
+          />
+          <Bar dataKey="hours" radius={[3, 3, 0, 0]}>
+            {data.map((entry, i) => (
+              <Cell key={i} fill={entry.hours > 0 ? "#0F0F10" : "#E8E8E4"} />
+            ))}
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  );
+};
+
+const RequestStatusChart = ({ summary }) => {
+  const total = (summary?.pendingCount ?? 0) + (summary?.approvedCount ?? 0) + (summary?.rejectedCount ?? 0);
+  if (!total) return null;
+  const data = [
+    { name: "Pending", value: summary.pendingCount, color: "#7A5712" },
+    { name: "Approved", value: summary.approvedCount, color: "#1F6B3A" },
+    { name: "Rejected", value: summary.rejectedCount, color: "#923232" },
+  ].filter((d) => d.value > 0);
+  return (
+    <div className="bg-white border border-ink-200 rounded-xl2 shadow-soft p-5">
+      <p className="text-[11px] uppercase tracking-wider text-ink-500 mb-4">Request Status</p>
+      <div className="flex items-center gap-5">
+        <div className="relative flex-shrink-0 w-[100px] h-[100px]">
+          <PieChart width={100} height={100}>
+            <Pie data={data} cx="50%" cy="50%" innerRadius={28} outerRadius={44} dataKey="value" strokeWidth={0}>
+              {data.map((entry, i) => (
+                <Cell key={i} fill={entry.color} />
+              ))}
+            </Pie>
+          </PieChart>
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <span className="text-[16px] font-semibold text-ink-900">{total}</span>
+          </div>
+        </div>
+        <div className="flex flex-col gap-2">
+          {data.map((d) => (
+            <div key={d.name} className="flex items-center gap-2 text-[12px]">
+              <span className="w-2 h-2 rounded-sm flex-shrink-0" style={{ backgroundColor: d.color }} />
+              <span className="text-ink-500">{d.name}</span>
+              <span className="font-semibold text-ink-900 ml-auto pl-3">{d.value}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 };
 
 const StatCard = ({ label, value, color }) => (
@@ -120,13 +207,8 @@ const EmployeeDashboard = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
           <StatCard label="Shifts This Week" value={upcomingShifts.length + completedShifts.length} />
-          <StatCard label="Pending Requests" value={summary?.pendingCount ?? "—"} color="text-amber-ink" />
-          <StatCard label="Approved Requests" value={summary?.approvedCount ?? "—"} color="text-mint-ink" />
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
           <StatCard
             label="Hours Worked This Week"
             value={hours ? `${hours.workedHours.toFixed(1)}h` : "—"}
@@ -136,6 +218,12 @@ const EmployeeDashboard = () => {
             value={hours ? `${hours.remainingHours.toFixed(1)}h` : "—"}
             color="text-accent"
           />
+        </div>
+
+        {/* Charts */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
+          <WeeklyHoursChart upcomingShifts={upcomingShifts} completedShifts={completedShifts} />
+          <RequestStatusChart summary={summary} />
         </div>
 
         {/* Pending swap requests requiring your action */}
