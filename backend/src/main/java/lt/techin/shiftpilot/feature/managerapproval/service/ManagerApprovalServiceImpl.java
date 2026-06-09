@@ -265,61 +265,6 @@ public class ManagerApprovalServiceImpl implements ManagerApprovalService{
         );
     }
 
-//    @Transactional
-//    public void respondAsManager(ManagerSwapResponseRequest request, String username) {
-//
-//        User manager = userRepository.findByUsername(username)
-//                .orElseThrow(() -> new UserNotFoundException(username));
-//
-//        SwapRequest swapRequest = swapRequestRepository.findById(request.swapRequestId())
-//                .orElseThrow(() -> new AssignmentNotFoundException(request.swapRequestId()));
-//
-//        ManagerApproval approval = swapRequest.getApproval();
-//
-//        // only assigned manager can approve
-//        if (!approval.getManager().getId().equals(manager.getId())) {
-//            System.out.println("Not your approval");
-//            return;
-//        }
-//
-//        // must be waiting for manager
-//        if (approval.getStatus() != ApprovalStatus.PENDING_MANAGER_APPROVAL) {
-//            System.out.println("Request already processed");
-//            return;
-//        }
-//
-//        // rejected by manager
-//        if (!request.approved()) {
-//            approval.setStatus(ApprovalStatus.MANAGER_REJECTED);
-//            approval.setManagerComment(request.comment());
-//            approval.setClosedAt(LocalDateTime.now());
-//            return;
-//        }
-//
-//
-//        ShiftAssignment requesterAssignment = swapRequest.getRequesterAssignment();
-//        ShiftAssignment targetAssignment = swapRequest.getTargetAssignment();
-//
-//        User requesterUser = requesterAssignment.getUser();
-//        User targetUser = targetAssignment.getUser();
-//
-//        // swap users
-//        requesterAssignment.setUser(targetUser);
-//        targetAssignment.setUser(requesterUser);
-//
-//        // optional status updates
-//        approval.setStatus(ApprovalStatus.APPROVED);
-//        approval.setManagerComment(request.comment());
-//        approval.setClosedAt(LocalDateTime.now());
-//
-//        // save assignments
-//        shiftAssignmentRepository.save(requesterAssignment);
-//        shiftAssignmentRepository.save(targetAssignment);
-//
-//        // save approval
-//        managerApprovalRepository.save(approval);
-//    }
-
     @Override
     @Transactional
     public ManagerDecisionResponse processRequest(String username, ManagerApprovalRequest request) {
@@ -461,6 +406,7 @@ public class ManagerApprovalServiceImpl implements ManagerApprovalService{
         if(!request.isDecision()) {
             approval.setStatus(ApprovalStatus.MANAGER_REJECTED);
             managerApprovalRepository.save(approval);
+            handleLeaveRequestRejection(leaveRequest);
             return new ManagerDecisionResponse("Request was rejected.");
         }
 
@@ -477,6 +423,7 @@ public class ManagerApprovalServiceImpl implements ManagerApprovalService{
             userRepository.save(requesterUser);
         }
 
+        handleLeaveRequestApproval(leaveRequest);
         return new ManagerDecisionResponse("Request was approved.");
     }
 
@@ -490,6 +437,34 @@ public class ManagerApprovalServiceImpl implements ManagerApprovalService{
             shiftAssignmentRepository.save(assignment);
         });
 
+    }
+
+    private void handleLeaveRequestRejection(LeaveRequest leaveRequest) {
+
+        String rejectedLeaveRequest = leaveRequest.getApproval().getType() + ", " +
+                leaveRequest.getOutFrom() + ", " +
+                leaveRequest.getOutTill();
+
+        notificationService.createNotification(
+                leaveRequest.getRequester(),
+                "Leave request rejected",
+                "Your leave request for type: " + rejectedLeaveRequest + " was rejected by the manager.",
+                NotificationType.REQUEST_REJECTED,
+                null);
+    }
+
+    private void handleLeaveRequestApproval(LeaveRequest leaveRequest) {
+
+        String rejectedLeaveRequest = leaveRequest.getApproval().getType() + ", " +
+                leaveRequest.getOutFrom() + ", " +
+                leaveRequest.getOutTill();
+
+        notificationService.createNotification(
+                leaveRequest.getRequester(),
+                "Leave request approved",
+                "Your leave request for type: " + rejectedLeaveRequest + " was approved by the manager.",
+                NotificationType.REQUEST_APPROVED,
+                null);
     }
 
 

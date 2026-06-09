@@ -45,8 +45,7 @@ const useShiftStore = create(
     addShift: async (formData) => {
       set({ isLoading: true, error: null });
       try {
-        const data = await createShift(formData);
-        console.log(data)
+        await createShift(formData);
         set({ isLoading: false });
         return true;
       } catch (error) {

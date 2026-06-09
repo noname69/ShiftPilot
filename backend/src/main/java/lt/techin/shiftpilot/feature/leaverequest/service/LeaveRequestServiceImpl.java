@@ -12,6 +12,8 @@ import lt.techin.shiftpilot.feature.leaverequest.model.LeaveRequest;
 import lt.techin.shiftpilot.feature.leaverequest.repository.LeaveRequestRepository;
 import lt.techin.shiftpilot.feature.managerapproval.model.ApprovalStatus;
 import lt.techin.shiftpilot.feature.managerapproval.model.ManagerApproval;
+import lt.techin.shiftpilot.feature.notification.model.NotificationType;
+import lt.techin.shiftpilot.feature.notification.service.NotificationService;
 import lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignment;
 import lt.techin.shiftpilot.feature.shiftassignment.model.ShiftAssignmentStatus;
 import lt.techin.shiftpilot.feature.shiftassignment.repository.ShiftAssignmentRepository;
@@ -27,6 +29,7 @@ public class LeaveRequestServiceImpl implements LeaveRequestService{
     private final ShiftAssignmentRepository shiftAssignmentRepository;
     private final UserRepository userRepository;
     private final LeaveRequestMapper leaveRequestMapper;
+    private final NotificationService notificationService;
 
     @Override
     @Transactional
@@ -52,7 +55,29 @@ public class LeaveRequestServiceImpl implements LeaveRequestService{
         leaveRequest.setApproval(approval);
         LeaveRequest savedRequest = leaveRequestRepository.save(leaveRequest);
 
+        sendLeaveRequestNotification(leaveRequest);
+
         return leaveRequestMapper.leaveRequestToResponse(savedRequest);
+    }
+
+    private void sendLeaveRequestNotification(LeaveRequest leaveRequest) {
+
+        User requester = leaveRequest.getRequester();
+        String message = String.format(
+                "%s %s has applied leave request for %s.\nOut from %s until %s.",
+                requester.getFirstName(), requester.getLastName(),
+                leaveRequest.getApproval().getType(),
+                leaveRequest.getOutFrom(),
+                leaveRequest.getOutTill()
+        );
+
+
+        notificationService.createNotification(
+                leaveRequest.getApproval().getManager(),
+                "Leave request awaiting your approval",
+                message,
+                NotificationType.REQUEST_SUBMITTED,
+                null);
     }
 }
 

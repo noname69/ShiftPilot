@@ -35,7 +35,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -155,39 +154,6 @@ public class ShiftAssignmentServiceImpl implements ShiftAssignmentService{
 
     }
 
-//    @Override
-//    public List<MyAssigneeResponse> getUserShifts(String username) {
-//
-//        User user = userRepository.findByUsername(username)
-//                .orElseThrow(() -> new UserNotFoundException(username));
-//
-//        List<ShiftAssignment> shiftAssignments = shiftAssignmentRepository.findByUserOrStatus(user);
-//
-//        return shiftAssignments.stream()
-//                .map(ShiftAssignment::getShift)
-//                .map(shift -> {
-//                    ShiftAssignment assignment = shiftAssignments.stream()
-//                            .filter(a -> a.getShift().getId().equals(shift.getId()))
-//                            .findFirst()
-//                            .orElseThrow();
-//
-//                    return new MyAssigneeResponse(
-//                            shift.getId(),
-//                            shift.getTitle(),
-//                            shift.getDescription(),
-//                            shift.getShiftDate(),
-//                            shift.getStartTime(),
-//                            shift.getEndTime(),
-//                            shift.getMinEmployees(),
-//                            shift.getStatus(),
-//                            shift.getCreatedBy().getId(),
-//                            shift.getCreatedBy().getUsername(),
-//                            assignment.getId(),
-//                            assignment.getStatus()
-//                    );
-//                })
-//                .toList();
-//    }
     @Override
     public MyAssigneeResponseList getUserShifts(
             String username,
@@ -357,11 +323,22 @@ public class ShiftAssignmentServiceImpl implements ShiftAssignmentService{
                 })
                 .toList();
 
-        List<LeaveRequest> leaveRequests =
-                leaveRequestRepository.findApprovedLeaveRequestsInRange(
-                        weekStart,
-                        weekEnd
-                );
+        List<LeaveRequest> leaveRequests;
+
+        if(userId == null) {
+            leaveRequests =
+                    leaveRequestRepository.findApprovedLeaveRequestsInRange(
+                            weekStart,
+                            weekEnd
+                    );
+        } else {
+            leaveRequests =
+                    leaveRequestRepository.findApprovedLeaveRequestsInRange(
+                            userId,
+                            weekStart,
+                            weekEnd
+                    );
+        }
 
         List<LeaveScheduleEntry> leaveEntries = leaveRequests.stream()
                 .map(lr -> new LeaveScheduleEntry(

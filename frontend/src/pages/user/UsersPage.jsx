@@ -7,7 +7,7 @@ import { FiEdit2, FiTrash2, FiRotateCcw } from "react-icons/fi";
 import { formatDateTimeForFrontend } from "./../../utils/formatDateTime";
 import UserFilter from "./UserFilter";
 import Pagination from "../components/shared/Pagination";
-import ConfirmationModal from "../components/shared/ConfirmationModal"
+import ConfirmationModal from "../components/shared/ConfirmationModal";
 
 const STATUS_CONFIG = {
   ACTIVE: {
@@ -89,9 +89,7 @@ const UsersPage = () => {
     searchUsers({ ...filters, page: page });
   }, [searchUsers, filters, page]);
 
-
   const handleRestore = (id) => {
-
     const user = users.find((u) => u.id === id);
 
     setModal({
@@ -104,8 +102,7 @@ const UsersPage = () => {
     });
   };
 
-    const handleDelete = (id) => {
-
+  const handleDelete = (id) => {
     const user = users.find((u) => u.id === id);
 
     setModal({
@@ -117,7 +114,6 @@ const UsersPage = () => {
       },
     });
   };
-
 
   return (
     <div className="flex flex-col flex-1">
@@ -192,13 +188,14 @@ const UsersPage = () => {
                       Out Until
                     </th>
 
-                    <th className="text-left font-medium px-4 py-2.5">
+                    <th className="text-center font-medium px-4 py-2.5 w-60">
                       Contact
                     </th>
-
-                    <th className="text-right font-medium px-4 py-2.5">
-                      Actions
-                    </th>
+                    {role === "ADMIN" && (
+                      <th className="text-right font-medium px-4 py-2.5">
+                        Actions
+                      </th>
+                    )}
                   </tr>
                 </thead>
 
@@ -245,29 +242,31 @@ const UsersPage = () => {
                       </td>
 
                       {/* ACTIONS */}
-                      <td className="px-4 py-3 text-right">
-                        <div className="inline-flex gap-1.5">
-                          <Link to={`/${role}/users/${user.id}/edit`}>
-                            <button className="w-8 h-8 flex items-center justify-center rounded-md transition-colors bg-white border border-ink-200 hover:bg-ink-50 px-2.5 py-1 text-ink-700 ">
-                              <FiEdit2 size={13} />
+                      {role === "ADMIN" && (
+                        <td className="px-4 py-3 text-right">
+                          <div className="inline-flex gap-1.5">
+                            <Link to={`/${role}/users/${user.id}/edit`}>
+                              <button className="w-8 h-8 flex items-center justify-center rounded-md transition-colors bg-white border border-ink-200 hover:bg-ink-50 px-2.5 py-1 text-ink-700 ">
+                                <FiEdit2 size={13} />
+                              </button>
+                            </Link>
+
+                            <button
+                              onClick={() => handleDelete(user.id)}
+                              className="w-8 h-8 flex items-center justify-center rounded-md transition-colors bg-rose-soft hover:bg-rose-soft/80 border border-rose-ink/20 px-2.5 py-1 text-rose-ink "
+                            >
+                              <FiTrash2 size={13} />
                             </button>
-                          </Link>
 
-                          <button
-                            onClick={() => handleDelete(user.id)}
-                            className="w-8 h-8 flex items-center justify-center rounded-md transition-colors bg-rose-soft hover:bg-rose-soft/80 border border-rose-ink/20 px-2.5 py-1 text-rose-ink "
-                          >
-                            <FiTrash2 size={13} />
-                          </button>
-
-                          <button
-                            onClick={() => handleRestore(user.id)}
-                            className="w-8 h-8 flex items-center justify-center rounded-md transition-colors bg-mint-soft hover:bg-mint-soft/80 border border-mint-ink/20 px-2.5 py-1 text-mint-ink "
-                          >
-                            <FiRotateCcw size={13} />
-                          </button>
-                        </div>
-                      </td>
+                            <button
+                              onClick={() => handleRestore(user.id)}
+                              className="w-8 h-8 flex items-center justify-center rounded-md transition-colors bg-mint-soft hover:bg-mint-soft/80 border border-mint-ink/20 px-2.5 py-1 text-mint-ink "
+                            >
+                              <FiRotateCcw size={13} />
+                            </button>
+                          </div>
+                        </td>
+                      )}
                     </tr>
                   ))}
                 </tbody>
@@ -281,7 +280,7 @@ const UsersPage = () => {
           setPage={setPage}
         />
       </main>
-      <ConfirmationModal modal={modal} setModal={setModal}/>
+      <ConfirmationModal modal={modal} setModal={setModal} />
       <Footer />
     </div>
   );

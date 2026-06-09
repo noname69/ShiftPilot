@@ -30,13 +30,11 @@ export const formatDateTimeForFrontend = (dateTime) => {
 export const getCurrentWeekRange = () => {
   const now = new Date();
 
-  // get Monday of current week
   const start = new Date(now);
-  const day = start.getDay(); // 0 = Sunday
+  const day = start.getDay();
   const diff = day === 0 ? -6 : 1 - day;
   start.setDate(start.getDate() + diff);
 
-  // get Sunday of current week
   const end = new Date(start);
   end.setDate(start.getDate() + 6);
 
