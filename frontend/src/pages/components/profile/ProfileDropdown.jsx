@@ -3,11 +3,12 @@ import { CgProfile } from "react-icons/cg";
 import { IoSettingsOutline } from "react-icons/io5";
 import { IoMdExit } from "react-icons/io";
 import { useEffect } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, Link } from "react-router";
 import useAuthStore from "../../../store/authStore";
 
 export default function ProfileDropdown() {
   const { user, logoutUser } = useAuthStore((state) => state);
+  const role = user?.role;
 
   const navigate = useNavigate();
 
@@ -48,12 +49,14 @@ export default function ProfileDropdown() {
           </div>
         </Menu.Item>
 
-        <Menu.Item>
-          <div className="flex items-center gap-2 cursor-pointer">
-            <IoSettingsOutline />
-            <p>Settings</p>
-          </div>
-        </Menu.Item>
+        <Link to={`/${role}/edit`}>
+          <Menu.Item>
+            <div className="flex items-center gap-2 cursor-pointer">
+              <IoSettingsOutline />
+              <p>Settings</p>
+            </div>
+          </Menu.Item>
+        </Link>
 
         <Menu.Item>
           <div

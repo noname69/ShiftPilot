@@ -70,6 +70,7 @@ public class AuthService {
                 user.getLastName(),
                 "Login successful",
                 user.getUsername(),
+                user.getEmail(),
                 user.getId(),
                 user.getRole()
         );
@@ -105,6 +106,7 @@ public class AuthService {
                 user.getLastName(),
                 "Token refreshed",
                 user.getUsername(),
+                user.getEmail(),
                 user.getId(),
                 user.getRole()
         );
@@ -162,7 +164,7 @@ public class AuthService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new AuthenticationException("User with username '" + username + "' is not authenticated."));
 
-        return new AuthResponse(user.getFirstName(), user.getLastName(), "Authenticated", user.getUsername(), user.getId(), user.getRole());
+        return new AuthResponse(user.getFirstName(), user.getLastName(), "Authenticated", user.getUsername(), user.getEmail(), user.getId(), user.getRole());
 
     }
 }

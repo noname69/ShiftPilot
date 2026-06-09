@@ -23,6 +23,7 @@ import ShiftDraftsPage from "./pages/shiftDrafts/ShiftDraftsPage";
 import DraftCreatePage from "./pages/shiftDrafts/DraftCreatePage";
 import UserSchedule from "./pages/schedule/UserShedule";
 import { Toaster } from "react-hot-toast";
+import EditPersonalInformation from "./pages/user/EditPersonalInformation";
 
 function App() {
   return (
@@ -43,7 +44,7 @@ function App() {
             <Route path="shifts" element={<ShiftsPage />} />
             <Route path="shifts/:shiftId/shift-requests" element={<ShiftAssignmentRequests />} />
             <Route path="shifts/:assigneeId/swap-request" element={<MySchedule />} />
-            
+            <Route path="edit" element={<EditPersonalInformation />} />
           </Route>
         </Route>
 
@@ -63,6 +64,7 @@ function App() {
             <Route path="shifts/:shiftId/assign-shift" element={<ShiftAssignments />} />
             <Route path="shifts/:shiftId/shift-requests" element={<ShiftAssignmentRequests />} />
             <Route path="shifts/:assigneeId/swap-request" element={<MySchedule />} />
+            <Route path="edit" element={<EditPersonalInformation />} />
           </Route>
         </Route>
 
@@ -80,6 +82,7 @@ function App() {
             <Route path="users/:userId/edit" element={<UserEditPage />} />
             <Route path="shifts/:shiftId/assign-shift" element={<ShiftAssignments />} />
             <Route path="shifts/:shiftId/shift-requests" element={<ShiftAssignmentRequests />} />
+            <Route path="edit" element={<EditPersonalInformation />} />
           </Route>
         </Route>
 

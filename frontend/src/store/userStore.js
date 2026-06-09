@@ -1,12 +1,14 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
+
 import {
   createUser,
   getUsers,
   updateUser,
   deleteUser,
   restoreUser,
-  searchUsers
+  searchUsers,
+  editPersonalInfo
 } from "../api/user";
 import toast from "react-hot-toast";
 
@@ -84,6 +86,22 @@ const useUserStore = create(
         set({ isLoading: false });
         navigate(`/${role}/users`);
         toast.success("User updated successfully");
+      } catch (error) {
+        set({ isLoading: false });
+        const message =
+          error?.response?.data?.message || "Failed to update user";
+        toast.error(message);
+      }
+    },
+
+    editPersonalInformation: async (formData, navigate, role, fetchCurrentUser) => {
+      set({ isLoading: true, error: null });
+      try {
+        await editPersonalInfo(formData);
+        set({ isLoading: false });
+        fetchCurrentUser();
+        navigate(`/${role}`);
+        toast.success("Information updated successfully");
       } catch (error) {
         set({ isLoading: false });
         const message =
