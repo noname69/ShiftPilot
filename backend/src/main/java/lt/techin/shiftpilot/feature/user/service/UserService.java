@@ -1,5 +1,6 @@
 package lt.techin.shiftpilot.feature.user.service;
 
+import jakarta.validation.Valid;
 import lt.techin.shiftpilot.feature.shift.model.ShiftStatus;
 import lt.techin.shiftpilot.feature.user.dto.*;
 import lt.techin.shiftpilot.feature.user.model.UserRole;
@@ -16,4 +17,5 @@ public interface UserService {
     void delete(Long id);
     void restore(Long id);
     UserListResponse getFilteredUsers(UserStatus status, UserRole userRole, String searchByFullName, Pageable pageable);
+    UserResponse editPersonalInformation(String username, EditPersonalInformationRequest request);
 }

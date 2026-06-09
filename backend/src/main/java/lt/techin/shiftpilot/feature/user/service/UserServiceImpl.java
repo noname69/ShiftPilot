@@ -9,12 +9,9 @@ import lt.techin.shiftpilot.exception.user.UserNotFoundException;
 import lt.techin.shiftpilot.feature.leaverequest.model.LeaveRequest;
 import lt.techin.shiftpilot.feature.leaverequest.repository.LeaveRequestRepository;
 import lt.techin.shiftpilot.feature.shift.model.ShiftStatus;
-import lt.techin.shiftpilot.feature.user.dto.UserListResponse;
+import lt.techin.shiftpilot.feature.user.dto.*;
 import lt.techin.shiftpilot.feature.user.model.UserRole;
 import lt.techin.shiftpilot.feature.user.repository.UserRepository;
-import lt.techin.shiftpilot.feature.user.dto.CreateUserRequest;
-import lt.techin.shiftpilot.feature.user.dto.UpdateUserRequest;
-import lt.techin.shiftpilot.feature.user.dto.UserResponse;
 import lt.techin.shiftpilot.feature.user.mapper.UserMapper;
 import lt.techin.shiftpilot.feature.user.model.User;
 import lt.techin.shiftpilot.feature.user.model.UserStatus;
@@ -28,6 +25,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -180,6 +178,36 @@ public class UserServiceImpl implements UserService{
         response.setLast(pageUsers.isLast());
 
         return response;
+    }
+
+    @Override
+    public UserResponse editPersonalInformation(String username, EditPersonalInformationRequest request) {
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException(username));
+
+        if (userRepository.existsByEmail(request.getEmail())
+                && !user.getEmail().equals(request.getEmail())) {
+
+            throw new DuplicateEmailException(request.getEmail());
+        }
+
+        if(request.getOldPassword() != null && !request.getOldPassword().isBlank()) {
+            if (!encoder.matches(request.getOldPassword(), user.getPassword())) {
+                throw new BusinessException("Old password is incorrect.");
+            }
+            if(request.getNewPassword() != null && !request.getNewPassword().isBlank()) {
+                user.setPassword(encoder.encode(request.getNewPassword()));
+            }
+        }
+
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
+        user.setEmail(request.getEmail());
+
+        User savedUser = userRepository.save(user);
+
+        return userMapper.toResponse(savedUser);
     }
 
 }

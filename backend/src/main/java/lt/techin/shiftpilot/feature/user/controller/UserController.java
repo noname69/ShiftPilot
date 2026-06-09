@@ -2,11 +2,7 @@ package lt.techin.shiftpilot.feature.user.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lt.techin.shiftpilot.feature.shift.model.ShiftStatus;
-import lt.techin.shiftpilot.feature.user.dto.CreateUserRequest;
-import lt.techin.shiftpilot.feature.user.dto.UpdateUserRequest;
-import lt.techin.shiftpilot.feature.user.dto.UserListResponse;
-import lt.techin.shiftpilot.feature.user.dto.UserResponse;
+import lt.techin.shiftpilot.feature.user.dto.*;
 import lt.techin.shiftpilot.feature.user.model.UserRole;
 import lt.techin.shiftpilot.feature.user.model.UserStatus;
 import lt.techin.shiftpilot.feature.user.service.UserService;
@@ -15,9 +11,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDate;
+import org.springframework.security.oauth2.jwt.Jwt;
 import java.util.List;
 
 @RestController
@@ -52,12 +49,21 @@ public class UserController {
         return userService.createUser(request);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public UserResponse update(
             @PathVariable Long id,
             @Valid @RequestBody UpdateUserRequest request
             ) {
         return  userService.update(id, request);
+    }
+
+    @PutMapping("/me/edit")
+    public UserResponse editPersonalInformation(@Valid @RequestBody EditPersonalInformationRequest request,
+                                                @AuthenticationPrincipal Jwt jwt) {
+        String username = jwt.getSubject();
+
+        return userService.editPersonalInformation(username, request);
     }
 
     @DeleteMapping("/{id}")
@@ -71,8 +77,4 @@ public class UserController {
         userService.restore(id);
     }
 
-    // GET /api/users/me
-    // GET /api/users/search?query=john
-    // PATCH /api/users/{id}/role
-    // PATCH /api/users/{id}/password
 }
