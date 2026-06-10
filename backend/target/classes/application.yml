@@ -16,3 +16,21 @@ spring:
 
 frontend:
   url: http://localhost:5173
+
+logbook:
+  filter:
+    enabled: false
+  obfuscate:
+    headers:
+      - Authorization
+      - Cookie
+    parameters:
+      - password
+  exclude:
+    - /actuator/**
+  write:
+    max-body-size: 10000
+
+logging:
+  level:
+    org.zalando.logbook: TRACE
