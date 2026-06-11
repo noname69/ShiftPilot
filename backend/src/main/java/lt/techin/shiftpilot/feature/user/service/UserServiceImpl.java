@@ -50,7 +50,7 @@ public class UserServiceImpl implements UserService{
         return users.stream()
                 .map(user -> {
                     for(LeaveRequest lr : leaveRequests) {
-                        if(lr.getRequester().getId().equals(user.getId())) {
+                        if(lr.getRequester().getId().equals(user.getId()) && !UserStatus.ACTIVE.equals(user.getStatus())) {
                             return userMapper.toResponse(user, lr.getOutFrom(), lr.getOutTill());
                         }
                     }
@@ -160,7 +160,7 @@ public class UserServiceImpl implements UserService{
         List<UserResponse> userResponses = pageUsers.stream()
                 .map(user -> {
                     for(LeaveRequest lr : leaveRequests) {
-                        if(lr.getRequester().getId().equals(user.getId())) {
+                        if(lr.getRequester().getId().equals(user.getId()) && !UserStatus.ACTIVE.equals(user.getStatus())) {
                             return userMapper.toResponse(user, lr.getOutFrom(), lr.getOutTill());
                         }
                     }

@@ -36,11 +36,11 @@ public class AuthController {
         return authService.login(request.username(), request.password(), response);
     }
 
-    // REFRESH TOKEN
-    @PostMapping("/refresh")
-    public AuthResponse refresh(@RequestBody RefreshTokenRequest request, HttpServletResponse response) {
-        return authService.refreshToken(request.refreshToken(), response);
-    }
+//    // REFRESH TOKEN
+//    @PostMapping("/refresh")
+//    public AuthResponse refresh(@RequestBody RefreshTokenRequest request, HttpServletResponse response) {
+//        return authService.refreshToken(request.refreshToken(), response);
+//    }
 
     // LOGOUT
 //    @PostMapping("/logout")
