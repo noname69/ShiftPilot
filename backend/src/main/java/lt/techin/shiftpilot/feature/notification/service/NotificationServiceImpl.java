@@ -1,6 +1,7 @@
 package lt.techin.shiftpilot.feature.notification.service;
 
 import lombok.RequiredArgsConstructor;
+import lt.techin.shiftpilot.exception.core.BusinessException;
 import lt.techin.shiftpilot.exception.notification.NotificationNotFoundException;
 import lt.techin.shiftpilot.feature.notification.dto.NotificationListResponse;
 import lt.techin.shiftpilot.feature.notification.dto.NotificationResponse;
@@ -95,9 +96,13 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public void markAsRead(Long notificationId) {
+    public void markAsRead(String username, Long notificationId) {
         Notification notification = notificationRepository.findById(notificationId)
                 .orElseThrow(() -> new NotificationNotFoundException(notificationId));
+
+        if(!notification.getRecipient().getUsername().equals(username)) {
+            throw new BusinessException("Notification doesn't belong to current user.");
+        }
 
         notification.setRead(true);
         notificationRepository.save(notification);

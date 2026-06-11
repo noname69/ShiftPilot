@@ -16,5 +16,5 @@ public interface NotificationService {
 
     NotificationListResponse getUserNotifications(String username, Pageable pageable);
 
-    void markAsRead(Long notificationId);
+    void markAsRead(String username, Long notificationId);
 }

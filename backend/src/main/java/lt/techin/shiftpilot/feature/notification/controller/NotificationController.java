@@ -32,8 +32,11 @@ public class NotificationController {
     }
 
     @PatchMapping("/{notificationId}/read")
-    public ResponseEntity<Void> markAsRead(@PathVariable Long notificationId) {
-        notificationService.markAsRead(notificationId);
+    public ResponseEntity<Void> markAsRead(
+            @AuthenticationPrincipal Jwt jwt,
+            @PathVariable Long notificationId) {
+        String username = jwt.getSubject();
+        notificationService.markAsRead(username, notificationId);
 
         return ResponseEntity.noContent().build();
     }
