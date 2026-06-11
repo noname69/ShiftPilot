@@ -27,6 +27,7 @@ public class ShiftAssignmentController {
 
     private final ShiftAssignmentService shiftAssignmentService;
 
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     @PostMapping("/shifts/{shiftId}/shift-assignments")
     public ResponseEntity<ShiftAssignResponse> assignShift(Authentication authentication,
                                                            @Valid @RequestBody ShiftAssignRequest request,
@@ -41,6 +42,7 @@ public class ShiftAssignmentController {
         return ResponseEntity.ok().body(response);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER', 'USER')")
     @GetMapping("/shifts/{shiftId}/shift-assignees")
     public ResponseEntity<ShiftAssignResponse> getShiftAssignees(@PathVariable Long shiftId){
 
@@ -63,6 +65,7 @@ public class ShiftAssignmentController {
 
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     @PatchMapping("/shifts/{shiftId}/shift-assignments/{userId}/remove")
     public ResponseEntity<AssigneeResponse> removeShiftAssignment(
             @PathVariable Long shiftId,
@@ -85,7 +88,7 @@ public class ShiftAssignmentController {
         return ResponseEntity.ok(scheduleResponse);
     }
 
-
+    
     @GetMapping("/shift-assignments/me/schedule")
     public ResponseEntity<WeeklyScheduleResponse> getWeeklyUserSchedule(
             @RequestParam LocalDate weekStart,
@@ -99,6 +102,7 @@ public class ShiftAssignmentController {
         return ResponseEntity.ok(scheduleResponse);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     @DeleteMapping("users/{userId}/shifts/{shiftId}")
     public ResponseEntity<WeeklyScheduleResponse> removeEmployeeFromShift(@PathVariable Long userId,
                                                                         @PathVariable Long shiftId) {

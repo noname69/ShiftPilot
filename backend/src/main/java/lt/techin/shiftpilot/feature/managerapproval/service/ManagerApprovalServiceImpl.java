@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lt.techin.shiftpilot.exception.ResourceNotFoundException;
 import lt.techin.shiftpilot.exception.assignment.ApprovalException;
 import lt.techin.shiftpilot.exception.assignment.AssignmentNotFoundException;
+import lt.techin.shiftpilot.exception.core.BusinessException;
 import lt.techin.shiftpilot.exception.user.UserNotFoundException;
 import lt.techin.shiftpilot.feature.leaverequest.mapper.LeaveRequestMapper;
 import lt.techin.shiftpilot.feature.leaverequest.model.LeaveRequest;
@@ -208,13 +209,11 @@ public class ManagerApprovalServiceImpl implements ManagerApprovalService{
         ManagerApproval approval = swapRequest.getApproval();
 
         if (!swapRequest.getTargetUser().getId().equals(user.getId())) {
-            //throw new UnauthorizedException("Not your swap request");
-            System.out.println("Not your swap request");
+            throw new BusinessException("Not your swap request");
         }
 
         if (approval.getStatus() != ApprovalStatus.PENDING_TARGET_APPROVAL) {
-            // throw new SwapRequestConflictException("Already processed");
-            System.out.println("Already processed");
+             throw new BusinessException("Already processed");
         }
 
         if (!request.accepted()) {

@@ -2,13 +2,16 @@ package lt.techin.shiftpilot.feature.leaverequest.dto;
 
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lt.techin.shiftpilot.feature.managerapproval.model.RequestType;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
+@AllArgsConstructor
 public class CreateLeaveRequest {
 
     private String reason;

@@ -38,7 +38,6 @@ public class AuthService {
                 .orElseThrow();
 
         String accessToken = jwtService.generateToken(user);
-        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
 
         ResponseCookie accessCookie = ResponseCookie.from(
                         "accessToken",
@@ -51,19 +50,7 @@ public class AuthService {
                 .sameSite("Lax")
                 .build();
 
-        ResponseCookie refreshCookie = ResponseCookie.from(
-                        "refreshToken",
-                        refreshToken.getToken()
-                )
-                .httpOnly(true)
-                .secure(false)
-                .path("/api/auth")
-                .maxAge(Duration.ofDays(7))
-                .sameSite("Lax")
-                .build();
-
         response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
-        response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
 
         return new AuthResponse(
                 user.getFirstName(),
@@ -111,37 +98,6 @@ public class AuthService {
                 user.getRole()
         );
     }
-
-//    public void logout(String refreshTokenValue,
-//                       HttpServletResponse response) {
-//
-//        refreshTokenService.deleteByToken(refreshTokenValue);
-//
-//        ResponseCookie accessCookie = ResponseCookie.from(
-//                        "accessToken",
-//                        ""
-//                )
-//                .httpOnly(true)
-//                .secure(false)
-//                .path("/")
-//                .maxAge(0)
-//                .sameSite("Lax")
-//                .build();
-//
-//        ResponseCookie refreshCookie = ResponseCookie.from(
-//                        "refreshToken",
-//                        ""
-//                )
-//                .httpOnly(true)
-//                .secure(false)
-//                .path("/api/auth")
-//                .maxAge(0)
-//                .sameSite("Lax")
-//                .build();
-//
-//        response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
-//        response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
-//    }
 
     public void logout(HttpServletResponse response) {
 

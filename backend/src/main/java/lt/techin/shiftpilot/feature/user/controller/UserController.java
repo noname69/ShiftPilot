@@ -29,6 +29,7 @@ public class UserController {
         return userService.getAll();
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     @GetMapping("/search")
     public UserListResponse getFilteredUsers(
             @RequestParam(required = false) UserStatus status,
@@ -39,6 +40,7 @@ public class UserController {
         return userService.getFilteredUsers(status, role, searchByFullName, pageable);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     @GetMapping("/{id}")
     public UserResponse getById(@PathVariable Long id) {
         return userService.getById(id);
@@ -58,6 +60,7 @@ public class UserController {
         return  userService.update(id, request);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @PutMapping("/me/edit")
     public UserResponse editPersonalInformation(@Valid @RequestBody EditPersonalInformationRequest request,
                                                 @AuthenticationPrincipal Jwt jwt) {
@@ -66,12 +69,14 @@ public class UserController {
         return userService.editPersonalInformation(username, request);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {
         userService.delete(id);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @PatchMapping("/{id}/restore")
     public void restore(@PathVariable Long id) {
         userService.restore(id);
